@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OwnIt — App Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════ */
+:root {
+  --navy:    #0D1B2A;
+  --purple:  #3B1F6A;
+  --teal:    #00B4A6;
+  --gold:    #F4A300;
+  --pink:    #C2185B;
+  --white:   #FFFFFF;
+  --lt:      #F0F8FF;
+  --muted:   #8A9BB0;
+  --green:   #1DB954;
+  --red:     #E53935;
+  --blue:    #0070E0;
+  --income:  #0070E0;
+  --profit:  #1a7a12;
+  --expense: #E53935;
+  --card:    #1A2E42;
+  --phone-w: min(260px, 72vw);
+  --phone-h: min(520px, 143vw);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+
+/* ═══════════════════════════════════════════
+   STAGE
+═══════════════════════════════════════════ */
+#stage {
+  width: 100vw;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: var(--navy);
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Ambient background orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  opacity: 0.18;
+}
+.orb1 { width: 500px; height: 500px; background: var(--teal);  top: -150px; right: -100px; }
+.orb2 { width: 400px; height: 400px; background: var(--purple); bottom: -120px; left: -80px; }
+.orb3 { width: 300px; height: 300px; background: var(--gold);   bottom: 50px;  right: 100px; opacity: 0.10; }
+
+/* ═══════════════════════════════════════════
+   PHONE SHELL
+═══════════════════════════════════════════ */
+#phone-wrap {
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
+  width: var(--phone-w);
+  height: var(--phone-h);
+  z-index: 10;
+  margin-top: 12px;
+  flex-shrink: 0;
+}
+.phone-shell {
+  width: 100%;
+  height: 100%;
+  background: #111827;
+  border-radius: 42px;
+  border: 2.5px solid rgba(255,255,255,0.12);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.6),
+    0 40px 80px rgba(0,0,0,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  position: relative;
+  overflow: hidden;
+}
+/* Notch */
+.phone-notch {
+  position: absolute;
+  top: 10px; left: 50%;
+  transform: translateX(-50%);
+  width: 90px; height: 22px;
+  background: #111827;
+  border-radius: 0 0 18px 18px;
+  z-index: 20;
+  border: 2px solid rgba(255,255,255,0.06);
+  border-top: none;
+}
+/* Screen area */
+.phone-screen {
+  position: absolute;
+  inset: 0;
+  border-radius: 40px;
+  overflow: hidden;
+  background: #0D1B2A;
+}
+
+/* ═══════════════════════════════════════════
+   SLIDES (scenes inside phone)
+═══════════════════════════════════════════ */
+.scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  overflow: hidden;
+}
+.scene.active { opacity: 1; pointer-events: auto; }
+
+/* ── APP HEADER (shared) ── */
+.app-header {
+  background: #0A1525;
+  padding: 38px 14px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  position: relative;
+  z-index: 5;
+}
+.app-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.3px;
+}
+.sync-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 58px;
+  background: #0A1525;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 4px 8px;
+  z-index: 5;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 8px;
+  color: var(--muted);
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+.nav-item.active { color: var(--teal); }
+.nav-item .nav-icon { font-size: 16px; }
+
+/* ── SCROLL AREA ── */
+.scroll-area {
+  position: absolute;
+  top: 70px; bottom: 58px; left: 0; right: 0;
+  overflow: hidden;
+  padding: 10px 12px;
+}
+
+/* ═══════════════════════════════════════════
+   SCENE 1 — INTRO / HOME SCREEN
+═══════════════════════════════════════════ */
+#scene-intro {
+  background: linear-gradient(160deg, #0D1B2A 0%, #1A0F35 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+.intro-icon {
+  width: 72px; height: 72px;
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  filter: drop-shadow(0 8px 24px rgba(0,180,166,0.4));
+  opacity: 0;
+  transform: scale(0.5) translateY(20px);
+  transition: all 0.6s cubic-bezier(.34,1.56,.64,1);
+  margin-bottom: 16px;
+}
+.intro-appname {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--white);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: all 0.5s ease 0.4s;
+  margin-bottom: 6px;
+}
+.intro-tagline {
+  font-size: 10px;
+  color: var(--teal);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.5s ease 0.65s;
+  margin-bottom: 28px;
+}
+.intro-badges {
+  display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.5s ease 0.85s;
+}
+.badge {
+  background: rgba(0,180,166,0.15);
+  border: 1px solid rgba(0,180,166,0.3);
+  color: var(--teal);
+  font-size: 8px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+.badge.gold { background: rgba(244,163,0,0.15); border-color: rgba(244,163,0,0.3); color: var(--gold); }
+.badge.pink { background: rgba(194,24,91,0.15); border-color: rgba(194,24,91,0.3); color: #F48FB1; }
+
+#scene-intro.active .intro-icon    { opacity: 1; transform: scale(1) translateY(0); }
+#scene-intro.active .intro-appname { opacity: 1; transform: translateY(0); }
+#scene-intro.active .intro-tagline { opacity: 1; transform: translateY(0); }
+#scene-intro.active .intro-badges  { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════════════════
+   SCENE 2 — BUSINESS TABS
+═══════════════════════════════════════════ */
+.biz-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #0A1525;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.biz-tab {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+.biz-tab.active-tab {
+  background: var(--teal);
+  color: var(--white);
+  border-color: var(--teal);
+  box-shadow: 0 2px 8px rgba(0,180,166,0.4);
+}
+
+/* Overview cards */
+.overview-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.4s ease;
+}
+.overview-card.show { opacity: 1; transform: translateY(0); }
+.ov-label { font-size: 9px; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+.ov-val { font-size: 20px; font-weight: 700; }
+.ov-val.income  { color: var(--income); }
+.ov-val.expense { color: var(--expense); }
+.ov-val.profit  { color: var(--profit); }
+
+.expense-row {
+  background: var(--card);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0;
+  transform: translateX(-12px);
+  transition: all 0.35s ease;
+}
+.expense-row.show { opacity: 1; transform: translateX(0); }
+.exp-left { display: flex; flex-direction: column; gap: 1px; }
+.exp-vendor { font-size: 9px; font-weight: 600; color: var(--white); }
+.exp-cat { font-size: 8px; color: var(--muted); }
+.exp-amt { font-size: 11px; font-weight: 700; color: var(--expense); }
+
+/* ═══════════════════════════════════════════
+   SCENE 3 — EXPENSE LOGGING
+═══════════════════════════════════════════ */
+.form-field {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 7px 10px;
+  margin-bottom: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.form-field.show { opacity: 1; transform: translateY(0); }
+.form-field.typing::after {
+  content: '';
+  position: absolute;
+  right: 8px; top: 50%;
+  transform: translateY(-50%);
+  width: 2px; height: 14px;
+  background: var(--teal);
+  animation: blink 0.7s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.ff-label { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.ff-val { font-size: 11px; color: var(--white); font-weight: 500; min-height: 14px; }
+
+.add-btn-app {
+  background: var(--teal);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 9px;
+  border-radius: 10px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.3px;
+}
+.add-btn-app.show { opacity: 1; transform: translateY(0); }
+.add-btn-app.pressed {
+  background: #009E91;
+  transform: scale(0.97);
+  box-shadow: 0 0 0 3px rgba(0,180,166,0.3);
+}
+
+/* ═══════════════════════════════════════════
+   SCENE 4 — EVENT / TICKET TRACKING
+═══════════════════════════════════════════ */
+.event-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.event-name { font-size: 11px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+.event-stats { display: flex; gap: 6px; }
+.evt-stat {
+  flex: 1;
+  background: rgba(255,255,255,0.04);
+  border-radius: 8px;
+  padding: 6px 8px;
+  text-align: center;
+}
+.evt-stat-val { font-size: 16px; font-weight: 700; color: var(--teal); transition: all 0.1s; }
+.evt-stat-lbl { font-size: 7px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px; }
+
+.ticket-btn {
+  background: linear-gradient(135deg, var(--purple), var(--pink));
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 9px;
+  border-radius: 10px;
+  text-align: center;
+  margin-top: 8px;
+  opacity: 0;
+  transition: all 0.3s ease 0.8s;
+  letter-spacing: 0.3px;
+}
+.ticket-btn.show { opacity: 1; }
+.ticket-btn.pressed {
+  transform: scale(0.97);
+  box-shadow: 0 0 0 3px rgba(194,24,91,0.3);
+}
+
+/* ═══════════════════════════════════════════
+   SCENE 5 — TOTAL EARNINGS
+═══════════════════════════════════════════ */
+.earnings-card {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.4s ease;
+}
+.earnings-card.show { opacity: 1; transform: translateX(0); }
+.ec-name { font-size: 9px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+.ec-row { display: flex; justify-content: space-between; margin-bottom: 3px; }
+.ec-lbl { font-size: 8px; color: var(--muted); }
+.ec-val { font-size: 9px; font-weight: 600; }
+.grand-total {
+  background: linear-gradient(135deg, rgba(0,180,166,0.15), rgba(26,122,18,0.15));
+  border: 1px solid rgba(0,180,166,0.3);
+  border-radius: 10px;
+  padding: 10px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.5s ease;
+}
+.grand-total.show { opacity: 1; transform: translateY(0); }
+.gt-label { font-size: 9px; font-weight: 700; color: var(--teal); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+.gt-profit { font-size: 22px; font-weight: 900; color: var(--profit); font-family: 'Playfair Display', serif; }
+
+/* ═══════════════════════════════════════════
+   SCENE 6 — EXPORT
+═══════════════════════════════════════════ */
+.export-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+.export-btn {
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.35s ease;
+}
+.export-btn.show { opacity: 1; transform: translateY(0); }
+.export-btn.pressed {
+  background: rgba(0,180,166,0.15);
+  border-color: var(--teal);
+  transform: scale(0.98);
+}
+.exp-icon { font-size: 20px; }
+.exp-info { flex: 1; }
+.exp-title { font-size: 10px; font-weight: 700; color: var(--white); }
+.exp-sub   { font-size: 8px; color: var(--muted); margin-top: 1px; }
+.exp-arrow { font-size: 14px; color: var(--muted); }
+
+.toast {
+  position: absolute;
+  bottom: 70px; left: 12px; right: 12px;
+  background: var(--green);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 10px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 4px 20px rgba(29,185,84,0.4);
+  z-index: 20;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+
+
+/* ═══════════════════════════════════════════
+   CALLOUT LABELS (outside phone)
+═══════════════════════════════════════════ */
+.callout {
+  position: relative;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  background: rgba(13,27,42,0.92);
+  border: 1px solid rgba(0,180,166,0.4);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  padding: 10px 14px;
+  width: 88vw;
+  max-width: 340px;
+  z-index: 50;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
+  pointer-events: none;
+  display: none;
+  margin: 10px auto 0;
+}
+.callout.show {
+  opacity: 1;
+  transform: translateY(0);
+  display: block;
+}
+.callout-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 4px;
+}
+.callout-body {
+  font-size: 10px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.5;
+}
+.callout-line { display: none; }
+
+/* Callout container — sits below phone */
+#callout-zone {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  min-height: 70px;
+  padding: 0 16px;
+}
+
+
+/* ═══════════════════════════════════════════
+   SCENE 7 — NAME CUSTOMIZATION
+═══════════════════════════════════════════ */
+.custom-screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  gap: 14px;
+}
+.custom-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.custom-label.show { opacity: 1; }
+
+.name-display {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--white);
+  text-align: center;
+  min-height: 40px;
+  transition: color 0.3s ease;
+  letter-spacing: 0.5px;
+}
+.name-display.highlight { color: var(--gold); }
+
+.name-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.4s ease;
+}
+.name-row.show { opacity: 1; transform: translateY(0); }
+.name-chip {
+  background: rgba(255,255,255,0.07);
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+  transition: all 0.3s ease;
+  cursor: default;
+}
+.name-chip.active {
+  background: rgba(244,163,0,0.15);
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: scale(1.05);
+}
+
+/* ═══════════════════════════════════════════
+   SCENE 8 — ICON & COLOR CUSTOMIZATION
+═══════════════════════════════════════════ */
+.icon-preview {
+  width: 72px; height: 72px;
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  transition: all 0.5s cubic-bezier(.34,1.56,.64,1);
+  opacity: 0;
+  transform: scale(0.7);
+}
+.icon-preview.show { opacity: 1; transform: scale(1); }
+
+.color-swatches {
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.4s ease 0.3s;
+}
+.color-swatches.show { opacity: 1; transform: translateY(0); }
+.swatch {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+.swatch.active {
+  border-color: var(--white);
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+.theme-preview {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+.theme-preview.show { opacity: 1; }
+.theme-bar {
+  height: 6px;
+  border-radius: 99px;
+  flex: 1;
+  margin: 0 4px;
+  transition: background 0.5s ease;
+}
+.theme-dot {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  transition: background 0.5s ease;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   SCENE 9 — FINALE
+═══════════════════════════════════════════ */
+.finale-screen {
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.finale-icon {
+  width: 70px; height: 70px;
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px;
+  opacity: 0;
+  transform: scale(0.5) rotate(-10deg);
+  transition: all 0.6s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.finale-icon.show { opacity: 1; transform: scale(1) rotate(0deg); }
+.finale-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 900;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.5s ease 0.3s;
+}
+.finale-name.show { opacity: 1; transform: translateY(0); }
+.finale-tag {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: all 0.5s ease 0.5s;
+  text-align: center;
+}
+.finale-tag.show { opacity: 1; }
+.finale-divider {
+  width: 40px; height: 2px;
+  border-radius: 99px;
+  opacity: 0;
+  transition: all 0.4s ease 0.6s;
+}
+.finale-divider.show { opacity: 1; }
+.finale-tagline {
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: all 0.5s ease 0.8s;
+  line-height: 1.4;
+  padding: 0 10px;
+}
+.finale-tagline.show { opacity: 1; transform: translateY(0); }
+.finale-sub {
+  font-size: 9px;
+  text-align: center;
+  opacity: 0;
+  transition: all 0.4s ease 1.0s;
+  padding: 0 16px;
+  line-height: 1.5;
+}
+.finale-sub.show { opacity: 1; }
+
+/* ═══════════════════════════════════════════
+   PROGRESS BAR
+═══════════════════════════════════════════ */
+#progress-bar {
+  position: fixed;
+  bottom: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal), var(--gold));
+  width: 0%;
+  z-index: 200;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px var(--teal);
+}
+
+/* ═══════════════════════════════════════════
+   SCENE LABEL
+═══════════════════════════════════════════ */
+#scene-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  z-index: 200;
+  transition: opacity 0.3s;
+  padding: 10px 0 2px;
+  text-align: center;
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════════
+   REPLAY BUTTON
+═══════════════════════════════════════════ */
+#replay-btn {
+  background: var(--teal);
+  color: var(--white);
+  border: none;
+  border-radius: 99px;
+  padding: 10px 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.2s ease;
+  z-index: 200;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 20px rgba(0,180,166,0.4);
+  margin: 12px auto 16px;
+  display: block;
+  pointer-events: none;
+}
+#replay-btn.show { opacity: 1; pointer-events: auto; }
+#replay-btn:hover { transform: scale(1.05); }
+
+#cta-btn {
+  background: var(--gold);
+  color: var(--navy);
+  border: none;
+  border-radius: 99px;
+  padding: 10px 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.5s ease 0.3s, transform 0.2s ease;
+  z-index: 200;
+  letter-spacing: 0.5px;
+  margin: 0 auto 8px;
+  display: block;
+  pointer-events: none;
+  box-shadow: 0 4px 20px rgba(244,163,0,0.35);
+  text-decoration: none;
+  text-align: center;
+}
+#cta-btn.show { opacity: 1; pointer-events: auto; }
+#cta-btn:hover { transform: scale(1.05); }
+
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- Ambient orbs -->
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <!-- Scene label -->
+  <div id="scene-label">INTRO</div>
+
+  <!-- ══ PHONE ══ -->
+  <div id="phone-wrap">
+    <div class="phone-shell">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+
+        <!-- ── SCENE 1: INTRO ── -->
+        <div class="scene active" id="scene-intro">
+          <div class="intro-icon" style="background:none;box-shadow:none;padding:0;">
+  <svg width="72" height="72" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" rx="44" fill="#0F2940"/>
+    <rect x="44" y="166" width="112" height="14" rx="5" fill="#F4A300"/>
+    <polygon points="48,166 44,118 62,140 80,100 80,166" fill="#F4A300"/>
+    <polygon points="80,166 80,100 100,68 120,100 120,166" fill="#00B4A6"/>
+    <polygon points="120,166 120,140 138,118 156,166" fill="#F4A300"/>
+    <circle cx="44" cy="118" r="8" fill="#FFFFFF"/>
+    <circle cx="100" cy="68" r="9" fill="#FFFFFF"/>
+    <circle cx="156" cy="118" r="8" fill="#FFFFFF"/>
+    <circle cx="100" cy="68" r="14" fill="none" stroke="#00B4A6" stroke-width="2" stroke-dasharray="3 3"/>
+  </svg>
+</div>
+          <div class="intro-appname">OwnIt</div>
+          <div class="intro-tagline">Custom Business Tracker</div>
+          <div class="intro-badges">
+            <span class="badge">📱 Home Screen App</span>
+            <span class="badge gold">💼 Multi-Business</span>
+            <span class="badge pink">📊 Tax-Ready</span>
+          </div>
+        </div>
+
+        <!-- ── SCENE 2: BUSINESS TABS ── -->
+        <div class="scene" id="scene-tabs">
+          <div class="app-header">
+            <span class="app-title">OwnIt</span>
+            <span class="sync-dot"></span>
+          </div>
+          <div class="biz-tabs" id="biz-tabs-row">
+            <div class="biz-tab active-tab" id="tab-rover">🐾 Rover</div>
+            <div class="biz-tab" id="tab-wyzant">📚 Wyzant</div>
+            <div class="biz-tab" id="tab-itt">💃 It Takes Two</div>
+          </div>
+          <div class="scroll-area" id="tabs-scroll" style="top:116px">
+            <div class="overview-card" id="ov-income">
+              <div class="ov-label">Income YTD</div>
+              <div class="ov-val income" id="ov-income-val">$3,240.00</div>
+            </div>
+            <div class="overview-card" id="ov-expense">
+              <div class="ov-label">Expenses YTD</div>
+              <div class="ov-val expense" id="ov-expense-val">$842.16</div>
+            </div>
+            <div class="overview-card" id="ov-profit">
+              <div class="ov-label">Net Profit YTD</div>
+              <div class="ov-val profit" id="ov-profit-val">$2,397.84</div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="nav-item active"><span class="nav-icon">🏠</span>Overview</div>
+            <div class="nav-item"><span class="nav-icon">➕</span>Add</div>
+            <div class="nav-item"><span class="nav-icon">📋</span>Log</div>
+            <div class="nav-item"><span class="nav-icon">💰</span>Earnings</div>
+            <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
+          </div>
+        </div>
+
+        <!-- ── SCENE 3: EXPENSE LOGGING ── -->
+        <div class="scene" id="scene-expense">
+          <div class="app-header">
+            <span class="app-title">Add Expense</span>
+            <span class="sync-dot"></span>
+          </div>
+          <div class="scroll-area">
+            <div class="form-field" id="ff-date">
+              <div class="ff-label">Date</div>
+              <div class="ff-val" id="ff-date-val"></div>
+            </div>
+            <div class="form-field" id="ff-vendor">
+              <div class="ff-label">Vendor</div>
+              <div class="ff-val" id="ff-vendor-val"></div>
+            </div>
+            <div class="form-field" id="ff-cat">
+              <div class="ff-label">Category</div>
+              <div class="ff-val" id="ff-cat-val"></div>
+            </div>
+            <div class="form-field" id="ff-amt">
+              <div class="ff-label">Amount</div>
+              <div class="ff-val" id="ff-amt-val"></div>
+            </div>
+            <div class="form-field" id="ff-pay">
+              <div class="ff-label">Payment Method</div>
+              <div class="ff-val" id="ff-pay-val"></div>
+            </div>
+            <div class="add-btn-app" id="add-expense-btn">+ Add Expense</div>
+          </div>
+          <div class="bottom-nav">
+            <div class="nav-item"><span class="nav-icon">🏠</span>Overview</div>
+            <div class="nav-item active"><span class="nav-icon">➕</span>Add</div>
+            <div class="nav-item"><span class="nav-icon">📋</span>Log</div>
+            <div class="nav-item"><span class="nav-icon">💰</span>Earnings</div>
+            <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
+          </div>
+        </div>
+
+        <!-- ── SCENE 4: EVENT TRACKING ── -->
+        <div class="scene" id="scene-events">
+          <div class="app-header">
+            <span class="app-title">💃 It Takes Two</span>
+            <span class="sync-dot"></span>
+          </div>
+          <div class="scroll-area" style="top:70px">
+            <div class="event-card">
+              <div class="event-name">Tango Night — April 2025</div>
+              <div class="event-stats">
+                <div class="evt-stat">
+                  <div class="evt-stat-val" id="single-count">0</div>
+                  <div class="evt-stat-lbl">Singles</div>
+                </div>
+                <div class="evt-stat">
+                  <div class="evt-stat-val" id="couple-count">0</div>
+                  <div class="evt-stat-lbl">Couples</div>
+                </div>
+                <div class="evt-stat">
+                  <div class="evt-stat-val" id="revenue-count">$0</div>
+                  <div class="evt-stat-lbl">Revenue</div>
+                </div>
+              </div>
+              <div class="ticket-btn" id="ticket-log-btn">🎟 Log Ticket Sales</div>
+            </div>
+            <div class="expense-row" id="ev-row1" style="background:#1A2E42">
+              <div class="exp-left">
+                <div class="exp-vendor">Venue Rental</div>
+                <div class="exp-cat">Operating Cost</div>
+              </div>
+              <div class="exp-amt">-$120.00</div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="nav-item active"><span class="nav-icon">🏠</span>Overview</div>
+            <div class="nav-item"><span class="nav-icon">➕</span>Add</div>
+            <div class="nav-item"><span class="nav-icon">📋</span>Log</div>
+            <div class="nav-item"><span class="nav-icon">💰</span>Earnings</div>
+            <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
+          </div>
+        </div>
+
+        <!-- ── SCENE 5: TOTAL EARNINGS ── -->
+        <div class="scene" id="scene-earnings">
+          <div class="app-header">
+            <span class="app-title">💰 Total Earnings</span>
+            <span class="sync-dot"></span>
+          </div>
+          <div class="scroll-area" style="top:70px; padding-top:8px">
+            <div class="earnings-card" id="ec1">
+              <div class="ec-name">🐾 Rover</div>
+              <div class="ec-row"><span class="ec-lbl">Income</span><span class="ec-val" style="color:var(--income)">$3,240</span></div>
+              <div class="ec-row"><span class="ec-lbl">Expenses</span><span class="ec-val" style="color:var(--expense)">$842</span></div>
+              <div class="ec-row"><span class="ec-lbl">Net Profit</span><span class="ec-val" style="color:var(--profit)">$2,398</span></div>
+            </div>
+            <div class="earnings-card" id="ec2">
+              <div class="ec-name">📚 Wyzant</div>
+              <div class="ec-row"><span class="ec-lbl">Income</span><span class="ec-val" style="color:var(--income)">$1,850</span></div>
+              <div class="ec-row"><span class="ec-lbl">Expenses</span><span class="ec-val" style="color:var(--expense)">$210</span></div>
+              <div class="ec-row"><span class="ec-lbl">Net Profit</span><span class="ec-val" style="color:var(--profit)">$1,640</span></div>
+            </div>
+            <div class="earnings-card" id="ec3">
+              <div class="ec-name">💃 It Takes Two</div>
+              <div class="ec-row"><span class="ec-lbl">Ticket Revenue</span><span class="ec-val" style="color:var(--income)">$2,760</span></div>
+              <div class="ec-row"><span class="ec-lbl">Expenses</span><span class="ec-val" style="color:var(--expense)">$580</span></div>
+              <div class="ec-row"><span class="ec-lbl">Net Profit</span><span class="ec-val" style="color:var(--profit)">$2,180</span></div>
+            </div>
+            <div class="grand-total" id="grand-total-card">
+              <div class="gt-label">✦ Combined Grand Total</div>
+              <div class="ec-row"><span class="ec-lbl" style="font-size:9px;color:rgba(255,255,255,0.5)">Total Income</span><span class="ec-val" style="color:var(--income);font-size:11px">$7,850</span></div>
+              <div class="ec-row" style="margin-top:3px"><span class="ec-lbl" style="font-size:9px;color:rgba(255,255,255,0.5)">Net Profit</span><span class="gt-profit">$6,218</span></div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="nav-item"><span class="nav-icon">🏠</span>Overview</div>
+            <div class="nav-item"><span class="nav-icon">➕</span>Add</div>
+            <div class="nav-item"><span class="nav-icon">📋</span>Log</div>
+            <div class="nav-item active"><span class="nav-icon">💰</span>Earnings</div>
+            <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
+          </div>
+        </div>
+
+        <!-- ── SCENE 6: EXPORT ── -->
+        <div class="scene" id="scene-export">
+          <div class="app-header">
+            <span class="app-title">Export Data</span>
+            <span class="sync-dot"></span>
+          </div>
+          <div class="scroll-area" style="top:70px">
+            <div style="font-size:9px;color:var(--muted);margin-bottom:10px;line-height:1.5">
+              Export your data anytime — send to your accountant or open in Google Sheets.
+            </div>
+            <div class="export-options">
+              <div class="export-btn" id="csv-btn">
+                <span class="exp-icon">📊</span>
+                <div class="exp-info">
+                  <div class="exp-title">Export CSV</div>
+                  <div class="exp-sub">All expenses → Google Sheets</div>
+                </div>
+                <span class="exp-arrow">›</span>
+              </div>
+              <div class="export-btn" id="schedC-btn">
+                <span class="exp-icon">📋</span>
+                <div class="exp-info">
+                  <div class="exp-title">Schedule C Summary</div>
+                  <div class="exp-sub">IRS-ready tax breakdown</div>
+                </div>
+                <span class="exp-arrow">›</span>
+              </div>
+            </div>
+          </div>
+          <div class="toast" id="export-toast">✓ CSV Downloaded Successfully!</div>
+          <div class="bottom-nav">
+            <div class="nav-item"><span class="nav-icon">🏠</span>Overview</div>
+            <div class="nav-item"><span class="nav-icon">➕</span>Add</div>
+            <div class="nav-item active"><span class="nav-icon">📋</span>Log</div>
+            <div class="nav-item"><span class="nav-icon">💰</span>Earnings</div>
+            <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
+          </div>
+        </div>
+
+        <!-- ── SCENE 7: NAME CUSTOMIZATION ── -->
+        <div class="scene" id="scene-custom-name">
+          <div class="app-header">
+            <span class="app-title" id="custom-app-title">OwnIt</span>
+            <span class="sync-dot"></span>
+          </div>
+          <div class="custom-screen" style="top:60px;position:absolute;bottom:0;left:0;right:0;justify-content:center;">
+            <div class="custom-label" id="cn-label">YOUR APP NAME</div>
+            <div class="name-display" id="name-display">OwnIt</div>
+            <div class="name-row" id="name-chips">
+              <span class="name-chip" id="chip-glam">Glam by Kia</span>
+              <span class="name-chip" id="chip-hustle">The Hustle Hub</span>
+              <span class="name-chip" id="chip-empire">My Empire</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SCENE 8: ICON & COLORS ── -->
+        <div class="scene" id="scene-custom-look">
+          <div class="app-header">
+            <span class="app-title">Glam by Kia</span>
+            <span class="sync-dot"></span>
+          </div>
+          <div style="position:absolute;top:70px;bottom:58px;left:0;right:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:14px;">
+            <div class="custom-label show" style="opacity:1;">YOUR ICON &amp; COLORS</div>
+            <div class="icon-preview" id="icon-preview" style="background:linear-gradient(135deg,#C2185B,#880E4F);">💄</div>
+            <div class="color-swatches" id="color-swatches">
+              <div class="swatch" id="sw1" style="background:#C2185B;"></div>
+              <div class="swatch" id="sw2" style="background:#6C2FAF;"></div>
+              <div class="swatch" id="sw3" style="background:#00B4A6;"></div>
+              <div class="swatch" id="sw4" style="background:#F4A300;"></div>
+              <div class="swatch" id="sw5" style="background:#1DB954;"></div>
+            </div>
+            <div class="theme-preview" id="theme-preview">
+              <div class="theme-dot" id="theme-dot" style="background:#C2185B;"></div>
+              <div class="theme-bar" id="theme-bar1" style="background:rgba(194,24,91,0.4);"></div>
+              <div class="theme-bar" id="theme-bar2" style="background:rgba(194,24,91,0.2);"></div>
+              <div class="theme-dot" id="theme-dot2" style="background:rgba(194,24,91,0.6);width:14px;height:14px;"></div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="nav-item active"><span class="nav-icon">🏠</span>Overview</div>
+            <div class="nav-item"><span class="nav-icon">➕</span>Add</div>
+            <div class="nav-item"><span class="nav-icon">📋</span>Log</div>
+            <div class="nav-item"><span class="nav-icon">💰</span>Earnings</div>
+            <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
+          </div>
+        </div>
+
+        <!-- ── SCENE 9: FINALE ── -->
+        <div class="scene" id="scene-finale">
+          <div class="finale-screen">
+            <div class="finale-icon" id="finale-icon" style="background:linear-gradient(135deg,#C2185B,#880E4F);">💄</div>
+            <div class="finale-name" id="finale-name" style="color:#C2185B;">Glam by Kia</div>
+            <div class="finale-tag" id="finale-tag" style="color:rgba(194,24,91,0.7);">Custom Business Tracker</div>
+            <div class="finale-divider" id="finale-divider" style="background:#C2185B;"></div>
+            <div class="finale-tagline" id="finale-tagline" style="color:#FFFFFF;">Your name. Your icon.<br>Your App.</div>
+            <div class="finale-sub" id="finale-sub" style="color:rgba(255,255,255,0.5);">Every client gets a fully branded app — you even own the name.</div>
+          </div>
+        </div>
+
+      </div><!-- /phone-screen -->
+    </div><!-- /phone-shell -->
+  </div><!-- /phone-wrap -->
+
+  <!-- ══ CALLOUT LABELS ══ -->
+  <div id="callout-zone">
+  <div class="callout" id="co-tabs" style="right: calc(50% + 170px); top: 28%;">
+    <div class="callout-title">4 Business Tabs</div>
+    <div class="callout-body">Separate tabs for each business, all in one app.</div>
+  </div>
+
+  <div class="callout" id="co-expense" style="left: calc(50% + 160px); top: 22%;">
+    <div class="callout-title">Expense Logging</div>
+    <div class="callout-body">Date, vendor, category, amount & payment method.</div>
+  </div>
+
+  <div class="callout" id="co-events" style="right: calc(50% + 170px); top: 32%;">
+    <div class="callout-title">Ticket & Event Tracking</div>
+    <div class="callout-body">Singles, couples, revenue & net profit per event.</div>
+  </div>
+
+  <div class="callout" id="co-earnings" style="left: calc(50% + 160px); top: 20%;">
+    <div class="callout-title">Total Earnings View</div>
+    <div class="callout-body">Income, expenses & net profit — all businesses.</div>
+  </div>
+
+  <div class="callout" id="co-export" style="right: calc(50% + 170px); top: 30%;">
+    <div class="callout-title">One-Tap Export</div>
+    <div class="callout-body">Export CSV or Schedule C — ready for your accountant.</div>
+  </div>
+
+
+  <div class="callout" id="co-customname">
+    <div class="callout-title">Make It Yours</div>
+    <div class="callout-body">Your app gets your business name on the Home Screen.</div>
+  </div>
+
+  <div class="callout" id="co-customlook">
+    <div class="callout-title">Custom Icon &amp; Colors</div>
+    <div class="callout-body">Brand colors &amp; icon matched to your business.</div>
+  </div>
+
+  </div><!-- /callout-zone -->
+
+  <!-- Progress bar -->
+  <div id="progress-bar"></div>
+
+  <!-- Replay -->
+  <a id="cta-btn" href="https://yourdomain.com/intake" target="_blank">Get Your App →</a>
+  <button id="replay-btn" onclick="startShow()">↺ Watch Again</button>
+
+</div><!-- /stage -->
+
+<script>
+/* ═══════════════════════════════════════════
+   UTILITY HELPERS
+═══════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+
+
+async function moveCursor() {}
+async function clickAt() { await sleep(250); }
+function showCursor() {}
+function hideCursor() {}
+
+function showScene(id) {
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+function showCallout(id) { $(id).classList.add('show'); }
+function hideAllCallouts() { document.querySelectorAll('.callout').forEach(c => c.classList.remove('show')); }
+
+let totalDuration = 38750;
+let startTime = null;
+let animRunning = false;
+
+function updateProgress() {
+  if (!animRunning) return;
+  const elapsed = Date.now() - startTime;
+  const pct = Math.min(100, (elapsed / totalDuration) * 100);
+  $('progress-bar').style.width = pct + '%';
+  if (pct < 100) requestAnimationFrame(updateProgress);
+}
+
+function setLabel(text) {
+  $('scene-label').textContent = text;
+}
+
+// Typewriter effect
+async function typeInto(elId, text, speed = 60) {
+  const el = $(elId);
+  el.textContent = '';
+  $(elId.replace('-val', '')).classList.add('typing');
+  for (const ch of text) {
+    el.textContent += ch;
+    await sleep(speed);
+  }
+  $(elId.replace('-val', '')).classList.remove('typing');
+}
+
+// Count up number
+async function countUp(elId, target, prefix='', suffix='', steps=20, duration=600) {
+  const el = $(elId);
+  const stepTime = duration / steps;
+  for (let i = 1; i <= steps; i++) {
+    const val = Math.round((target / steps) * i);
+    el.textContent = prefix + val + suffix;
+    await sleep(stepTime);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   MAIN SHOW SEQUENCER
+═══════════════════════════════════════════ */
+async function startShow() {
+  animRunning = true;
+  $('replay-btn').classList.remove('show');
+  $('cta-btn').classList.remove('show');
+  hideAllCallouts();
+  hideCursor();
+  $('progress-bar').style.width = '0%';
+
+  // Reset all animated states
+  document.querySelectorAll('.overview-card').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('.expense-row').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('.form-field').forEach(e => { e.classList.remove('show'); e.classList.remove('typing'); });
+  document.querySelectorAll('.add-btn-app').forEach(e => { e.classList.remove('show','pressed'); });
+  document.querySelectorAll('.earnings-card,.grand-total').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('.export-btn').forEach(e => e.classList.remove('show','pressed'));
+  // Reset custom scenes
+  ['cn-label','name-chips'].forEach(id => $(id) && $(id).classList.remove('show'));
+  document.querySelectorAll('.name-chip').forEach(c => c.classList.remove('active'));
+  $('name-display').textContent = 'OwnIt';
+  $('name-display').classList.remove('highlight');
+  $('custom-app-title').textContent = 'OwnIt';
+  $('icon-preview').classList.remove('show');
+  $('color-swatches').classList.remove('show');
+  $('theme-preview').classList.remove('show');
+  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  ['finale-icon','finale-name','finale-tag','finale-divider','finale-tagline','finale-sub'].forEach(id => $(id).classList.remove('show'));
+  document.querySelectorAll('.toast').forEach(e => e.classList.remove('show'));
+  $('ticket-log-btn').classList.remove('show','pressed');
+  $('single-count').textContent = '0';
+  $('couple-count').textContent = '0';
+  $('revenue-count').textContent = '$0';
+  ['ff-date-val','ff-vendor-val','ff-cat-val','ff-amt-val','ff-pay-val'].forEach(id => $(id).textContent = '');
+
+  startTime = Date.now();
+  requestAnimationFrame(updateProgress);
+
+  /* ─────────────────────────────────────────
+     SCENE 1 — INTRO (0–5s)
+  ───────────────────────────────────────── */
+  setLabel('INTRO');
+  showScene('scene-intro');
+  await sleep(3000);
+
+  /* ─────────────────────────────────────────
+     SCENE 2 — BUSINESS TABS (5–10s)
+  ───────────────────────────────────────── */
+  setLabel('BUSINESS TABS');
+  showScene('scene-tabs');
+
+  // Per-tab data
+  const tabData = {
+    rover:  { income: '$3,240.00', expense: '$842.16',  profit: '$2,397.84' },
+    wyzant: { income: '$1,850.00', expense: '$210.50',  profit: '$1,639.50' },
+    itt:    { income: '$2,760.00', expense: '$580.00',  profit: '$2,180.00' },
+  };
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.biz-tab').forEach(t => t.classList.remove('active-tab'));
+    $('tab-' + tabId).classList.add('active-tab');
+    const d = tabData[tabId];
+    // Flash out, update, flash in
+    ['ov-income', 'ov-expense', 'ov-profit'].forEach(id => {
+      $(id).style.opacity = '0.3';
+      $(id).style.transform = 'translateY(4px)';
+      $(id).style.transition = 'all 0.15s ease';
+    });
+    setTimeout(() => {
+      $('ov-income-val').textContent  = d.income;
+      $('ov-expense-val').textContent = d.expense;
+      $('ov-profit-val').textContent  = d.profit;
+      ['ov-income', 'ov-expense', 'ov-profit'].forEach(id => {
+        $(id).style.opacity = '1';
+        $(id).style.transform = 'translateY(0)';
+      });
+    }, 160);
+  }
+
+  await sleep(400);
+  showCallout('co-tabs');
+
+  // Start on Rover — call switchTab to guarantee correct values on every run
+  switchTab('rover');
+  await sleep(300);
+  $('ov-income').classList.add('show');
+  await sleep(200);
+  $('ov-expense').classList.add('show');
+  await sleep(200);
+  $('ov-profit').classList.add('show');
+  await sleep(900);
+
+  // Switch to Wyzant
+  switchTab('wyzant');
+  await sleep(1100);
+
+  // Switch to It Takes Two
+  switchTab('itt');
+  await sleep(900);
+
+  /* ─────────────────────────────────────────
+     SCENE 3 — EXPENSE LOGGING (10–16s)
+  ───────────────────────────────────────── */
+  setLabel('EXPENSE LOGGING');
+  hideAllCallouts();
+  showScene('scene-expense');
+  await sleep(300);
+  showCallout('co-expense');
+
+  // Fields appear and fill in
+  $('ff-date').classList.add('show');
+  await sleep(200);
+  await typeInto('ff-date-val', 'Apr 23, 2025', 55);
+  await sleep(150);
+
+  $('ff-vendor').classList.add('show');
+  await sleep(150);
+  await typeInto('ff-vendor-val', 'PetSmart', 65);
+  await sleep(150);
+
+  $('ff-cat').classList.add('show');
+  await sleep(150);
+  await typeInto('ff-cat-val', 'Supplies', 70);
+  await sleep(150);
+
+  $('ff-amt').classList.add('show');
+  await sleep(150);
+  await typeInto('ff-amt-val', '$34.99', 70);
+  await sleep(150);
+
+  $('ff-pay').classList.add('show');
+  await sleep(150);
+  await typeInto('ff-pay-val', 'Business Card', 55);
+  await sleep(300);
+
+  $('add-expense-btn').classList.add('show');
+  await sleep(400);
+
+  // Click add
+  await clickAt(140, 430, 350);
+  $('add-expense-btn').classList.add('pressed');
+  await sleep(300);
+  $('add-expense-btn').classList.remove('pressed');
+  await sleep(700);
+
+  /* ─────────────────────────────────────────
+     SCENE 4 — EVENT TRACKING (16–22s)
+  ───────────────────────────────────────── */
+  setLabel('EVENT TRACKING');
+  hideAllCallouts();
+  showScene('scene-events');
+  await sleep(300);
+  showCallout('co-events');
+  $('ev-row1').classList.add('show');
+  await sleep(500);
+  $('ticket-log-btn').classList.add('show');
+  await sleep(500);
+
+  // Click Log Ticket Sales
+  await clickAt(140, 315, 400);
+  $('ticket-log-btn').classList.add('pressed');
+  await sleep(250);
+  $('ticket-log-btn').classList.remove('pressed');
+  await sleep(200);
+
+  // Count up stats
+  countUp('single-count', 8, '', '', 15, 600);
+  await sleep(150);
+  countUp('couple-count', 5, '', '', 15, 600);
+  await sleep(150);
+  countUp('revenue-count', 1095, '$', '', 15, 700);
+  await sleep(1400);
+
+  /* ─────────────────────────────────────────
+     SCENE 5 — TOTAL EARNINGS (22–27s)
+  ───────────────────────────────────────── */
+  setLabel('TOTAL EARNINGS');
+  hideAllCallouts();
+  showScene('scene-earnings');
+  await sleep(300);
+  showCallout('co-earnings');
+  hideCursor();
+
+  $('ec1').classList.add('show');
+  await sleep(250);
+  $('ec2').classList.add('show');
+  await sleep(250);
+  $('ec3').classList.add('show');
+  await sleep(350);
+  $('grand-total-card').classList.add('show');
+  await sleep(3000);
+
+  /* ─────────────────────────────────────────
+     SCENE 6 — EXPORT (27–30s)
+  ───────────────────────────────────────── */
+  setLabel('EXPORT');
+  hideAllCallouts();
+  showScene('scene-export');
+  showCursor();
+  await sleep(300);
+  showCallout('co-export');
+
+  $('csv-btn').classList.add('show');
+  await sleep(200);
+  $('schedC-btn').classList.add('show');
+  await sleep(500);
+
+  // Click CSV export
+  await clickAt(140, 200, 450);
+  $('csv-btn').classList.add('pressed');
+  await sleep(300);
+  $('csv-btn').classList.remove('pressed');
+  await sleep(200);
+  $('export-toast').classList.add('show');
+  await sleep(2300);
+
+
+  /* ─────────────────────────────────────────
+     SCENE 7 — NAME CUSTOMIZATION (30–32.5s)
+  ───────────────────────────────────────── */
+  setLabel('YOUR APP NAME');
+  hideAllCallouts();
+  showScene('scene-custom-name');
+  await sleep(300);
+  showCallout('co-customname');
+  $('cn-label').classList.add('show');
+  await sleep(400);
+
+  // Show name chips
+  $('name-chips').classList.add('show');
+  await sleep(600);
+
+  // Cycle through names
+  const names = [
+    { id: 'chip-glam',   name: 'Glam by Kia',   emoji: '💄' },
+    { id: 'chip-hustle', name: 'The Hustle Hub', emoji: '💼' },
+    { id: 'chip-empire', name: 'My Empire',      emoji: '👑' },
+  ];
+  for (const n of names) {
+    document.querySelectorAll('.name-chip').forEach(c => c.classList.remove('active'));
+    $(n.id).classList.add('active');
+    $('name-display').classList.add('highlight');
+    $('name-display').textContent = n.name;
+    $('custom-app-title').textContent = n.name;
+    await sleep(750);
+    $('name-display').classList.remove('highlight');
+    await sleep(100);
+  }
+  await sleep(300);
+
+  /* ─────────────────────────────────────────
+     SCENE 8 — ICON & COLORS (32.5–35.5s)
+  ───────────────────────────────────────── */
+  setLabel('ICON & COLORS');
+  hideAllCallouts();
+  showScene('scene-custom-look');
+  await sleep(300);
+  showCallout('co-customlook');
+
+  $('icon-preview').classList.add('show');
+  await sleep(300);
+  $('color-swatches').classList.add('show');
+  await sleep(300);
+  $('theme-preview').classList.add('show');
+  await sleep(300);
+
+  // Cycle through color themes
+  const themes = [
+    { sw: 'sw1', color: '#C2185B', icon: '💄', grad: 'linear-gradient(135deg,#C2185B,#880E4F)' },
+    { sw: 'sw2', color: '#6C2FAF', icon: '🔮', grad: 'linear-gradient(135deg,#6C2FAF,#3B1F6A)' },
+    { sw: 'sw3', color: '#00B4A6', icon: '🌊', grad: 'linear-gradient(135deg,#00B4A6,#006D66)' },
+    { sw: 'sw4', color: '#F4A300', icon: '⭐', grad: 'linear-gradient(135deg,#F4A300,#B07800)' },
+  ];
+  for (const t of themes) {
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+    $(t.sw).classList.add('active');
+    $('icon-preview').style.background = t.grad;
+    $('icon-preview').textContent = t.icon;
+    $('theme-dot').style.background = t.color;
+    $('theme-dot2').style.background = t.color + '99';
+    $('theme-bar1').style.background = t.color + '66';
+    $('theme-bar2').style.background = t.color + '33';
+    await sleep(600);
+  }
+  await sleep(200);
+
+  /* ─────────────────────────────────────────
+     SCENE 9 — FINALE (35.5–38s)
+  ───────────────────────────────────────── */
+  setLabel('');
+  hideAllCallouts();
+  showScene('scene-finale');
+  await sleep(200);
+  $('finale-icon').classList.add('show');
+  await sleep(200);
+  $('finale-name').classList.add('show');
+  await sleep(150);
+  $('finale-tag').classList.add('show');
+  await sleep(150);
+  $('finale-divider').classList.add('show');
+  await sleep(150);
+  $('finale-tagline').classList.add('show');
+  await sleep(200);
+  $('finale-sub').classList.add('show');
+  await sleep(1200);
+
+  /* ─────────────────────────────────────────
+     DONE
+  ───────────────────────────────────────── */
+  animRunning = false;
+  hideCursor();
+  hideAllCallouts();
+  $('progress-bar').style.width = '100%';
+  $('cta-btn').classList.add('show');
+  $('replay-btn').classList.add('show');
+  setLabel('');
+}
+
+// Kick off on load
+window.addEventListener('load', () => {
+  // Small delay so fonts load
+  setTimeout(startShow, 600);
+});
+</script>
+</body>
+</html>
