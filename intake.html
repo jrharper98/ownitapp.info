@@ -532,7 +532,7 @@
 
 <!-- FORM -->
 <div class="form-outer" id="formOuter">
-<form id="intakeForm" novalidate>
+<form id="intakeForm" action="https://formspree.io/f/mlgazvra" method="POST" novalidate>
 
   <!-- 1. ABOUT YOU -->
   <div class="section-card">
@@ -910,11 +910,28 @@ function updateProgress() {
 document.getElementById('intakeForm').addEventListener('input', updateProgress);
 
 // Form submit
-document.getElementById('intakeForm').addEventListener('submit', function(e) {
+document.getElementById('intakeForm').addEventListener('submit', async function(e) {
   e.preventDefault();
-  document.getElementById('formOuter').querySelector('form').style.display = 'none';
-  document.getElementById('successScreen').classList.add('show');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const form = e.target;
+  const data = new FormData(form);
+
+  try {
+    const response = await fetch('https://formspree.io/f/mlgazvra', {
+      method: 'POST',
+      body: data,
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (response.ok) {
+      form.style.display = 'none';
+      document.getElementById('successScreen').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      alert('Oops! Something went wrong. Please try again or email us directly at Ownitapp.info@yahoo.com');
+    }
+  } catch (error) {
+    alert('Oops! Something went wrong. Please try again or email us directly at Ownitapp.info@yahoo.com');
+  }
 });
 
 // Init with 1 business
