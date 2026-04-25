@@ -562,12 +562,7 @@
         <label>Phone / Best Way to Reach You</label>
         <input type="tel" name="phone" placeholder="Phone number or preferred messaging app">
       </div>
-      <div class="field-group">
-        <label>What do you want your app to be called? <span class="req">*</span>
-          <span class="hint">— This becomes the app name on your Home Screen</span>
-        </label>
-        <input type="text" name="appName" placeholder='e.g. "Glam by Kia" or "The Hustle Hub"' required>
-      </div>
+
     </div>
   </div>
 
@@ -618,7 +613,7 @@
         <label>List your main expense categories
           <span class="hint">— e.g. Transportation, Supplies, Subscriptions, Marketing</span>
         </label>
-        <textarea name="expenseCategories" placeholder="Walk us through a recent month of spending. What do you typically pay for across your businesses?"></textarea>
+        <textarea name="expenseCategories" placeholder="Walk us through a recent month of spending. What do you typically pay for across your businesses? Tip: look at last year's Schedule C to help determine which categories you need."></textarea>
       </div>
       <div class="field-group">
         <label>Do you have recurring expenses you'd want to duplicate quickly?</label>
@@ -675,6 +670,24 @@
           <div class="radio-pill"><input type="radio" name="csvExport" id="csv-m" value="Maybe"><label for="csv-m">Maybe later</label></div>
         </div>
       </div>
+      <div class="field-group">
+        <label>Do you want to export into QuickBooks or another accounting platform?</label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="qbExport" id="qb-y" value="Yes"><label for="qb-y">Yes</label></div>
+          <div class="radio-pill"><input type="radio" name="qbExport" id="qb-n" value="No"><label for="qb-n">No</label></div>
+          <div class="radio-pill"><input type="radio" name="qbExport" id="qb-m" value="Maybe"><label for="qb-m">Not sure</label></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Do you have a part-time or full-time job you'd like to incorporate?
+          <span class="hint">— W2 forms for 1040 tax filing</span>
+        </label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="w2Job" id="w2-y" value="Yes — full-time"><label for="w2-y">Yes — full-time</label></div>
+          <div class="radio-pill"><input type="radio" name="w2Job" id="w2-p" value="Yes — part-time"><label for="w2-p">Yes — part-time</label></div>
+          <div class="radio-pill"><input type="radio" name="w2Job" id="w2-n" value="No"><label for="w2-n">No</label></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -699,6 +712,36 @@
         </div>
       </div>
       <div class="field-group">
+        <label>Do you use Apple products or Android/Windows?
+          <span class="hint">— Helps us optimize your app experience</span>
+        </label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="deviceType" id="dt-apple" value="Apple"><label for="dt-apple">Apple (iPhone/iPad/Mac)</label></div>
+          <div class="radio-pill"><input type="radio" name="deviceType" id="dt-android" value="Android/Windows"><label for="dt-android">Android / Windows</label></div>
+          <div class="radio-pill"><input type="radio" name="deviceType" id="dt-mix" value="Mix"><label for="dt-mix">Mix of both</label></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 6. APP BRANDING -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-icon">👑</div>
+      <div>
+        <h2>App Branding</h2>
+        <p>Make it look and feel like yours</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="field-group">
+        <label>What do you want your app to be called? <span class="req">*</span>
+          <span class="hint">— This becomes the app name on your Home Screen</span>
+        </label>
+        <input type="text" name="appName" placeholder='e.g. "Glam by Kia" or "The Hustle Hub"' required>
+      </div>
+      <div class="field-group">
         <label>Do you have a brand color or logo you want used?</label>
         <div class="radio-pills">
           <div class="radio-pill"><input type="radio" name="branding" id="br-y" value="Yes"><label for="br-y">Yes — I'll share it</label></div>
@@ -707,15 +750,28 @@
         </div>
       </div>
       <div class="field-group">
-        <label>Brand colors or any visual notes
+        <label>What are your brand colors?
           <span class="hint">— Hex codes, "vibes," or paste an Instagram link</span>
         </label>
-        <input type="text" name="brandNotes" placeholder='e.g. "#9B59B6 purple + gold" or "clean and minimal, no pink"'>
+        <input type="text" name="brandColors" placeholder='e.g. "#C2185B pink + gold" or "earth tones, no bright colors"'>
+      </div>
+      <div class="field-group">
+        <label>Do you have a logo you'd like to use as your app icon?</label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="hasLogo" id="lg-y" value="Yes"><label for="lg-y">Yes — I'll send it</label></div>
+          <div class="radio-pill"><input type="radio" name="hasLogo" id="lg-n" value="No"><label for="lg-n">No — create one for me</label></div>
+          <div class="radio-pill"><input type="radio" name="hasLogo" id="lg-w" value="Working on it"><label for="lg-w">Working on it</label></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Any other visual notes?
+          <span class="hint">— Fonts, styles, inspiration accounts, anything helps</span>
+        </label>
+        <textarea name="visualNotes" placeholder='e.g. "clean and minimal", "bold and colorful", "similar vibe to @brandname on Instagram"' style="min-height:72px"></textarea>
       </div>
     </div>
   </div>
 
-  <!-- 6. ANYTHING ELSE -->
   <div class="section-card">
     <div class="section-header">
       <div class="section-icon">✨</div>
@@ -799,7 +855,7 @@ function addBusiness() {
       <input type="text" name="bizName[]" placeholder='e.g. "Glam by Kia", "The Hustle Hub"' required>
     </div>
     <div class="field-group">
-      <label>What do you sell or offer? <span class="req">*</span></label>
+      <label>What do you do? <span class="req">*</span></label>
       <textarea name="bizDesc[]" placeholder="Describe what your business sells or does — e.g. handmade candles sold online, dog walking &amp; pet care via Rover, event tickets for dance classes, freelance graphic design, etc. Anything goes!" style="min-height:72px" required></textarea>
     </div>
     <div class="field-group">
