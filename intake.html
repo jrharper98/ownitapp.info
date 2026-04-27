@@ -2,1251 +2,940 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="OwnIt Demo">
-<title>OwnIt Demo</title>
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OwnIt — Client Intake Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --navy:#0D1B2A; --navy2:#0F2940; --navy3:#1A3550;
-  --teal:#00B4A6; --teal-lt:#A8DCDA; --teal-dk:#007A74;
-  --gold:#F4A300; --gold-lt:#FDE8B0;
-  --white:#FFFFFF; --muted:#8A9BB0; --border:rgba(0,180,166,0.2);
-  --green:#1DB954; --red:#E53935; --orange:#F57C00;
-  --blue:#0070E0; --card:#0F2940;
-  --r:12px; --r-lg:20px; --topnav-h:50px; --tab-h:68px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;overflow:hidden;}
-body{font-family:'DM Sans',sans-serif;background:var(--teal-lt);color:var(--white);display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent;}
+  :root {
+    --navy:      #0D1B2A;
+    --navy-mid:  #0F2940;
+    --teal:      #00B4A6;
+    --teal-lt:   #A8DCDA;
+    --gold:      #F4A300;
+    --gold-lt:   #FDE8B0;
+    --white:     #FFFFFF;
+    --offwhite:  #F0F8FF;
+    --muted:     #6B7C93;
+    --border:    #D6EEF0;
+    --error:     #E53935;
+    --success:   #00B4A6;
+    --card:      #FFFFFF;
+    --shadow:    0 4px 24px rgba(13,27,42,0.10);
+    --shadow-lg: 0 12px 48px rgba(13,27,42,0.16);
+  }
 
-#loading{position:fixed;inset:0;background:var(--teal-lt);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:999;}
-.load-crown{width:72px;height:72px;animation:pulse 1.2s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.85;transform:scale(0.93);}}
-.load-text{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--navy);}
-.load-sub{font-size:13px;color:var(--teal-dk);}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-#headerbar{height:52px;background:var(--navy2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;z-index:20;}
-.header-logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--white);display:flex;align-items:center;gap:8px;}
-.header-logo span{color:var(--teal);}
-.header-logo-icon{width:28px;height:28px;flex-shrink:0;}
-.header-right{display:flex;align-items:center;gap:10px;}
-.header-biz{font-size:12px;font-weight:700;color:var(--teal);letter-spacing:0.5px;text-transform:uppercase;}
-.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block;transition:background 0.3s;}
-.sync-dot.syncing{background:var(--gold);} .sync-dot.synced{background:var(--green);} .sync-dot.error{background:var(--red);}
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--offwhite);
+    min-height: 100vh;
+    color: var(--navy);
+  }
 
-#topnav{height:var(--topnav-h);background:var(--navy2);border-bottom:2px solid var(--border);display:flex;align-items:stretch;flex-shrink:0;z-index:19;}
-.tnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:none;background:transparent;color:var(--muted);font-size:9px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;cursor:pointer;transition:color 0.2s;border-bottom:2px solid transparent;margin-bottom:-2px;-webkit-tap-highlight-color:transparent;}
-.tnav-btn .ti{font-size:16px;line-height:1;}
-.tnav-btn.active{color:var(--teal);border-bottom-color:var(--teal);}
+  /* ── HERO HEADER ── */
+  .hero {
+    background: var(--navy);
+    padding: 56px 24px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,180,166,0.18) 0%, transparent 70%);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -60px;
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(244,163,0,0.12) 0%, transparent 70%);
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.05;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero h1 span { color: var(--teal); }
+  .hero p {
+    color: var(--teal-lt);
+    font-size: 15px;
+    font-weight: 300;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+  }
 
-#main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:16px 16px calc(var(--tab-h) + 16px);}
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(13,27,42,0.07);
+  }
+  .progress-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--gold));
+    border-radius: 99px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+  .progress-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    white-space: nowrap;
+  }
 
-#tabbar{height:var(--tab-h);background:var(--navy2);border-top:1px solid var(--border);display:flex;flex-shrink:0;z-index:20;}
-.tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:color 0.2s;padding:8px 2px;-webkit-tap-highlight-color:transparent;}
-.tab-btn.active{color:var(--teal);}
-.tab-icon{font-size:20px;line-height:1;}
-.tab-label{font-size:9px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase;}
+  /* ── FORM CONTAINER ── */
+  .form-outer {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
 
-.page{display:none;} .page.active{display:block;}
-.page-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--white);margin-bottom:4px;}
-.page-sub{font-size:13px;color:var(--muted);margin-bottom:14px;}
-.sec-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+  /* ── SECTION CARDS ── */
+  .section-card {
+    background: var(--card);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 28px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: box-shadow 0.2s;
+  }
+  .section-card:focus-within {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--teal);
+  }
+  .section-header {
+    background: var(--navy);
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-icon {
+    width: 38px; height: 38px;
+    background: rgba(0,180,166,0.15);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+  }
+  .section-header p {
+    font-size: 12px;
+    color: var(--teal-lt);
+    margin-top: 2px;
+    font-weight: 300;
+  }
+  .section-body {
+    padding: 28px;
+  }
 
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;text-align:center;}
-.stat-card.full{grid-column:span 2;}
-.stat-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;}
-.stat-value{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;}
-.c-in{color:var(--blue);} .c-ex{color:var(--red);} .c-pr{color:var(--green);} .c-lo{color:var(--red);}
+  /* ── FIELD GROUPS ── */
+  .field-group {
+    margin-bottom: 22px;
+  }
+  .field-group:last-child { margin-bottom: 0; }
 
-.period-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
-.period-btn{font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;}
-.period-btn.active{background:var(--teal);border-color:var(--teal);color:var(--white);}
-.period-sel{font-size:12px;font-weight:600;padding:5px 10px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;-webkit-appearance:none;}
-.period-sel.active{border-color:var(--teal);color:var(--teal);}
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 540px) {
+    .field-row { grid-template-columns: 1fr; }
+  }
 
-.ytd-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;margin-bottom:12px;}
-.ytd-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;}
-.ytd-lbl{font-size:12px;font-weight:600;color:var(--muted);flex:none;}
-.ytd-input{flex:1;min-width:80px;background:var(--navy3);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:14px;font-weight:600;padding:6px 10px;font-family:'DM Sans',sans-serif;}
-.ytd-save{background:var(--teal);color:var(--white);border:none;border-radius:8px;font-size:12px;font-weight:600;padding:7px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 7px;
+  }
+  label .req { color: var(--teal); margin-left: 2px; }
+  label .hint {
+    font-weight: 400;
+    font-size: 11px;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--muted);
+    margin-left: 6px;
+  }
 
-.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin:18px 0 10px;}
-.add-btn{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--teal);background:rgba(0,180,166,0.1);border:1px solid rgba(0,180,166,0.25);border-radius:20px;padding:4px 12px;cursor:pointer;}
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  select,
+  textarea {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--navy);
+    background: var(--offwhite);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    outline: none;
+    appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--teal);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(0,180,166,0.12);
+  }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7C93' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
 
-.log-entry{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;transition:border-color 0.2s;}
-.log-entry.flagged{background:rgba(245,124,0,0.06);border-color:rgba(245,124,0,0.3);}
-.le-row{display:flex;justify-content:space-between;align-items:flex-start;}
-.le-left{flex:1;cursor:pointer;}
-.le-title{font-size:14px;font-weight:600;margin-bottom:2px;}
-.le-meta{font-size:11px;color:var(--muted);}
-.le-right{text-align:right;flex-shrink:0;margin-left:12px;cursor:pointer;}
-.le-amount{font-size:15px;font-weight:700;}
-.le-pay{font-size:10px;color:var(--muted);margin-top:2px;}
-.cat-pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;background:rgba(0,180,166,0.12);color:var(--teal);margin-top:3px;}
-.flag-pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;background:rgba(245,124,0,0.15);color:var(--orange);margin-top:3px;}
-.le-actions{display:flex;gap:6px;margin-top:8px;}
-.btn-edit{font-size:11px;font-weight:700;padding:4px 12px;border-radius:8px;border:1px solid var(--border);background:rgba(0,180,166,0.1);color:var(--teal);cursor:pointer;font-family:'DM Sans',sans-serif;}
-.btn-dupe{font-size:11px;font-weight:700;padding:4px 12px;border-radius:8px;border:1px solid rgba(244,163,0,0.3);background:rgba(244,163,0,0.08);color:var(--gold);cursor:pointer;font-family:'DM Sans',sans-serif;}
-.btn-del{font-size:11px;font-weight:700;padding:4px 12px;border-radius:8px;border:1px solid rgba(229,57,53,0.3);background:rgba(229,57,53,0.06);color:var(--red);cursor:pointer;font-family:'DM Sans',sans-serif;}
-.empty-st{text-align:center;padding:32px 16px;color:var(--muted);font-size:13px;}
-.empty-ic{font-size:32px;margin-bottom:8px;}
+  /* ── BUSINESS ENTRIES ── */
+  .biz-entry {
+    background: var(--offwhite);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 14px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .biz-entry:focus-within { border-color: var(--teal); }
+  .biz-entry-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .biz-number {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--teal);
+    background: rgba(0,180,166,0.10);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .remove-biz {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+    line-height: 1;
+  }
+  .remove-biz:hover { color: var(--error); background: #FEE; }
 
-.file-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:8px;background:rgba(0,180,166,0.1);color:var(--teal);margin:2px 3px 2px 0;cursor:pointer;border:1px solid rgba(0,180,166,0.2);}
-.file-chip.new-chip{background:rgba(29,185,84,0.1);color:var(--green);border-color:rgba(29,185,84,0.2);}
-.file-chip button{background:none;border:none;cursor:pointer;color:var(--red);font-size:14px;font-weight:700;padding:0 2px;line-height:1;}
+  /* ── ADD BUTTON ── */
+  .add-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: 1.5px dashed var(--teal);
+    color: var(--teal);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+    margin-top: 4px;
+  }
+  .add-btn:hover { background: rgba(0,180,166,0.08); }
 
-.flag-banner{background:rgba(245,124,0,0.08);border:1px solid rgba(245,124,0,0.3);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;font-size:12px;font-weight:600;color:var(--orange);}
-.flag-banner.blue{background:rgba(0,112,224,0.06);border-color:rgba(0,112,224,0.25);color:var(--blue);}
+  /* ── CHECKBOX / RADIO GROUPS ── */
+  .check-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+  }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--offwhite);
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    padding: 9px 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--navy);
+    user-select: none;
+  }
+  .check-item:hover { border-color: var(--teal); background: rgba(0,180,166,0.05); }
+  .check-item input { display: none; }
+  .check-box {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: border-color 0.2s, background 0.2s;
+    font-size: 11px;
+  }
+  .check-item input:checked ~ .check-box {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: white;
+  }
+  .check-item input:checked ~ .check-box::after { content: '✓'; }
+  .check-item:has(input:checked) {
+    border-color: var(--teal);
+    background: rgba(0,180,166,0.07);
+  }
 
-.repeat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;}
-.repeat-card.due-today{border-color:rgba(245,124,0,0.4);background:rgba(245,124,0,0.04);}
-.repeat-card.overdue{border-color:rgba(229,57,53,0.4);background:rgba(229,57,53,0.04);}
-.repeat-info{flex:1;min-width:0;}
-.repeat-vendor{font-size:14px;font-weight:600;margin-bottom:2px;}
-.repeat-meta{font-size:11px;color:var(--muted);}
-.repeat-next{font-size:11px;margin-top:2px;}
-.repeat-actions{display:flex;flex-direction:column;gap:5px;flex-shrink:0;}
+  /* ── RADIO PILLS ── */
+  .radio-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .radio-pill {
+    position: relative;
+  }
+  .radio-pill input { position: absolute; opacity: 0; pointer-events: none; }
+  .radio-pill label {
+    display: inline-block;
+    background: var(--offwhite);
+    border: 1.5px solid var(--border);
+    border-radius: 99px;
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--navy);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 0;
+  }
+  .radio-pill input:checked + label {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: white;
+  }
 
-.earn-hero{background:linear-gradient(135deg,var(--navy2),var(--navy3));border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;margin-bottom:16px;text-align:center;}
-.earn-hero-lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
-.earn-hero-amt{font-family:'Playfair Display',serif;font-size:42px;font-weight:900;line-height:1;margin-bottom:4px;}
-.earn-hero-sub{font-size:12px;color:var(--muted);}
-.biz-earn-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-bottom:10px;}
-.biz-earn-name{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-.biz-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;}
-.biz-row-lbl{color:var(--muted);}
-.biz-divider{border:none;border-top:1px solid var(--border);margin:8px 0;}
-.tax-note{background:rgba(0,180,166,0.05);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-size:11px;color:var(--muted);margin-top:12px;}
+  /* ── SUBMIT ── */
+  .submit-zone {
+    text-align: center;
+    padding: 16px 0 0;
+  }
+  .submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 16px 44px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(13,27,42,0.25);
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .submit-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--teal) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(13,27,42,0.30); }
+  .submit-btn:hover::before { opacity: 0.15; }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 12px;
+  }
 
-.add-biz-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;}
-.add-biz-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 12px;text-align:center;cursor:pointer;}
-.add-biz-card:active{border-color:var(--teal);}
-.add-biz-emoji{font-size:28px;margin-bottom:8px;}
-.add-biz-name{font-size:13px;font-weight:700;margin-bottom:4px;}
-.add-biz-sub{font-size:11px;color:var(--muted);}
-.add-type-row{display:flex;gap:10px;margin-bottom:20px;}
-.add-type-btn{flex:1;padding:14px;border-radius:var(--r-lg);border:1.5px solid var(--border);background:var(--card);color:var(--white);font-size:13px;font-weight:700;cursor:pointer;text-align:center;font-family:'DM Sans',sans-serif;}
-.add-type-btn .atb-icon{font-size:22px;display:block;margin-bottom:4px;}
+  /* ── SUCCESS STATE ── */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 80px 24px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .success-screen.show { display: block; }
+  .success-icon {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--teal), var(--navy));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    margin: 0 auto 24px;
+    box-shadow: 0 8px 32px rgba(0,180,166,0.3);
+  }
+  .success-screen h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .success-screen p { color: var(--muted); line-height: 1.7; font-size: 15px; }
 
-.export-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-bottom:12px;}
-.export-card-title{font-size:14px;font-weight:700;margin-bottom:4px;}
-.export-card-sub{font-size:12px;color:var(--muted);margin-bottom:12px;}
-.export-biz-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
-.export-biz-row:last-child{border-bottom:none;padding-bottom:0;}
-.export-biz-name{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;}
-.export-dl-btn{font-size:11px;font-weight:700;color:var(--navy);background:var(--teal);border:none;border-radius:8px;padding:6px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-.export-dl-btn.gold{background:var(--gold);}
-.sc-preview{background:var(--navy3);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin:10px 0;}
-.sc-row{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border);}
-.sc-row:last-child{border-bottom:none;}
-.sc-total{display:flex;justify-content:space-between;font-size:13px;font-weight:700;padding:8px 0;color:var(--red);}
-.sc-note{font-size:10px;color:var(--muted);margin-top:6px;font-style:italic;}
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
 
-.doc-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
-.doc-icon{font-size:26px;flex-shrink:0;}
-.doc-info{flex:1;}
-.doc-name{font-size:14px;font-weight:600;margin-bottom:2px;}
-.doc-meta{font-size:11px;color:var(--muted);}
-.doc-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;background:rgba(0,180,166,0.15);color:var(--teal);}
-.upload-zone{background:var(--card);border:2px dashed var(--border);border-radius:var(--r-lg);padding:22px 20px;text-align:center;margin-bottom:12px;cursor:pointer;}
-.upload-zone:active{border-color:var(--teal);}
-.upload-zone-icon{font-size:26px;margin-bottom:6px;}
-.upload-zone-text{font-size:14px;font-weight:600;color:var(--muted);}
-.upload-zone-sub{font-size:11px;color:var(--muted);margin-top:4px;}
-.year-badge{display:inline-block;font-size:11px;font-weight:700;color:var(--gold);background:rgba(244,163,0,0.1);border-radius:8px;padding:3px 10px;margin:8px 0;}
-.guidance-row{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
-.guidance-row:last-child{border-bottom:none;}
-.guidance-biz{font-weight:700;min-width:115px;color:var(--white);}
-.guidance-text{color:var(--muted);}
 
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity 0.25s;}
-.modal-overlay.open{opacity:1;pointer-events:all;}
-.modal-sheet{background:var(--navy2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:8px 16px 36px;width:100%;max-height:92vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);}
-.modal-overlay.open .modal-sheet{transform:translateY(0);}
-.modal-handle{width:36px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;margin:8px auto 16px;}
-.modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--white);margin-bottom:16px;}
+  /* ── INFO NOTE ── */
+  .info-note {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: linear-gradient(135deg, rgba(0,180,166,0.08), rgba(244,163,0,0.06));
+    border: 1.5px solid rgba(0,180,166,0.25);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12.5px;
+    color: var(--navy);
+    line-height: 1.6;
+  }
+  .info-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
 
-#modal-root{position:fixed;inset:0;z-index:300;pointer-events:none;}
-#modal-root:not(:empty){pointer-events:all;}
-.receipt-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:flex-end;}
-.receipt-sheet{background:var(--navy2);border-radius:20px 20px 0 0;padding:16px;width:100%;max-height:90vh;overflow-y:auto;}
+  /* ── PRINT/SHARE BAR ── */
+  .action-bar {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    gap: 10px;
+    z-index: 200;
+  }
+  .action-bar button {
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+  }
+  .action-bar button:hover { background: var(--teal); }
+  .action-bar .print-btn { background: var(--navy-mid); }
 
-.form-group{margin-bottom:14px;}
-.form-label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:5px;}
-.form-input,.form-select{width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:10px;color:var(--white);font-size:15px;font-family:'DM Sans',sans-serif;padding:11px 14px;-webkit-appearance:none;appearance:none;outline:none;transition:border-color 0.2s;}
-.form-input:focus,.form-select:focus{border-color:var(--teal);}
-.form-select option{background:var(--navy2);color:var(--white);}
-.form-select.unassigned{border-color:rgba(245,124,0,0.5);color:var(--orange);}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.radio-group{display:flex;gap:8px;}
-.radio-btn{flex:1;text-align:center;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
-.radio-btn.selected{background:rgba(0,180,166,0.15);border-color:var(--teal);color:var(--teal);}
-.checkbox-row{display:flex;align-items:center;gap:10px;padding:10px 0;}
-.checkbox-row input[type=checkbox]{width:20px;height:20px;cursor:pointer;flex-shrink:0;accent-color:var(--teal);}
-.checkbox-row label{font-size:14px;font-weight:600;color:var(--white);cursor:pointer;}
-.submit-btn{width:100%;background:var(--teal);color:var(--white);border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:'DM Sans',sans-serif;padding:15px;cursor:pointer;margin-top:8px;}
-.cancel-btn{width:100%;background:transparent;color:var(--muted);border:none;border-radius:12px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;padding:13px;cursor:pointer;margin-top:4px;}
-.delete-btn{width:100%;background:rgba(229,57,53,0.1);color:var(--red);border:1px solid rgba(229,57,53,0.3);border-radius:12px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;padding:13px;cursor:pointer;margin-top:8px;}
-.small-upload{background:var(--navy3);border:1px dashed var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;font-size:12px;color:var(--muted);margin-top:4px;}
-
-#toast{position:fixed;bottom:calc(var(--tab-h) + 12px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--teal);color:var(--white);font-size:13px;font-weight:600;padding:10px 20px;border-radius:20px;opacity:0;transition:all 0.3s;pointer-events:none;z-index:400;white-space:nowrap;}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  @media print {
+    .progress-wrap, .action-bar { display: none; }
+    .hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
 </style>
 </head>
 <body>
 
-<div id="loading">
-  <div class="load-crown">
-    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-      <rect x="3" y="3" width="194" height="194" rx="42" fill="#0F2940" stroke="#00B4A6" stroke-width="6"/>
-      <polygon points="92,146 30,146 55,76" fill="#F4A300"/>
-      <polygon points="108,146 168,146 142,96" fill="#F4A300"/>
-      <polygon points="100,50 124,106 124,160 76,160 76,106" fill="#00B4A6"/>
-      <rect x="28" y="141" width="144" height="22" rx="6" fill="#F4A300"/>
-      <circle cx="55" cy="76" r="9" fill="#FFFFFF"/>
-      <circle cx="100" cy="50" r="10" fill="#FFFFFF"/>
-      <circle cx="142" cy="96" r="8" fill="#FFFFFF"/>
-    </svg>
-  </div>
-  <div class="load-text">OwnIt</div>
-  <div class="load-sub">Syncing your data...</div>
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Client Intake Form</div>
+  <h1>Let's Build Your<br><span>OwnIt</span> App</h1>
+  <p>Fill this out before your discovery call — the more detail you share, the faster we build your perfect app.</p>
 </div>
 
-<div id="headerbar">
-  <div class="header-logo">
-    <img class="header-logo-icon" src="OwnIt_Icon.svg" alt="" onerror="this.style.display='none'">
-    Own<span>It</span>
-  </div>
-  <div class="header-right">
-    <div class="header-biz" id="header-biz-label">Tutoring</div>
-    <span class="sync-dot" id="sync-dot"></span>
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel">0% complete</span>
   </div>
 </div>
 
-<div id="topnav">
-  <button class="tnav-btn active" id="tnav-earnings" onclick="switchPage('earnings')"><span class="ti">💰</span>Earnings</button>
-  <button class="tnav-btn" id="tnav-add" onclick="switchPage('add')"><span class="ti">➕</span>Add</button>
-  <button class="tnav-btn" id="tnav-overview" onclick="switchPage('overview')"><span class="ti">📊</span>Overview</button>
-  <button class="tnav-btn" id="tnav-docs" onclick="switchPage('docs')"><span class="ti">📄</span>Tax Forms</button>
-  <button class="tnav-btn" id="tnav-export" onclick="switchPage('export')"><span class="ti">📤</span>Export</button>
-</div>
+<!-- FORM -->
+<div class="form-outer" id="formOuter">
+<form id="intakeForm" action="https://formspree.io/f/mlgazvra" method="POST" novalidate>
 
-<div id="main">
-  <div id="page-earnings" class="page active"></div>
-  <div id="page-add" class="page">
-    <div class="page-title">Add New Entry</div>
-    <div class="page-sub">Choose a business, then pick what to log.</div>
-    <div class="add-biz-grid">
-      <div class="add-biz-card" onclick="showAddOptions('tutoring')"><div class="add-biz-emoji">📚</div><div class="add-biz-name">Tutoring</div><div class="add-biz-sub">Session or Expense</div></div>
-      <div class="add-biz-card" onclick="showAddOptions('music')"><div class="add-biz-emoji">🎵</div><div class="add-biz-name">Music Gigs</div><div class="add-biz-sub">Event or Expense</div></div>
-      <div class="add-biz-card" onclick="showAddOptions('dance')"><div class="add-biz-emoji">💃</div><div class="add-biz-name">Dance Classes</div><div class="add-biz-sub">Class or Expense</div></div>
-      <div class="add-biz-card" onclick="showAddOptions('skincare')"><div class="add-biz-emoji">🧴</div><div class="add-biz-name">Skincare Line</div><div class="add-biz-sub">Sale or Expense</div></div>
+  <!-- 1. ABOUT YOU -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-icon">👤</div>
+      <div>
+        <h2>About You</h2>
+        <p>Basic contact info so we can get started</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field-group">
+          <label>First Name <span class="req">*</span></label>
+          <input type="text" name="firstName" placeholder="Your first name" required>
+        </div>
+        <div class="field-group">
+          <label>Last Name <span class="req">*</span></label>
+          <input type="text" name="lastName" placeholder="Your last name" required>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Email Address <span class="req">*</span></label>
+        <input type="email" name="email" placeholder="you@example.com" required>
+      </div>
+      <div class="field-group">
+        <label>Phone / Best Way to Reach You</label>
+        <input type="tel" name="phone" placeholder="Phone number or preferred messaging app">
+      </div>
+
     </div>
   </div>
-  <div id="page-overview" class="page"><div id="overview-content"></div></div>
-  <div id="page-docs" class="page"><div id="docs-content"></div></div>
-  <div id="page-export" class="page"><div id="export-content"></div></div>
-</div>
 
-<div id="tabbar">
-  <button class="tab-btn active" id="tab-tutoring" onclick="switchBiz('tutoring')"><div class="tab-icon">📚</div><div class="tab-label">Tutoring</div></button>
-  <button class="tab-btn" id="tab-music" onclick="switchBiz('music')"><div class="tab-icon">🎵</div><div class="tab-label">Music</div></button>
-  <button class="tab-btn" id="tab-dance" onclick="switchBiz('dance')"><div class="tab-icon">💃</div><div class="tab-label">Dance</div></button>
-  <button class="tab-btn" id="tab-skincare" onclick="switchBiz('skincare')"><div class="tab-icon">🧴</div><div class="tab-label">Skincare</div></button>
-</div>
-
-<div id="toast"></div>
-<div id="modal-root"></div>
-
-<!-- ADD TYPE PICKER -->
-<div class="modal-overlay" id="add-type-modal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="add-type-title">Add to Tutoring</div>
-    <div class="add-type-row">
-      <button class="add-type-btn" onclick="openIncomeFromPicker()"><span class="atb-icon">💵</span>Log Income</button>
-      <button class="add-type-btn" onclick="openExpenseFromPicker()"><span class="atb-icon">🧾</span>Log Expense</button>
+  <!-- 2. YOUR BUSINESSES -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-icon">💼</div>
+      <div>
+        <h2>Your Businesses</h2>
+        <p>Tell us about each income stream — one entry per business</p>
+      </div>
     </div>
-    <button class="cancel-btn" onclick="closeModal('add-type-modal')">Cancel</button>
+    <div class="section-body">
+      <div id="bizContainer"></div>
+      <button type="button" class="add-btn" onclick="addBusiness()">
+        <span>＋</span> Add Another Business
+      </button>
+    </div>
   </div>
+
+  <!-- 3. EXPENSES & PAYMENTS -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-icon">💳</div>
+      <div>
+        <h2>Expenses & Payments</h2>
+        <p>How you spend and how you get paid</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="field-group">
+        <label>What payment methods do you use?
+          <span class="hint">— Select all that apply</span>
+        </label>
+        <div class="check-grid">
+          <label class="check-item"><input type="checkbox" name="pay" value="Business Card"> <span class="check-box"></span> Business Card</label>
+          <label class="check-item"><input type="checkbox" name="pay" value="Personal Card"> <span class="check-box"></span> Personal Card</label>
+          <label class="check-item"><input type="checkbox" name="pay" value="Cash"> <span class="check-box"></span> Cash</label>
+          <label class="check-item"><input type="checkbox" name="pay" value="Zelle"> <span class="check-box"></span> Zelle</label>
+          <label class="check-item"><input type="checkbox" name="pay" value="Venmo"> <span class="check-box"></span> Venmo</label>
+          <label class="check-item"><input type="checkbox" name="pay" value="PayPal"> <span class="check-box"></span> PayPal</label>
+          <label class="check-item"><input type="checkbox" name="pay" value="CashApp"> <span class="check-box"></span> Cash App</label>
+          <label class="check-item"><input type="checkbox" name="pay" value="Check"> <span class="check-box"></span> Check</label>
+          <label class="check-item"><input type="checkbox" name="pay" value="Other"> <span class="check-box"></span> Other</label>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>List your main expense categories
+          <span class="hint">— e.g. Transportation, Supplies, Subscriptions, Marketing</span>
+        </label>
+        <textarea name="expenseCategories" placeholder="Walk us through a recent month of spending. What do you typically pay for across your businesses? Tip: look at last year's Schedule C to help determine which categories you need."></textarea>
+      </div>
+      <div class="field-group">
+        <label>Do you have recurring expenses you'd want to duplicate quickly?</label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="recurring" id="rec-y" value="Yes"><label for="rec-y">Yes</label></div>
+          <div class="radio-pill"><input type="radio" name="recurring" id="rec-n" value="No"><label for="rec-n">No</label></div>
+          <div class="radio-pill"><input type="radio" name="recurring" id="rec-m" value="Maybe"><label for="rec-m">Not sure</label></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Do you attach receipts or photos to expenses?</label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="receipts" id="rec2-y" value="Yes"><label for="rec2-y">Yes — always</label></div>
+          <div class="radio-pill"><input type="radio" name="receipts" id="rec2-s" value="Sometimes"><label for="rec2-s">Sometimes</label></div>
+          <div class="radio-pill"><input type="radio" name="receipts" id="rec2-n" value="No"><label for="rec2-n">Not really</label></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. INCOME & TAX -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-icon">📊</div>
+      <div>
+        <h2>Income & Tax Info</h2>
+        <p>Helps us set up the right tracking features for you</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="field-group">
+        <label>Do you file taxes using Schedule C?
+          <span class="hint">— Sole proprietors & single-member LLCs</span>
+        </label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="schedC" id="sc-y" value="Yes"><label for="sc-y">Yes</label></div>
+          <div class="radio-pill"><input type="radio" name="schedC" id="sc-n" value="No"><label for="sc-n">No</label></div>
+          <div class="radio-pill"><input type="radio" name="schedC" id="sc-u" value="Unsure"><label for="sc-u">Not sure</label></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Do you receive 1099-NEC or 1099-K forms?</label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="form1099" id="f-y" value="Yes"><label for="f-y">Yes</label></div>
+          <div class="radio-pill"><input type="radio" name="form1099" id="f-n" value="No"><label for="f-n">No</label></div>
+          <div class="radio-pill"><input type="radio" name="form1099" id="f-u" value="Unsure"><label for="f-u">Not sure</label></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Do you want to export data to Google Sheets for your accountant?</label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="csvExport" id="csv-y" value="Yes"><label for="csv-y">Yes please</label></div>
+          <div class="radio-pill"><input type="radio" name="csvExport" id="csv-n" value="No"><label for="csv-n">Not needed</label></div>
+          <div class="radio-pill"><input type="radio" name="csvExport" id="csv-m" value="Maybe"><label for="csv-m">Maybe later</label></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Do you want to export into QuickBooks or another accounting platform?</label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="qbExport" id="qb-y" value="Yes"><label for="qb-y">Yes</label></div>
+          <div class="radio-pill"><input type="radio" name="qbExport" id="qb-n" value="No"><label for="qb-n">No</label></div>
+          <div class="radio-pill"><input type="radio" name="qbExport" id="qb-m" value="Maybe"><label for="qb-m">Not sure</label></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Do you have a part-time or full-time job you'd like to incorporate?
+          <span class="hint">— W2 forms for 1040 tax filing</span>
+        </label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="w2Job" id="w2-y" value="Yes — full-time"><label for="w2-y">Yes — full-time</label></div>
+          <div class="radio-pill"><input type="radio" name="w2Job" id="w2-p" value="Yes — part-time"><label for="w2-p">Yes — part-time</label></div>
+          <div class="radio-pill"><input type="radio" name="w2Job" id="w2-n" value="No"><label for="w2-n">No</label></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. SETUP & DEVICES -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-icon">📱</div>
+      <div>
+        <h2>Setup & Devices</h2>
+        <p>So we build the right version for your life</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="field-group">
+        <label>How many devices do you plan to use the app on? <span class="req">*</span>
+          <span class="hint">— Multi-device needs Supabase sync (+$50)</span>
+        </label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="devices" id="d1" value="1 device"><label for="d1">Just 1 device</label></div>
+          <div class="radio-pill"><input type="radio" name="devices" id="d2" value="2+ devices"><label for="d2">2 or more devices</label></div>
+          <div class="radio-pill"><input type="radio" name="devices" id="du" value="Unsure"><label for="du">Not sure yet</label></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Do you use Apple products or Android/Windows?
+          <span class="hint">— Helps us optimize your app experience</span>
+        </label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="deviceType" id="dt-apple" value="Apple"><label for="dt-apple">Apple (iPhone/iPad/Mac)</label></div>
+          <div class="radio-pill"><input type="radio" name="deviceType" id="dt-android" value="Android/Windows"><label for="dt-android">Android / Windows</label></div>
+          <div class="radio-pill"><input type="radio" name="deviceType" id="dt-mix" value="Mix"><label for="dt-mix">Mix of both</label></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 6. APP BRANDING -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-icon">👑</div>
+      <div>
+        <h2>App Branding</h2>
+        <p>Make it look and feel like yours</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="field-group">
+        <label>What do you want your app to be called? <span class="req">*</span>
+          <span class="hint">— This becomes the app name on your Home Screen</span>
+        </label>
+        <input type="text" name="appName" placeholder='e.g. "Glam by Kia" or "The Hustle Hub"' required>
+      </div>
+      <div class="field-group">
+        <label>Do you have a brand color or logo you want used?</label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="branding" id="br-y" value="Yes"><label for="br-y">Yes — I'll share it</label></div>
+          <div class="radio-pill"><input type="radio" name="branding" id="br-n" value="No"><label for="br-n">No — you choose</label></div>
+          <div class="radio-pill"><input type="radio" name="branding" id="br-w" value="Working on it"><label for="br-w">Working on it</label></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>What are your brand colors?
+          <span class="hint">— Hex codes, "vibes," or paste an Instagram link</span>
+        </label>
+        <input type="text" name="brandColors" placeholder='e.g. "#C2185B pink + gold" or "earth tones, no bright colors"'>
+      </div>
+      <div class="field-group">
+        <label>Do you have a logo you'd like to use as your app icon?</label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="hasLogo" id="lg-y" value="Yes"><label for="lg-y">Yes — I'll send it</label></div>
+          <div class="radio-pill"><input type="radio" name="hasLogo" id="lg-n" value="No"><label for="lg-n">No — create one for me</label></div>
+          <div class="radio-pill"><input type="radio" name="hasLogo" id="lg-w" value="Working on it"><label for="lg-w">Working on it</label></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Any other visual notes?
+          <span class="hint">— Fonts, styles, inspiration accounts, anything helps</span>
+        </label>
+        <textarea name="visualNotes" placeholder='e.g. "clean and minimal", "bold and colorful", "similar vibe to @brandname on Instagram"' style="min-height:72px"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-icon">✨</div>
+      <div>
+        <h2>Anything Else?</h2>
+        <p>Your chance to tell us anything we haven't asked</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="field-group">
+        <label>How did you hear about OwnIt?</label>
+        <select name="referral">
+          <option value="">Select one…</option>
+          <option>Instagram</option>
+          <option>Word of mouth / friend referral</option>
+          <option>LinkedIn</option>
+          <option>TikTok</option>
+          <option>Google search</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Anything special you want in your app?
+          <span class="hint">— Dream features, specific workflows, anything goes</span>
+        </label>
+        <textarea name="notes" placeholder="Tell us anything! The more context you give, the more custom we can make it."></textarea>
+      </div>
+      <div class="field-group">
+        <label>What's your ideal timeline?</label>
+        <div class="radio-pills">
+          <div class="radio-pill"><input type="radio" name="timeline" id="t1" value="ASAP"><label for="t1">ASAP 🔥</label></div>
+          <div class="radio-pill"><input type="radio" name="timeline" id="t2" value="Within a week"><label for="t2">Within a week</label></div>
+          <div class="radio-pill"><input type="radio" name="timeline" id="t3" value="No rush"><label for="t3">No rush</label></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-zone">
+    <button type="submit" class="submit-btn">
+      <span>Submit My Intake Form</span>
+      <span>→</span>
+    </button>
+    <p class="submit-note">We'll review your answers and reach out soon to confirm your build details.</p>
+  </div>
+
+</form>
+
+<!-- SUCCESS -->
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">🎉</div>
+  <h2>You're all set!</h2>
+  <p>Thanks for filling out your intake form. We'll review everything and reach out soon to confirm your build details and get you started.<br><br>
+  Get ready — your custom app is on its way. <strong>You're about to OwnIt.</strong></p>
 </div>
 
-<!-- TUTORING INCOME MODAL -->
-<div class="modal-overlay" id="modal-tut-income">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="tut-income-title">Log Session</div>
-    <input type="hidden" id="tut-income-edit-id">
-    <div class="form-group"><label class="form-label">Student Name</label><input type="text" class="form-input" id="tut-student" placeholder="e.g. Alex Johnson"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Rate / Hour ($)</label><input type="number" class="form-input" id="tut-rate" placeholder="25.00" inputmode="decimal"></div>
-      <div class="form-group"><label class="form-label">Hours Worked</label><input type="number" class="form-input" id="tut-hours" placeholder="1.5" inputmode="decimal"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="tut-date"></div>
-    <div class="form-group"><label class="form-label">Payment Method</label>
-      <select class="form-select unassigned" id="tut-payment" onchange="flagSel(this)">
-        <option value="">— Select —</option><option>Business Card</option><option>Personal Card</option><option>Venmo</option><option>Zelle</option><option>Cash</option><option>PayPal</option>
-      </select></div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="tut-notes" placeholder="Optional"></div>
-    <button class="submit-btn" onclick="saveSession()">Save Session</button>
-    <button class="delete-btn" id="tut-income-del" style="display:none" onclick="deleteSession()">Delete Session</button>
-    <button class="cancel-btn" onclick="closeModal('modal-tut-income')">Cancel</button>
-  </div>
-</div>
+</div><!-- /form-outer -->
 
-<!-- MUSIC INCOME MODAL -->
-<div class="modal-overlay" id="modal-mus-income">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="mus-income-title">Log Event</div>
-    <input type="hidden" id="mus-income-edit-id">
-    <div class="form-group"><label class="form-label">Event Name</label><input type="text" class="form-input" id="mus-event-name" placeholder="e.g. Friday Night Jazz"></div>
-    <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="mus-date"></div>
-    <div class="form-group"><label class="form-label">Pay Type</label>
-      <div class="radio-group">
-        <button class="radio-btn selected" id="mus-btn-flat" onclick="setMusPay('flat')">Flat Rate</button>
-        <button class="radio-btn" id="mus-btn-hourly" onclick="setMusPay('hourly')">Hourly</button>
-      </div></div>
-    <div class="form-group" id="mus-flat-grp"><label class="form-label">Flat Rate ($)</label><input type="number" class="form-input" id="mus-flat" placeholder="200.00" inputmode="decimal"></div>
-    <div id="mus-hourly-grp" style="display:none">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Hourly Rate ($)</label><input type="number" class="form-input" id="mus-hourly-rate" placeholder="50.00" inputmode="decimal"></div>
-        <div class="form-group"><label class="form-label">Hours</label><input type="number" class="form-input" id="mus-hours" placeholder="3" inputmode="decimal"></div>
-      </div></div>
-    <div class="form-group"><label class="form-label">Payment Method</label>
-      <select class="form-select unassigned" id="mus-payment" onchange="flagSel(this)">
-        <option value="">— Select —</option><option>Business Card</option><option>Personal Card</option><option>Venmo</option><option>Zelle</option><option>Cash</option><option>PayPal</option>
-      </select></div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="mus-notes" placeholder="Optional"></div>
-    <button class="submit-btn" onclick="saveEvent()">Save Event</button>
-    <button class="delete-btn" id="mus-income-del" style="display:none" onclick="deleteEvent()">Delete Event</button>
-    <button class="cancel-btn" onclick="closeModal('modal-mus-income')">Cancel</button>
-  </div>
-</div>
-
-<!-- DANCE INCOME MODAL -->
-<div class="modal-overlay" id="modal-dan-income">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="dan-income-title">Log Class</div>
-    <input type="hidden" id="dan-income-edit-id">
-    <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="dan-date"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Price / Attendee ($)</label><input type="number" class="form-input" id="dan-price" placeholder="20.00" inputmode="decimal"></div>
-      <div class="form-group"><label class="form-label">Attendees</label><input type="number" class="form-input" id="dan-attendees" placeholder="8" inputmode="numeric"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Payment Method</label>
-      <select class="form-select unassigned" id="dan-payment" onchange="flagSel(this)">
-        <option value="">— Select —</option><option>Business Card</option><option>Personal Card</option><option>Venmo</option><option>Zelle</option><option>Cash</option><option>PayPal</option>
-      </select></div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="dan-notes" placeholder="Optional"></div>
-    <button class="submit-btn" onclick="saveClass()">Save Class</button>
-    <button class="delete-btn" id="dan-income-del" style="display:none" onclick="deleteClass()">Delete Class</button>
-    <button class="cancel-btn" onclick="closeModal('modal-dan-income')">Cancel</button>
-  </div>
-</div>
-
-<!-- SKINCARE INCOME MODAL -->
-<div class="modal-overlay" id="modal-ski-income">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="ski-income-title">Log Product Sale</div>
-    <input type="hidden" id="ski-income-edit-id">
-    <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="ski-date"></div>
-    <div class="form-group"><label class="form-label">Product Type</label>
-      <select class="form-select" id="ski-product" onchange="setSkiPrice()">
-        <option value="">Select product...</option>
-        <option value="Soap" data-price="12">Soap — $12.00</option>
-        <option value="Hair Oil" data-price="22">Hair Oil — $22.00</option>
-        <option value="Lotion" data-price="18">Lotion — $18.00</option>
-        <option value="Facial Cleanser" data-price="28">Facial Cleanser — $28.00</option>
-      </select></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Price Each ($)</label><input type="number" class="form-input" id="ski-price" placeholder="0.00" inputmode="decimal"></div>
-      <div class="form-group"><label class="form-label">Quantity</label><input type="number" class="form-input" id="ski-qty" placeholder="1" inputmode="numeric"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Marketplace / Venue</label><input type="text" class="form-input" id="ski-marketplace" placeholder="e.g. Etsy, Farmers Market"></div>
-    <div class="form-group"><label class="form-label">Customer Payment Method</label>
-      <select class="form-select unassigned" id="ski-payment" onchange="flagSel(this)">
-        <option value="">— Select —</option><option>Business Card</option><option>Personal Card</option><option>Venmo</option><option>Zelle</option><option>Cash</option><option>PayPal</option>
-      </select></div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="ski-notes" placeholder="Optional"></div>
-    <button class="submit-btn" onclick="saveSale()">Save Sale</button>
-    <button class="delete-btn" id="ski-income-del" style="display:none" onclick="deleteSale()">Delete Sale</button>
-    <button class="cancel-btn" onclick="closeModal('modal-ski-income')">Cancel</button>
-  </div>
-</div>
-
-<!-- EXPENSE MODALS: one per business, generated with consistent IDs -->
-<!-- TUTORING EXPENSE -->
-<div class="modal-overlay" id="modal-tut-expense">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="tut-exp-title">Add Expense</div>
-    <input type="hidden" id="tut-exp-edit-id">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="tut-exp-date"></div>
-      <div class="form-group"><label class="form-label">Amount ($)</label><input type="number" class="form-input" id="tut-exp-amount" placeholder="0.00" inputmode="decimal"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Vendor</label><input type="text" class="form-input" id="tut-exp-vendor" placeholder="e.g. Staples, Amazon"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Category</label>
-        <select class="form-select unassigned" id="tut-exp-cat" onchange="flagSel(this)">
-          <option value="">— Select —</option><option>Supplies &amp; Materials</option><option>Books &amp; Curriculum</option><option>Software &amp; Subscriptions</option><option>Marketing &amp; Advertising</option><option>Transportation</option><option>Home Office</option><option>Professional Development</option><option>Equipment</option><option>Printing &amp; Copies</option><option>Other</option>
-        </select></div>
-      <div class="form-group"><label class="form-label">Payment</label>
-        <select class="form-select unassigned" id="tut-exp-pay" onchange="flagSel(this)">
-          <option value="">— Select —</option><option>Business Card</option><option>Personal Card</option><option>Venmo</option><option>Zelle</option><option>Cash</option><option>PayPal</option>
-        </select></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="tut-exp-notes" placeholder="Optional"></div>
-    <div class="form-group"><label class="form-label">Receipt / File</label>
-      <div id="tut-exp-chips" style="margin-bottom:6px"></div>
-      <div class="small-upload" onclick="document.getElementById('tut-exp-file').click()">📎 Tap to attach receipt<input type="file" id="tut-exp-file" style="display:none" accept="image/*,.pdf" onchange="handleExpFile('tut',this)"></div>
-    </div>
-    <div class="checkbox-row" id="tut-repeat-row"><input type="checkbox" id="tut-exp-repeat" onchange="toggleRepeatOpts('tut')"><label for="tut-exp-repeat">Repeat expense</label></div>
-    <div id="tut-repeat-opts" style="display:none;padding-bottom:8px">
-      <div class="form-group"><label class="form-label">Frequency</label><select class="form-select" id="tut-exp-freq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></div>
-    </div>
-    <button class="submit-btn" onclick="saveExpense('tutoring')">Save Expense</button>
-    <button class="delete-btn" id="tut-exp-del" style="display:none" onclick="deleteExpense('tutoring')">Delete Expense</button>
-    <button class="cancel-btn" onclick="closeModal('modal-tut-expense')">Cancel</button>
-  </div>
-</div>
-
-<!-- MUSIC EXPENSE -->
-<div class="modal-overlay" id="modal-mus-expense">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="mus-exp-title">Add Expense</div>
-    <input type="hidden" id="mus-exp-edit-id">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="mus-exp-date"></div>
-      <div class="form-group"><label class="form-label">Amount ($)</label><input type="number" class="form-input" id="mus-exp-amount" placeholder="0.00" inputmode="decimal"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Vendor</label><input type="text" class="form-input" id="mus-exp-vendor" placeholder="e.g. Guitar Center"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Category</label>
-        <select class="form-select unassigned" id="mus-exp-cat" onchange="flagSel(this)">
-          <option value="">— Select —</option><option>Instruments &amp; Gear</option><option>Repairs &amp; Maintenance</option><option>Recording &amp; Studio</option><option>Marketing &amp; Promotion</option><option>Transportation</option><option>Software &amp; Subscriptions</option><option>Costumes &amp; Wardrobe</option><option>Professional Development</option><option>Venue &amp; Licensing Fees</option><option>Other</option>
-        </select></div>
-      <div class="form-group"><label class="form-label">Payment</label>
-        <select class="form-select unassigned" id="mus-exp-pay" onchange="flagSel(this)">
-          <option value="">— Select —</option><option>Business Card</option><option>Personal Card</option><option>Venmo</option><option>Zelle</option><option>Cash</option><option>PayPal</option>
-        </select></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="mus-exp-notes" placeholder="Optional"></div>
-    <div class="form-group"><label class="form-label">Receipt / File</label>
-      <div id="mus-exp-chips" style="margin-bottom:6px"></div>
-      <div class="small-upload" onclick="document.getElementById('mus-exp-file').click()">📎 Tap to attach receipt<input type="file" id="mus-exp-file" style="display:none" accept="image/*,.pdf" onchange="handleExpFile('mus',this)"></div>
-    </div>
-    <div class="checkbox-row" id="mus-repeat-row"><input type="checkbox" id="mus-exp-repeat" onchange="toggleRepeatOpts('mus')"><label for="mus-exp-repeat">Repeat expense</label></div>
-    <div id="mus-repeat-opts" style="display:none;padding-bottom:8px">
-      <div class="form-group"><label class="form-label">Frequency</label><select class="form-select" id="mus-exp-freq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></div>
-    </div>
-    <button class="submit-btn" onclick="saveExpense('music')">Save Expense</button>
-    <button class="delete-btn" id="mus-exp-del" style="display:none" onclick="deleteExpense('music')">Delete Expense</button>
-    <button class="cancel-btn" onclick="closeModal('modal-mus-expense')">Cancel</button>
-  </div>
-</div>
-
-<!-- DANCE EXPENSE -->
-<div class="modal-overlay" id="modal-dan-expense">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="dan-exp-title">Add Expense</div>
-    <input type="hidden" id="dan-exp-edit-id">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="dan-exp-date"></div>
-      <div class="form-group"><label class="form-label">Amount ($)</label><input type="number" class="form-input" id="dan-exp-amount" placeholder="0.00" inputmode="decimal"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Vendor</label><input type="text" class="form-input" id="dan-exp-vendor" placeholder="e.g. Dance Supply Co"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Category</label>
-        <select class="form-select unassigned" id="dan-exp-cat" onchange="flagSel(this)">
-          <option value="">— Select —</option><option>Costumes &amp; Attire</option><option>Music &amp; Licensing</option><option>Studio &amp; Venue Rental</option><option>Marketing &amp; Promotion</option><option>Transportation</option><option>Supplies &amp; Props</option><option>Software &amp; Subscriptions</option><option>Professional Development</option><option>Equipment</option><option>Other</option>
-        </select></div>
-      <div class="form-group"><label class="form-label">Payment</label>
-        <select class="form-select unassigned" id="dan-exp-pay" onchange="flagSel(this)">
-          <option value="">— Select —</option><option>Business Card</option><option>Personal Card</option><option>Venmo</option><option>Zelle</option><option>Cash</option><option>PayPal</option>
-        </select></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="dan-exp-notes" placeholder="Optional"></div>
-    <div class="form-group"><label class="form-label">Receipt / File</label>
-      <div id="dan-exp-chips" style="margin-bottom:6px"></div>
-      <div class="small-upload" onclick="document.getElementById('dan-exp-file').click()">📎 Tap to attach receipt<input type="file" id="dan-exp-file" style="display:none" accept="image/*,.pdf" onchange="handleExpFile('dan',this)"></div>
-    </div>
-    <div class="checkbox-row" id="dan-repeat-row"><input type="checkbox" id="dan-exp-repeat" onchange="toggleRepeatOpts('dan')"><label for="dan-exp-repeat">Repeat expense</label></div>
-    <div id="dan-repeat-opts" style="display:none;padding-bottom:8px">
-      <div class="form-group"><label class="form-label">Frequency</label><select class="form-select" id="dan-exp-freq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></div>
-    </div>
-    <button class="submit-btn" onclick="saveExpense('dance')">Save Expense</button>
-    <button class="delete-btn" id="dan-exp-del" style="display:none" onclick="deleteExpense('dance')">Delete Expense</button>
-    <button class="cancel-btn" onclick="closeModal('modal-dan-expense')">Cancel</button>
-  </div>
-</div>
-
-<!-- SKINCARE EXPENSE -->
-<div class="modal-overlay" id="modal-ski-expense">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="ski-exp-title">Add Expense</div>
-    <input type="hidden" id="ski-exp-edit-id">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="ski-exp-date"></div>
-      <div class="form-group"><label class="form-label">Amount ($)</label><input type="number" class="form-input" id="ski-exp-amount" placeholder="0.00" inputmode="decimal"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Vendor</label><input type="text" class="form-input" id="ski-exp-vendor" placeholder="e.g. Wholesale Supplies Plus"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Category</label>
-        <select class="form-select unassigned" id="ski-exp-cat" onchange="flagSel(this)">
-          <option value="">— Select —</option><option>Raw Ingredients</option><option>Packaging &amp; Labels</option><option>Equipment &amp; Tools</option><option>Marketing &amp; Advertising</option><option>Platform &amp; Marketplace Fees</option><option>Shipping &amp; Postage</option><option>Transportation</option><option>Software &amp; Subscriptions</option><option>Professional Development</option><option>Other</option>
-        </select></div>
-      <div class="form-group"><label class="form-label">Payment</label>
-        <select class="form-select unassigned" id="ski-exp-pay" onchange="flagSel(this)">
-          <option value="">— Select —</option><option>Business Card</option><option>Personal Card</option><option>Venmo</option><option>Zelle</option><option>Cash</option><option>PayPal</option>
-        </select></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label><input type="text" class="form-input" id="ski-exp-notes" placeholder="Optional"></div>
-    <div class="form-group"><label class="form-label">Receipt / File</label>
-      <div id="ski-exp-chips" style="margin-bottom:6px"></div>
-      <div class="small-upload" onclick="document.getElementById('ski-exp-file').click()">📎 Tap to attach receipt<input type="file" id="ski-exp-file" style="display:none" accept="image/*,.pdf" onchange="handleExpFile('ski',this)"></div>
-    </div>
-    <div class="checkbox-row" id="ski-repeat-row"><input type="checkbox" id="ski-exp-repeat" onchange="toggleRepeatOpts('ski')"><label for="ski-exp-repeat">Repeat expense</label></div>
-    <div id="ski-repeat-opts" style="display:none;padding-bottom:8px">
-      <div class="form-group"><label class="form-label">Frequency</label><select class="form-select" id="ski-exp-freq"><option value="monthly">Monthly</option><option value="annual">Annual</option></select></div>
-    </div>
-    <button class="submit-btn" onclick="saveExpense('skincare')">Save Expense</button>
-    <button class="delete-btn" id="ski-exp-del" style="display:none" onclick="deleteExpense('skincare')">Delete Expense</button>
-    <button class="cancel-btn" onclick="closeModal('modal-ski-expense')">Cancel</button>
-  </div>
+<!-- ACTION BAR -->
+<div class="action-bar">
+  <button class="print-btn" onclick="window.print()">🖨 Print / Save PDF</button>
 </div>
 
 <script>
-var SB_URL = 'https://qoswwueqmfjmlfkkhwtf.supabase.co';
-var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvc3d3dWVxbWZqbWxma2tod3RmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNDY3NTgsImV4cCI6MjA5MjcyMjc1OH0.HQfRqmiooiFcc2bpmzZNfna6AkbAwndUV-53FxqC5DU';
+let bizCount = 0;
 
-var BN = { tutoring:'Tutoring', music:'Music Gigs', dance:'Dance Classes', skincare:'Skincare Line' };
-var BE = { tutoring:'📚', music:'🎵', dance:'💃', skincare:'🧴' };
-var IL = { tutoring:'Sessions', music:'Events', dance:'Classes', skincare:'Product Sales' };
-var FL = { monthly:'Monthly', annual:'Annual' };
-
-var SC_MAP = {
-  'Supplies & Materials':'Supplies (ln 22)', 'Books & Curriculum':'Supplies (ln 22)',
-  'Software & Subscriptions':'Office expense (ln 18)', 'Marketing & Advertising':'Advertising (ln 8)',
-  'Transportation':'Car & truck (ln 9)', 'Home Office':'Office expense (ln 18)',
-  'Professional Development':'Other expenses (ln 48)', 'Equipment':'Depreciation/equipment (ln 13)',
-  'Printing & Copies':'Office expense (ln 18)', 'Instruments & Gear':'Depreciation/equipment (ln 13)',
-  'Repairs & Maintenance':'Repairs (ln 21)', 'Recording & Studio':'Rent/lease (ln 20b)',
-  'Marketing & Promotion':'Advertising (ln 8)', 'Costumes & Wardrobe':'Supplies (ln 22)',
-  'Venue & Licensing Fees':'Rent/lease (ln 20b)', 'Costumes & Attire':'Supplies (ln 22)',
-  'Music & Licensing':'Other expenses (ln 48)', 'Studio & Venue Rental':'Rent/lease (ln 20b)',
-  'Supplies & Props':'Supplies (ln 22)', 'Raw Ingredients':'Supplies (ln 22)',
-  'Packaging & Labels':'Supplies (ln 22)', 'Equipment & Tools':'Depreciation/equipment (ln 13)',
-  'Platform & Marketplace Fees':'Commissions (ln 10)', 'Shipping & Postage':'Other expenses (ln 48)',
-  'Other':'Other expenses (ln 48)'
-};
-
-var activeBiz = 'tutoring', activePage = 'earnings', addPickerBiz = 'tutoring', musPayType = 'flat';
-var periodMode = 'all', periodYear = '', periodMonth = '';
-var allSessions = [], allEvents = [], allClasses = [], allSales = [];
-var allExpenses = [], allYTD = [], allRepeats = [], allDocs = [];
-var pendingFiles = {}, pendingFileObjects = {};
-
-function sbH() { return {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'}; }
-function sbGet(t, p) {
-  var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-  var opts = {method:'GET', headers:sbH()};
-  if (ctrl) opts.signal = ctrl.signal;
-  var timer = ctrl ? setTimeout(function() { ctrl.abort(); }, 10000) : null;
-  return fetch(SB_URL+'/rest/v1/'+t+'?'+(p||''), opts)
-    .then(function(r) { if (timer) clearTimeout(timer); return r.json(); })
-    .catch(function() { if (timer) clearTimeout(timer); return []; });
-}
-function sbIns(t, d) { return fetch(SB_URL+'/rest/v1/'+t, {method:'POST', headers:sbH(), body:JSON.stringify(d)}); }
-function sbUpd(t, id, d) { return fetch(SB_URL+'/rest/v1/'+t+'?id=eq.'+encodeURIComponent(id), {method:'PATCH', headers:sbH(), body:JSON.stringify(d)}); }
-function sbDel(t, id) { return fetch(SB_URL+'/rest/v1/'+t+'?id=eq.'+encodeURIComponent(id), {method:'DELETE', headers:sbH()}); }
-function sbUps(t, d) { return fetch(SB_URL+'/rest/v1/'+t, {method:'POST', headers:Object.assign({},sbH(),{'Prefer':'resolution=merge-duplicates,return=minimal'}), body:JSON.stringify(d)}); }
-
-function sbUploadFile(file, path) {
-  return fetch(SB_URL+'/storage/v1/object/receipts/'+path, {
-    method:'POST',
-    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':file.type||'application/octet-stream'},
-    body:file
-  }).then(function() { return SB_URL+'/storage/v1/object/public/receipts/'+path; });
-}
-function uploadFiles(fileObjs, prefix) {
-  return Promise.all(Array.prototype.map.call(fileObjs, function(f) {
-    var path = prefix+'-'+Date.now()+'-'+f.name.replace(/[^a-zA-Z0-9._-]/g,'_');
-    return sbUploadFile(f, path).then(function(url) { return {name:f.name, url:url}; }).catch(function() { return {name:f.name, url:null}; });
-  }));
-}
-function genId() { return Date.now()+'-'+Math.random().toString(36).slice(2,7); }
-function setSyncDot(s) { var d=document.getElementById('sync-dot'); if(d) d.className='sync-dot '+s; }
-
-function loadAll() {
-  setSyncDot('syncing');
-  var safe = function(p) { return p.catch(function() { return []; }); };
-  return Promise.all([
-    safe(sbGet('tutoring_sessions','order=date.desc')),
-    safe(sbGet('music_events','order=date.desc')),
-    safe(sbGet('dance_classes','order=date.desc')),
-    safe(sbGet('skincare_sales','order=date.desc')),
-    safe(sbGet('expenses','order=date.desc')),
-    safe(sbGet('income_ytd','order=updated_at.desc')),
-    safe(sbGet('repeat_expenses','order=next_date.asc')),
-    safe(sbGet('docs','order=created_at.desc'))
-  ]).then(function(r) {
-    allSessions=r[0]||[]; allEvents=r[1]||[]; allClasses=r[2]||[]; allSales=r[3]||[];
-    allExpenses=r[4]||[]; allYTD=r[5]||[]; allRepeats=r[6]||[]; allDocs=r[7]||[];
-    setSyncDot('synced'); return true;
-  }).catch(function() { setSyncDot('error'); return false; });
-}
-function showApp() { var el=document.getElementById('loading'); if(el) el.style.display='none'; }
-
-function fmt(n) { return '$'+(parseFloat(n)||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
-function fmtDate(s) { if(!s) return ''; var d=new Date(s+'T12:00:00'); return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
-function tod() { return new Date().toISOString().split('T')[0]; }
-function unassigned(v) { return !v||v===''||v==='— Select —'; }
-function pfx(biz) { return biz==='tutoring'?'tut':biz==='music'?'mus':biz==='dance'?'dan':'ski'; }
-function parseFiles(raw) {
-  if (!raw) return [];
-  if (Array.isArray(raw)) return raw;
-  try { var p=JSON.parse(raw); return Array.isArray(p)?p:[]; } catch(e) {}
-  return raw.split('|').filter(Boolean).map(function(n){return{name:n,url:null};});
-}
-function inPeriod(ds) {
-  if (periodMode==='all'||!ds) return true;
-  if (periodMode==='year') return ds.slice(0,4)===periodYear;
-  if (periodMode==='month') return ds.slice(0,7)===periodMonth;
-  return true;
-}
-function incomeFor(biz, f) {
-  if (biz==='tutoring') return (f?allSessions.filter(function(x){return inPeriod(x.date);}):allSessions).reduce(function(s,x){return s+(parseFloat(x.rate_per_hour)||0)*(parseFloat(x.hours_worked)||0);},0);
-  if (biz==='music') return (f?allEvents.filter(function(x){return inPeriod(x.date);}):allEvents).reduce(function(s,x){return s+(x.pay_type==='flat'?(parseFloat(x.flat_rate)||0):(parseFloat(x.hourly_rate)||0)*(parseFloat(x.hours_worked)||0));},0);
-  if (biz==='dance') return (f?allClasses.filter(function(x){return inPeriod(x.date);}):allClasses).reduce(function(s,x){return s+(parseFloat(x.price_per_attendee)||0)*(parseInt(x.num_attendees)||0);},0);
-  if (biz==='skincare') return (f?allSales.filter(function(x){return inPeriod(x.date);}):allSales).reduce(function(s,x){return s+(parseFloat(x.price)||0)*(parseInt(x.quantity)||0);},0);
-  return 0;
-}
-function expensesFor(biz, f) {
-  return allExpenses.filter(function(x){return x.business===biz&&(!f||inPeriod(x.date));}).reduce(function(s,x){return s+(parseFloat(x.amount)||0);},0);
-}
-function getYears(biz) { var y={}; allExpenses.filter(function(e){return e.business===biz;}).forEach(function(e){if(e.date)y[e.date.slice(0,4)]=1;}); return Object.keys(y).sort().reverse(); }
-function getMonths(biz) { var m={}; allExpenses.filter(function(e){return e.business===biz;}).forEach(function(e){if(e.date)m[e.date.slice(0,7)]=1;}); return Object.keys(m).sort().reverse(); }
-function fmtMonth(ym) { var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; var p=ym.split('-'); return MN[parseInt(p[1])-1]+' '+p[0]; }
-
-function renderAll() {
-  try { renderEarnings(); } catch(e) {}
-  try { if(activePage==='overview') renderOverview(); } catch(e) {}
-  try { if(activePage==='docs') renderDocs(); } catch(e) {}
-  try { if(activePage==='export') renderExport(); } catch(e) {}
+function addBusiness() {
+  bizCount++;
+  const container = document.getElementById('bizContainer');
+  const div = document.createElement('div');
+  div.className = 'biz-entry';
+  div.id = 'biz-' + bizCount;
+  div.innerHTML = `
+    <div class="biz-entry-header">
+      <span class="biz-number">Business ${bizCount}</span>
+      ${bizCount > 1 ? `<button type="button" class="remove-biz" onclick="removeBiz('biz-${bizCount}')">✕</button>` : ''}
+    </div>
+    <div class="field-group">
+      <label>Business / Brand Name <span class="req">*</span></label>
+      <input type="text" name="bizName[]" placeholder='e.g. "Glam by Kia", "The Hustle Hub"' required>
+    </div>
+    <div class="field-group">
+      <label>What do you do? <span class="req">*</span></label>
+      <textarea name="bizDesc[]" placeholder="Describe what your business sells or does — e.g. handmade candles sold online, dog walking &amp; pet care via Rover, event tickets for dance classes, freelance graphic design, etc. Anything goes!" style="min-height:72px" required></textarea>
+    </div>
+    <div class="field-group">
+      <div class="info-note">
+        <span class="info-icon">💡</span>
+        <span>When we build your app, we can make your input fields <strong>as specific or as generic as you like</strong> — custom categories, dropdown options, pricing fields, notes fields, whatever fits your workflow. The more detail you share here, the better we can tailor it.</span>
+      </div>
+    </div>
+  `;
+  container.appendChild(div);
+  updateProgress();
 }
 
-function periodBar() {
-  var years=getYears(activeBiz), months=getMonths(activeBiz);
-  var h='<div class="period-row">';
-  h+='<button class="period-btn'+(periodMode==='all'?' active':'')+'" onclick="setPeriod(\'all\')">All</button>';
-  if(years.length){
-    h+='<select class="period-sel'+(periodMode==='year'?' active':'')+'" onchange="setPeriodYear(this.value)"><option value="">Year...</option>';
-    years.forEach(function(y){h+='<option value="'+y+'"'+(periodMode==='year'&&periodYear===y?' selected':'')+'>'+y+'</option>';});
-    h+='</select>';
-  }
-  if(months.length){
-    h+='<select class="period-sel'+(periodMode==='month'?' active':'')+'" onchange="setPeriodMonth(this.value)"><option value="">Month...</option>';
-    months.forEach(function(m){h+='<option value="'+m+'"'+(periodMode==='month'&&periodMonth===m?' selected':'')+'>'+fmtMonth(m)+'</option>';});
-    h+='</select>';
-  }
-  h+='</div>';
-  if(periodMode!=='all'){var lbl=periodMode==='year'?periodYear:fmtMonth(periodMonth);h+='<div style="font-size:12px;color:var(--teal);font-weight:600;margin-bottom:10px">Showing: '+lbl+'</div>';}
-  return h;
-}
-function setPeriod(m){periodMode=m;periodYear='';periodMonth='';renderAll();}
-function setPeriodYear(v){if(!v){periodMode='all';periodYear='';}else{periodMode='year';periodYear=v;periodMonth='';}renderAll();}
-function setPeriodMonth(v){if(!v){periodMode='all';periodMonth='';}else{periodMode='month';periodMonth=v;periodYear='';}renderAll();}
-
-function renderEarnings(){
-  var bizList=['tutoring','music','dance','skincare'];
-  var totalInc=0,totalExp=0;
-  bizList.forEach(function(b){totalInc+=incomeFor(b,true);totalExp+=expensesFor(b,true);});
-  var net=totalInc-totalExp;
-  var h='<div class="page-title" style="color:var(--teal)">Total Earnings</div>';
-  h+='<div class="page-sub">All businesses combined</div>';
-  h+=periodBar();
-  h+='<div class="earn-hero"><div class="earn-hero-lbl">Net Profit</div>';
-  h+='<div class="earn-hero-amt" style="color:'+(net>=0?'var(--green)':'var(--red)')+'">'+fmt(net)+'</div>';
-  h+='<div class="earn-hero-sub">'+fmt(totalInc)+' income &nbsp;&middot;&nbsp; '+fmt(totalExp)+' expenses</div></div>';
-  bizList.forEach(function(b){
-    var inc=incomeFor(b,true),exp=expensesFor(b,true),n=inc-exp;
-    h+='<div class="biz-earn-card"><div class="biz-earn-name">'+BE[b]+' '+BN[b]+'</div>';
-    h+='<div class="biz-row"><span class="biz-row-lbl">Income</span><span class="c-in" style="font-weight:700">'+fmt(inc)+'</span></div>';
-    h+='<div class="biz-row"><span class="biz-row-lbl">Expenses</span><span class="c-ex" style="font-weight:700">'+fmt(exp)+'</span></div>';
-    h+='<hr class="biz-divider"><div class="biz-row"><span class="biz-row-lbl">Net</span><span class="'+(n>=0?'c-pr':'c-lo')+'" style="font-weight:700">'+fmt(n)+'</span></div></div>';
-  });
-  h+='<div class="tax-note">&#9888;&#65039; Estimate only. Consult a tax professional for actual tax liability.</div>';
-  document.getElementById('page-earnings').innerHTML=h;
+function removeBiz(id) {
+  document.getElementById(id)?.remove();
+  updateProgress();
 }
 
-function renderOverview(){
-  var biz=activeBiz,today=tod();
-  var inc=incomeFor(biz,true),exp=expensesFor(biz,true),net=inc-exp;
-  var exps=allExpenses.filter(function(x){return x.business===biz&&inPeriod(x.date);});
-  var flagged=exps.filter(function(e){return unassigned(e.category)||unassigned(e.payment_method);});
-  var dueRepeats=allRepeats.filter(function(r){return r.business===biz&&r.next_date<=today;});
-  var h='<div class="page-title">'+BE[biz]+' '+BN[biz]+'</div>';
-  h+='<div class="page-sub">Overview</div>';
-  h+=periodBar();
-  if(flagged.length) h+='<div class="flag-banner">&#9888;&#65039; '+flagged.length+' expense'+(flagged.length>1?'s':'')+' missing category or payment &mdash; tap Edit</div>';
-  if(dueRepeats.length) h+='<div class="flag-banner blue">&#128260; '+dueRepeats.length+' repeat expense'+(dueRepeats.length>1?'s':'')+' due &mdash; scroll down</div>';
-  h+='<div class="stat-grid">';
-  h+='<div class="stat-card"><div class="stat-label">'+IL[biz]+'</div><div class="stat-value c-in">'+fmt(inc)+'</div></div>';
-  h+='<div class="stat-card"><div class="stat-label">Expenses</div><div class="stat-value c-ex">'+fmt(exp)+'</div></div>';
-  h+='<div class="stat-card full"><div class="stat-label">Net Profit</div><div class="stat-value '+(net>=0?'c-pr':'c-lo')+'">'+fmt(net)+'</div></div>';
-  h+='</div>';
-  if(biz==='tutoring'||biz==='skincare'){
-    var ytd=allYTD.find(function(y){return y.business===biz;})||{};
-    h+='<div class="ytd-card"><div class="stat-label">Income YTD (Manual)</div><div class="ytd-row">';
-    h+='<span class="ytd-lbl">$</span>';
-    h+='<input type="number" class="ytd-input" id="ytd-amt-'+biz+'" value="'+(ytd.amount||'')+'" placeholder="0.00" inputmode="decimal">';
-    h+='<span class="ytd-lbl">as of</span>';
-    h+='<input type="date" class="ytd-input" id="ytd-date-'+biz+'" value="'+(ytd.as_of_date||'')+'" style="max-width:150px">';
-    h+='<button class="ytd-save" onclick="saveYTD(\''+biz+'\')">Save</button></div></div>';
-  }
-  if(dueRepeats.length){
-    h+='<div class="sec-hdr"><div class="sec-title">&#128260; Due Repeats</div></div>';
-    dueRepeats.forEach(function(r){
-      var over=r.next_date<today;
-      h+='<div class="repeat-card '+(over?'overdue':'due-today')+'">';
-      h+='<div class="repeat-info"><div class="repeat-vendor">'+(r.vendor||'—')+'</div>';
-      h+='<div class="repeat-meta">'+FL[r.freq]+' &middot; '+fmt(r.amount)+'</div>';
-      h+='<div class="repeat-next" style="color:'+(over?'var(--red)':'var(--orange)')+'">Next: '+fmtDate(r.next_date)+(over?' &#9888; overdue':' — due today')+'</div></div>';
-      h+='<div class="repeat-actions"><button class="btn-edit" onclick="logRepeat(\''+r.id+'\')">Log</button><button class="btn-del" onclick="delRepeat(\''+r.id+'\')">Del</button></div></div>';
-    });
-  }
-  h+='<div class="sec-hdr"><div class="sec-title">'+IL[biz]+'</div><button class="add-btn" onclick="openIncomeModal(\''+biz+'\')">+ Add</button></div>';
-  h+=buildIncomeList(biz);
-  h+='<div class="sec-hdr"><div class="sec-title">Expenses</div><button class="add-btn" onclick="openExpenseModal(\''+biz+'\')">+ Add</button></div>';
-  h+=buildExpenseList(biz);
-  document.getElementById('overview-content').innerHTML=h;
-}
-
-function buildIncomeList(biz){
-  var h='';
-  if(biz==='tutoring'){
-    var items=allSessions.filter(function(x){return inPeriod(x.date);});
-    if(!items.length) return '<div class="empty-st"><div class="empty-ic">📚</div>No sessions yet.</div>';
-    items.forEach(function(s){
-      var earn=(parseFloat(s.rate_per_hour)||0)*(parseFloat(s.hours_worked)||0);
-      h+='<div class="log-entry"><div class="le-row" onclick="editSession(\''+s.id+'\')">';
-      h+='<div class="le-left"><div class="le-title">'+(s.student_name||'Student')+'</div>';
-      h+='<div class="le-meta">'+fmtDate(s.date)+' &middot; '+(s.hours_worked||0)+'h @ '+fmt(s.rate_per_hour)+'/hr</div>';
-      if(s.notes) h+='<span class="cat-pill">'+s.notes+'</span>';
-      h+='</div><div class="le-right"><div class="le-amount c-in">'+fmt(earn)+'</div><div class="le-pay">'+(s.payment_method||'')+'</div></div></div></div>';
-    });
-  } else if(biz==='music'){
-    var items=allEvents.filter(function(x){return inPeriod(x.date);});
-    if(!items.length) return '<div class="empty-st"><div class="empty-ic">🎵</div>No events yet.</div>';
-    items.forEach(function(ev){
-      var earn=ev.pay_type==='flat'?(parseFloat(ev.flat_rate)||0):(parseFloat(ev.hourly_rate)||0)*(parseFloat(ev.hours_worked)||0);
-      h+='<div class="log-entry"><div class="le-row" onclick="editEvent(\''+ev.id+'\')">';
-      h+='<div class="le-left"><div class="le-title">'+(ev.event_name||'Event')+'</div>';
-      h+='<div class="le-meta">'+fmtDate(ev.date)+' &middot; '+(ev.pay_type==='flat'?'Flat Rate':(ev.hours_worked||0)+'h @ '+fmt(ev.hourly_rate)+'/hr')+'</div>';
-      if(ev.notes) h+='<span class="cat-pill">'+ev.notes+'</span>';
-      h+='</div><div class="le-right"><div class="le-amount c-in">'+fmt(earn)+'</div><div class="le-pay">'+(ev.payment_method||'')+'</div></div></div></div>';
-    });
-  } else if(biz==='dance'){
-    var items=allClasses.filter(function(x){return inPeriod(x.date);});
-    if(!items.length) return '<div class="empty-st"><div class="empty-ic">💃</div>No classes yet.</div>';
-    items.forEach(function(c){
-      var earn=(parseFloat(c.price_per_attendee)||0)*(parseInt(c.num_attendees)||0);
-      h+='<div class="log-entry"><div class="le-row" onclick="editClass(\''+c.id+'\')">';
-      h+='<div class="le-left"><div class="le-title">Dance Class</div>';
-      h+='<div class="le-meta">'+fmtDate(c.date)+' &middot; '+(c.num_attendees||0)+' attendees @ '+fmt(c.price_per_attendee)+' each</div>';
-      if(c.notes) h+='<span class="cat-pill">'+c.notes+'</span>';
-      h+='</div><div class="le-right"><div class="le-amount c-in">'+fmt(earn)+'</div><div class="le-pay">'+(c.payment_method||'')+'</div></div></div></div>';
-    });
-  } else if(biz==='skincare'){
-    var items=allSales.filter(function(x){return inPeriod(x.date);});
-    if(!items.length) return '<div class="empty-st"><div class="empty-ic">🧴</div>No sales yet.</div>';
-    items.forEach(function(s){
-      var earn=(parseFloat(s.price)||0)*(parseInt(s.quantity)||0);
-      h+='<div class="log-entry"><div class="le-row" onclick="editSale(\''+s.id+'\')">';
-      h+='<div class="le-left"><div class="le-title">'+(s.product_type||'Product')+'</div>';
-      h+='<div class="le-meta">'+fmtDate(s.date)+' &middot; Qty: '+(s.quantity||1)+(s.marketplace?' &middot; '+s.marketplace:'')+'</div>';
-      h+='<span class="cat-pill">'+(s.product_type||'')+'</span>';
-      h+='</div><div class="le-right"><div class="le-amount c-in">'+fmt(earn)+'</div><div class="le-pay">'+(s.payment_method||'')+'</div></div></div></div>';
-    });
-  }
-  return h;
-}
-
-function buildExpenseList(biz){
-  var items=allExpenses.filter(function(x){return x.business===biz&&inPeriod(x.date);});
-  if(!items.length) return '<div class="empty-st"><div class="empty-ic">🧾</div>No expenses yet.</div>';
-  var h='';
-  items.forEach(function(e){
-    var isFlagged=unassigned(e.category)||unassigned(e.payment_method);
-    var files=parseFiles(e.files);
-    h+='<div class="log-entry'+(isFlagged?' flagged':'')+'"><div class="le-row">';
-    h+='<div class="le-left"><div class="le-title">'+(e.vendor||'Expense')+'</div>';
-    h+='<div class="le-meta">'+fmtDate(e.date)+'</div>';
-    if(e.category&&!unassigned(e.category)) h+='<span class="cat-pill">'+e.category+'</span>';
-    if(isFlagged) h+='<span class="flag-pill">&#9888;&#65039; Unassigned</span>';
-    if(files.length){
-      h+='<div style="margin-top:4px">';
-      files.forEach(function(f){
-        var fn=typeof f==='object'?f.name:f, fu=typeof f==='object'?(f.url||''):'';
-        h+='<span class="file-chip" onclick="viewFile(\''+encodeURIComponent(JSON.stringify({name:fn,url:fu}))+'\',event)">📎 '+fn+'</span>';
-      });
-      h+='</div>';
+// Progress tracker
+function updateProgress() {
+  const form = document.getElementById('intakeForm');
+  const inputs = form.querySelectorAll('input[required], select[required]');
+  let filled = 0;
+  inputs.forEach(input => {
+    if (input.type === 'radio' || input.type === 'checkbox') {
+      const name = input.name;
+      if (form.querySelector(`input[name="${name}"]:checked`)) filled++;
+    } else if (input.value.trim()) {
+      filled++;
     }
-    h+='</div><div class="le-right"><div class="le-amount c-ex">'+fmt(e.amount)+'</div><div class="le-pay">'+(e.payment_method||'')+'</div></div></div>';
-    h+='<div class="le-actions">';
-    h+='<button class="btn-edit" onclick="openExpEdit(\''+biz+'\',\''+e.id+'\',event)">Edit</button>';
-    h+='<button class="btn-dupe" onclick="dupeExp(\''+biz+'\',\''+e.id+'\',event)">Dupe</button>';
-    h+='<button class="btn-del" onclick="delExpById(\''+biz+'\',\''+e.id+'\',event)">Del</button>';
-    h+='</div></div>';
   });
-  return h;
-}
-
-function renderDocs(){
-  var filterYear='',filterBiz='',filterType='';
-  var yEl=document.getElementById('doc-filter-year');
-  var bEl=document.getElementById('doc-filter-biz');
-  var tEl=document.getElementById('doc-filter-type');
-  if(yEl) filterYear=yEl.value;
-  if(bEl) filterBiz=bEl.value;
-  if(tEl) filterType=tEl.value;
-  var h='<div class="page-title">Tax Forms</div>';
-  h+='<div class="page-sub">Upload and store your 1099 and Schedule C forms.</div>';
-  h+='<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;margin-bottom:12px">';
-  h+='<div class="form-group" style="margin-bottom:10px"><label class="form-label">Tax Year for Upload</label>';
-  h+='<input type="number" class="form-input" id="doc-year-input" placeholder="'+new Date().getFullYear()+'" inputmode="numeric" style="max-width:120px"></div>';
-  h+='<div class="upload-zone" onclick="document.getElementById(\'doc-file-real\').click()">';
-  h+='<div class="upload-zone-icon">📎</div>';
-  h+='<div class="upload-zone-text">Tap to upload 1099 or Schedule C form</div>';
-  h+='<div class="upload-zone-sub">PDF or image &middot; 1099-NEC, 1099-K, or Schedule C</div>';
-  h+='<input type="file" id="doc-file-real" style="display:none" accept=".pdf,image/*" multiple onchange="uploadDocs(this)">';
-  h+='</div></div>';
-  var docYears={};
-  allDocs.forEach(function(d){if(d.year) docYears[d.year]=1;});
-  h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">';
-  h+='<select class="form-select" id="doc-filter-year" onchange="renderDocs()" style="flex:1;min-width:90px;padding:8px 10px;font-size:13px"><option value="">All Years</option>';
-  Object.keys(docYears).sort().reverse().forEach(function(y){h+='<option value="'+y+'"'+(filterYear===y?' selected':'')+'>'+y+'</option>';});
-  h+='</select>';
-  h+='<select class="form-select" id="doc-filter-biz" onchange="renderDocs()" style="flex:1;min-width:110px;padding:8px 10px;font-size:13px"><option value="">All Businesses</option>';
-  Object.values(BN).forEach(function(n){h+='<option value="'+n+'"'+(filterBiz===n?' selected':'')+'>'+n+'</option>';});
-  h+='</select>';
-  h+='<select class="form-select" id="doc-filter-type" onchange="renderDocs()" style="flex:1;min-width:110px;padding:8px 10px;font-size:13px"><option value="">All Types</option>';
-  ['1099-NEC','1099-K','Schedule C'].forEach(function(t){h+='<option value="'+t+'"'+(filterType===t?' selected':'')+'>'+t+'</option>';});
-  h+='</select></div>';
-  var filtered=allDocs.filter(function(d){
-    return(!filterYear||d.year===filterYear)&&(!filterBiz||d.biz===filterBiz)&&(!filterType||(d.name&&d.name.indexOf(filterType)>=0));
-  });
-  if(!filtered.length){
-    h+='<div class="empty-st"><div class="empty-ic">📄</div>'+(allDocs.length?'No forms match your filters.':'No forms uploaded yet.')+'</div>';
-  } else {
-    var byYear={};
-    filtered.forEach(function(d){var y=d.year||'Unknown Year';if(!byYear[y])byYear[y]=[];byYear[y].push(d);});
-    Object.keys(byYear).sort().reverse().forEach(function(yr){
-      h+='<div class="year-badge">'+yr+'</div>';
-      byYear[yr].forEach(function(d){
-        var icon=d.name&&d.name.toLowerCase().indexOf('.pdf')>=0?'📄':'🖼️';
-        var tl=d.name&&d.name.indexOf('1099-NEC')>=0?'NEC':d.name&&d.name.indexOf('1099-K')>=0?'K':d.name&&d.name.indexOf('Schedule C')>=0?'SC':'📎';
-        h+='<div class="doc-card"><div class="doc-icon">'+icon+'</div>';
-        h+='<div class="doc-info"><div class="doc-name">'+(d.name||'Form')+'</div>';
-        h+='<div class="doc-meta">'+(d.biz||'')+(d.uploaded?' &middot; Uploaded '+d.uploaded:'')+'</div></div>';
-        h+='<div style="display:flex;align-items:center;gap:8px"><div class="doc-badge">'+tl+'</div>';
-        h+='<button class="btn-del" onclick="delDoc(\''+d.id+'\')">Del</button></div></div>';
-      });
-    });
-  }
-  h+='<div class="sec-hdr" style="margin-top:20px"><div class="sec-title">What to Expect</div></div>';
-  h+='<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px">';
-  [['📚 Tutoring','1099-NEC if you earned $600+ from a single platform or client'],
-   ['🎵 Music Gigs','1099-NEC from venues or promoters who paid you $600+ in the year'],
-   ['💃 Dance Classes','May receive 1099-K if using payment processors over the threshold'],
-   ['🧴 Skincare Line','1099-K from Etsy, PayPal, or other platforms if sales exceed threshold']
-  ].forEach(function(g){h+='<div class="guidance-row"><span class="guidance-biz">'+g[0]+'</span><span class="guidance-text">'+g[1]+'</span></div>';});
-  h+='</div>';
-  document.getElementById('docs-content').innerHTML=h;
-}
-
-function uploadDocs(input){
-  var files=Array.prototype.slice.call(input.files);
-  var today=new Date().toLocaleDateString();
-  var yEl=document.getElementById('doc-year-input');
-  var year=(yEl?yEl.value:'')||new Date().getFullYear()+'';
-  var rows=files.map(function(f){return{id:genId(),name:f.name,biz:BN[activeBiz],uploaded:today,year:year};});
-  setSyncDot('syncing');
-  sbIns('docs',rows).then(function(){return loadAll();}).then(function(){showToast('&#10003; '+files.length+' form(s) uploaded');renderDocs();}).catch(function(){setSyncDot('error');showToast('Upload failed');});
-}
-function delDoc(id){if(!confirm('Remove this form?'))return;setSyncDot('syncing');sbDel('docs',id).then(function(){return loadAll();}).then(function(){showToast('Removed');renderDocs();});}
-
-function renderExport(){
-  var biz=activeBiz;
-  var exps=allExpenses.filter(function(e){return e.business===biz;});
-  var scMap={};
-  exps.forEach(function(e){
-    if(!e.category||unassigned(e.category))return;
-    var line=SC_MAP[e.category]||'Other expenses (ln 48)';
-    scMap[line]=(scMap[line]||0)+(parseFloat(e.amount)||0);
-  });
-  var scTotal=Object.keys(scMap).reduce(function(s,k){return s+scMap[k];},0);
-  var h='<div class="page-title">Export Data</div>';
-  h+='<div class="page-sub">Download records for Google Sheets or your accountant.</div>';
-  h+='<div class="export-card"><div class="export-card-title">📊 CSV Export</div>';
-  h+='<div class="export-card-sub">Download all income and expenses per business.</div>';
-  ['tutoring','music','dance','skincare'].forEach(function(b){
-    h+='<div class="export-biz-row"><div class="export-biz-name">'+BE[b]+' '+BN[b]+'</div>';
-    h+='<button class="export-dl-btn" onclick="exportCSV(\''+b+'\')">Download</button></div>';
-  });
-  h+='<button class="export-dl-btn" style="width:100%;margin-top:10px;padding:12px;border-radius:var(--r);font-size:13px" onclick="exportCSV(\'all\')">&#8599; Export All Businesses</button></div>';
-  h+='<div class="export-card"><div class="export-card-title">🧾 Schedule C Summary</div>';
-  h+='<div class="export-card-sub">IRS-ready summary. Showing: <strong>'+BN[biz]+'</strong> — switch business tab to change.</div>';
-  if(Object.keys(scMap).length){
-    h+='<div class="sc-preview">';
-    Object.keys(scMap).sort(function(a,b){return scMap[b]-scMap[a];}).forEach(function(k){h+='<div class="sc-row"><span style="color:var(--muted)">'+k+'</span><strong>'+fmt(scMap[k])+'</strong></div>';});
-    h+='<div class="sc-total"><span>Total Deductible</span><strong>'+fmt(scTotal)+'</strong></div>';
-    h+='<div class="sc-note">* IRS Schedule C line items shown. Consult a tax professional.</div></div>';
-  } else {
-    h+='<div class="empty-st" style="padding:16px"><div class="empty-ic">🧾</div>No categorized expenses yet.</div>';
-  }
-  h+='<div style="margin-top:8px">';
-  ['tutoring','music','dance','skincare'].forEach(function(b){
-    h+='<div class="export-biz-row"><div class="export-biz-name">'+BE[b]+' '+BN[b]+'</div>';
-    h+='<button class="export-dl-btn gold" onclick="exportScheduleC(\''+b+'\')">Download</button></div>';
-  });
-  h+='</div></div>';
-  document.getElementById('export-content').innerHTML=h;
-}
-
-function exportCSV(biz){
-  var rows=[],bizList=biz==='all'?['tutoring','music','dance','skincare']:[biz];
-  bizList.forEach(function(b){
-    if(b==='tutoring'){
-      rows.push(['Type','Date','Student','Rate/hr','Hours','Earned','Payment','Notes']);
-      allSessions.forEach(function(s){var earn=(parseFloat(s.rate_per_hour)||0)*(parseFloat(s.hours_worked)||0);rows.push(['Income',s.date||'',s.student_name||'',s.rate_per_hour||'',s.hours_worked||'',earn.toFixed(2),s.payment_method||'',s.notes||'']);});
-    } else if(b==='music'){
-      rows.push(['Type','Date','Event','Pay Type','Rate','Hours','Earned','Payment','Notes']);
-      allEvents.forEach(function(ev){var earn=ev.pay_type==='flat'?(parseFloat(ev.flat_rate)||0):(parseFloat(ev.hourly_rate)||0)*(parseFloat(ev.hours_worked)||0);rows.push(['Income',ev.date||'',ev.event_name||'',ev.pay_type||'',ev.pay_type==='flat'?ev.flat_rate:ev.hourly_rate||'',ev.hours_worked||'',earn.toFixed(2),ev.payment_method||'',ev.notes||'']);});
-    } else if(b==='dance'){
-      rows.push(['Type','Date','Price/Attendee','Attendees','Earned','Payment','Notes']);
-      allClasses.forEach(function(c){var earn=(parseFloat(c.price_per_attendee)||0)*(parseInt(c.num_attendees)||0);rows.push(['Income',c.date||'',c.price_per_attendee||'',c.num_attendees||'',earn.toFixed(2),c.payment_method||'',c.notes||'']);});
-    } else if(b==='skincare'){
-      rows.push(['Type','Date','Product','Price','Qty','Total','Marketplace','Payment','Notes']);
-      allSales.forEach(function(s){var earn=(parseFloat(s.price)||0)*(parseInt(s.quantity)||0);rows.push(['Income',s.date||'',s.product_type||'',s.price||'',s.quantity||'',earn.toFixed(2),s.marketplace||'',s.payment_method||'',s.notes||'']);});
+  // Count all fillable fields roughly
+  const allInputs = form.querySelectorAll('input:not([type="hidden"]), select, textarea');
+  let totalFilled = 0;
+  const seen = new Set();
+  allInputs.forEach(el => {
+    if (el.type === 'radio' || el.type === 'checkbox') {
+      if (!seen.has(el.name)) {
+        seen.add(el.name);
+        if (form.querySelector(`input[name="${el.name}"]:checked`)) totalFilled++;
+      }
+    } else if (el.value.trim()) {
+      totalFilled++;
     }
-    rows.push([]);
-    rows.push(['EXPENSES','Date','Vendor','Amount','Category','Payment','Notes','Schedule C Line']);
-    allExpenses.filter(function(e){return e.business===b;}).forEach(function(e){rows.push(['Expense',e.date||'',e.vendor||'',(parseFloat(e.amount)||0).toFixed(2),e.category||'',e.payment_method||'',e.notes||'',SC_MAP[e.category]||'']);});
-    rows.push([]);
   });
-  dlCSV(rows,(biz==='all'?'All_Businesses':BN[biz].replace(/\s/g,'_'))+'_export.csv');
-  showToast('Downloaded!');
-}
-function exportScheduleC(biz){
-  var exps=allExpenses.filter(function(e){return e.business===biz;}),scMap={},total=0;
-  exps.forEach(function(e){if(!e.category||unassigned(e.category))return;var line=SC_MAP[e.category]||'Other expenses (ln 48)';scMap[line]=(scMap[line]||0)+(parseFloat(e.amount)||0);});
-  var rows=[['Schedule C Summary — '+BN[biz]],['Generated: '+new Date().toLocaleDateString()],[],['INCOME'],[IL[biz]+' Total','$'+incomeFor(biz,false).toFixed(2)],[],['IRS Line Item','Deductible Amount']];
-  Object.keys(scMap).sort(function(a,b){return scMap[b]-scMap[a];}).forEach(function(k){total+=scMap[k];rows.push([k,'$'+scMap[k].toFixed(2)]);});
-  rows.push([],['Total Deductible','$'+total.toFixed(2)],['Net Profit','$'+(incomeFor(biz,false)-total).toFixed(2)]);
-  dlCSV(rows,BN[biz].replace(/\s/g,'_')+'_ScheduleC.csv');
-  showToast('Schedule C downloaded!');
-}
-function dlCSV(rows,name){
-  var csv=rows.map(function(r){return r.map(function(c){return'"'+String(c||'').replace(/"/g,'""')+'"';}).join(',');}).join('\n');
-  var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);
+  const total = allInputs.length;
+  const pct = Math.min(100, Math.round((totalFilled / (total * 0.6)) * 100));
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = pct + '% complete';
 }
 
-function saveYTD(biz){
-  var amt=parseFloat(document.getElementById('ytd-amt-'+biz).value)||0;
-  var dt=document.getElementById('ytd-date-'+biz).value;
-  var ex=allYTD.find(function(y){return y.business===biz;});
-  var data={business:biz,amount:amt,as_of_date:dt||null,updated_at:new Date().toISOString()};
-  setSyncDot('syncing');
-  (ex?sbUpd('income_ytd',ex.id,data):sbIns('income_ytd',Object.assign({id:genId()},data))).then(function(){return loadAll();}).then(function(){showToast('YTD saved!');setSyncDot('synced');renderOverview();});
-}
+document.getElementById('intakeForm').addEventListener('input', updateProgress);
 
-function handleExpFile(prefix,input){
-  if(!pendingFiles[prefix]) pendingFiles[prefix]=[];
-  if(!pendingFileObjects[prefix]) pendingFileObjects[prefix]=[];
-  Array.prototype.forEach.call(input.files,function(f){
-    if(!pendingFiles[prefix].some(function(n){return n===f.name;})){pendingFiles[prefix].push(f.name);pendingFileObjects[prefix].push(f);}
-  });
-  renderPendingChips(prefix);
-}
-function renderPendingChips(prefix){
-  var el=document.getElementById(prefix+'-exp-chips');if(!el)return;
-  el.innerHTML=(pendingFiles[prefix]||[]).map(function(f,i){return'<span class="file-chip">📎 '+f+' <button onclick="removePending(\''+prefix+'\','+i+')">×</button></span>';}).join('');
-}
-function removePending(prefix,idx){if(pendingFiles[prefix])pendingFiles[prefix].splice(idx,1);if(pendingFileObjects[prefix])pendingFileObjects[prefix].splice(idx,1);renderPendingChips(prefix);}
+// Form submit
+document.getElementById('intakeForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const form = e.target;
+  const data = new FormData(form);
 
-function viewFile(encoded,evt){
-  if(evt) evt.stopPropagation();
-  var fn,fu;
-  try{var fi=JSON.parse(decodeURIComponent(encoded));fn=fi.name||'';fu=fi.url||null;}catch(e){fn=encoded;fu=null;}
-  if(!fn) return;
-  var dn=fn.split('/').pop(),ext=dn.toLowerCase().split('.').pop();
-  var isImg=['jpg','jpeg','png','gif','webp','heic','bmp'].indexOf(ext)>=0, isPdf=ext==='pdf';
-  var h='<div class="receipt-overlay" onclick="closeReceiptModal(event)"><div class="receipt-sheet" onclick="event.stopPropagation()">';
-  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">';
-  h+='<span style="font-size:14px;font-weight:700;word-break:break-all;max-width:85%">'+dn+'</span>';
-  h+='<span onclick="closeReceipt()" style="font-size:24px;cursor:pointer;color:var(--muted)">✕</span></div>';
-  if(fu){
-    if(isImg){
-      h+='<img src="'+fu+'" style="width:100%;border-radius:10px;max-height:60vh;object-fit:contain" onerror="this.style.display=\'none\'">';
-      h+='<button class="submit-btn" style="margin-top:10px" onclick="window.open(\''+fu+'\',\'_blank\')">&#8599; Open Full Size</button>';
-    } else if(isPdf){
-      h+='<div style="text-align:center;padding:20px"><div style="font-size:48px;margin-bottom:12px">📄</div><button class="submit-btn" onclick="window.open(\''+fu+'\',\'_blank\')">Open PDF</button></div>';
+  try {
+    const response = await fetch('https://formspree.io/f/mlgazvra', {
+      method: 'POST',
+      body: data,
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (response.ok) {
+      form.style.display = 'none';
+      document.getElementById('successScreen').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      h+='<div style="text-align:center;padding:20px"><div style="font-size:48px;margin-bottom:12px">📎</div><button class="submit-btn" onclick="window.open(\''+fu+'\',\'_blank\')">Open File</button></div>';
+      alert('Oops! Something went wrong. Please try again or email us directly at Ownitapp.info@yahoo.com');
     }
-  } else {
-    h+='<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">File saved before cloud storage was enabled.<br>Edit this expense and re-attach to upload.</div>';
+  } catch (error) {
+    alert('Oops! Something went wrong. Please try again or email us directly at Ownitapp.info@yahoo.com');
   }
-  h+='<button class="cancel-btn" onclick="closeReceipt()">Close</button></div></div>';
-  document.getElementById('modal-root').innerHTML=h;
-}
-function closeReceiptModal(evt){if(evt.target.classList.contains('receipt-overlay'))closeReceipt();}
-function closeReceipt(){document.getElementById('modal-root').innerHTML='';}
+});
 
-async function saveSession(){
-  var editId=document.getElementById('tut-income-edit-id').value;
-  var student=document.getElementById('tut-student').value.trim();
-  var rate=parseFloat(document.getElementById('tut-rate').value)||0;
-  var hours=parseFloat(document.getElementById('tut-hours').value)||0;
-  var date=document.getElementById('tut-date').value;
-  var payment=document.getElementById('tut-payment').value;
-  var notes=document.getElementById('tut-notes').value.trim();
-  if(!student||!date||rate<=0||hours<=0){showToast('Please fill all required fields');return;}
-  var data={student_name:student,rate_per_hour:rate,hours_worked:hours,date:date,payment_method:payment,notes:notes};
-  setSyncDot('syncing');
-  if(editId){await sbUpd('tutoring_sessions',editId,data);var idx=allSessions.findIndex(function(s){return s.id===editId;});if(idx>=0)allSessions[idx]=Object.assign(allSessions[idx],data);}
-  else{await sbIns('tutoring_sessions',Object.assign({id:genId()},data));await loadAll();}
-  closeModal('modal-tut-income');setSyncDot('synced');renderAll();showToast(editId?'Session updated!':'Session saved!');
-}
-async function deleteSession(){var id=document.getElementById('tut-income-edit-id').value;if(!id||!confirm('Delete?'))return;setSyncDot('syncing');await sbDel('tutoring_sessions',id);allSessions=allSessions.filter(function(s){return s.id!==id;});closeModal('modal-tut-income');setSyncDot('synced');renderAll();showToast('Deleted');}
-function editSession(id){var s=allSessions.find(function(x){return x.id===id;});if(!s)return;resetModal('modal-tut-income');document.getElementById('tut-income-title').textContent='Edit Session';document.getElementById('tut-income-edit-id').value=id;document.getElementById('tut-student').value=s.student_name||'';document.getElementById('tut-rate').value=s.rate_per_hour||'';document.getElementById('tut-hours').value=s.hours_worked||'';document.getElementById('tut-date').value=s.date||'';document.getElementById('tut-payment').value=s.payment_method||'';document.getElementById('tut-notes').value=s.notes||'';document.getElementById('tut-income-del').style.display='';openModal('modal-tut-income');}
-
-function setMusPay(t){musPayType=t;document.getElementById('mus-flat-grp').style.display=t==='flat'?'':'none';document.getElementById('mus-hourly-grp').style.display=t==='hourly'?'':'none';document.getElementById('mus-btn-flat').className='radio-btn'+(t==='flat'?' selected':'');document.getElementById('mus-btn-hourly').className='radio-btn'+(t==='hourly'?' selected':'');}
-async function saveEvent(){
-  var editId=document.getElementById('mus-income-edit-id').value;
-  var name=document.getElementById('mus-event-name').value.trim();
-  var date=document.getElementById('mus-date').value;
-  var payment=document.getElementById('mus-payment').value;
-  var notes=document.getElementById('mus-notes').value.trim();
-  var flat=parseFloat(document.getElementById('mus-flat').value)||0;
-  var hourly=parseFloat(document.getElementById('mus-hourly-rate').value)||0;
-  var hours=parseFloat(document.getElementById('mus-hours').value)||0;
-  if(!name||!date){showToast('Please fill all required fields');return;}
-  var data={event_name:name,date:date,pay_type:musPayType,flat_rate:flat,hourly_rate:hourly,hours_worked:hours,payment_method:payment,notes:notes};
-  setSyncDot('syncing');
-  if(editId){await sbUpd('music_events',editId,data);var idx=allEvents.findIndex(function(e){return e.id===editId;});if(idx>=0)allEvents[idx]=Object.assign(allEvents[idx],data);}
-  else{await sbIns('music_events',Object.assign({id:genId()},data));await loadAll();}
-  closeModal('modal-mus-income');setSyncDot('synced');renderAll();showToast(editId?'Event updated!':'Event saved!');
-}
-async function deleteEvent(){var id=document.getElementById('mus-income-edit-id').value;if(!id||!confirm('Delete?'))return;setSyncDot('syncing');await sbDel('music_events',id);allEvents=allEvents.filter(function(e){return e.id!==id;});closeModal('modal-mus-income');setSyncDot('synced');renderAll();showToast('Deleted');}
-function editEvent(id){var ev=allEvents.find(function(x){return x.id===id;});if(!ev)return;resetModal('modal-mus-income');document.getElementById('mus-income-title').textContent='Edit Event';document.getElementById('mus-income-edit-id').value=id;document.getElementById('mus-event-name').value=ev.event_name||'';document.getElementById('mus-date').value=ev.date||'';document.getElementById('mus-notes').value=ev.notes||'';document.getElementById('mus-payment').value=ev.payment_method||'';setMusPay(ev.pay_type||'flat');document.getElementById('mus-flat').value=ev.flat_rate||'';document.getElementById('mus-hourly-rate').value=ev.hourly_rate||'';document.getElementById('mus-hours').value=ev.hours_worked||'';document.getElementById('mus-income-del').style.display='';openModal('modal-mus-income');}
-
-async function saveClass(){
-  var editId=document.getElementById('dan-income-edit-id').value;
-  var date=document.getElementById('dan-date').value;
-  var price=parseFloat(document.getElementById('dan-price').value)||0;
-  var att=parseInt(document.getElementById('dan-attendees').value)||0;
-  var payment=document.getElementById('dan-payment').value;
-  var notes=document.getElementById('dan-notes').value.trim();
-  if(!date||price<=0||att<=0){showToast('Please fill all required fields');return;}
-  var data={date:date,price_per_attendee:price,num_attendees:att,payment_method:payment,notes:notes};
-  setSyncDot('syncing');
-  if(editId){await sbUpd('dance_classes',editId,data);var idx=allClasses.findIndex(function(c){return c.id===editId;});if(idx>=0)allClasses[idx]=Object.assign(allClasses[idx],data);}
-  else{await sbIns('dance_classes',Object.assign({id:genId()},data));await loadAll();}
-  closeModal('modal-dan-income');setSyncDot('synced');renderAll();showToast(editId?'Class updated!':'Class saved!');
-}
-async function deleteClass(){var id=document.getElementById('dan-income-edit-id').value;if(!id||!confirm('Delete?'))return;setSyncDot('syncing');await sbDel('dance_classes',id);allClasses=allClasses.filter(function(c){return c.id!==id;});closeModal('modal-dan-income');setSyncDot('synced');renderAll();showToast('Deleted');}
-function editClass(id){var c=allClasses.find(function(x){return x.id===id;});if(!c)return;resetModal('modal-dan-income');document.getElementById('dan-income-title').textContent='Edit Class';document.getElementById('dan-income-edit-id').value=id;document.getElementById('dan-date').value=c.date||'';document.getElementById('dan-price').value=c.price_per_attendee||'';document.getElementById('dan-attendees').value=c.num_attendees||'';document.getElementById('dan-payment').value=c.payment_method||'';document.getElementById('dan-notes').value=c.notes||'';document.getElementById('dan-income-del').style.display='';openModal('modal-dan-income');}
-
-function setSkiPrice(){var sel=document.getElementById('ski-product');var opt=sel.options[sel.selectedIndex];var p=opt?opt.getAttribute('data-price'):'';if(p)document.getElementById('ski-price').value=p;}
-async function saveSale(){
-  var editId=document.getElementById('ski-income-edit-id').value;
-  var date=document.getElementById('ski-date').value;
-  var product=document.getElementById('ski-product').value;
-  var price=parseFloat(document.getElementById('ski-price').value)||0;
-  var qty=parseInt(document.getElementById('ski-qty').value)||1;
-  var market=document.getElementById('ski-marketplace').value.trim();
-  var payment=document.getElementById('ski-payment').value;
-  var notes=document.getElementById('ski-notes').value.trim();
-  if(!date||!product){showToast('Please fill all required fields');return;}
-  var data={date:date,product_type:product,price:price,quantity:qty,marketplace:market,payment_method:payment,notes:notes};
-  setSyncDot('syncing');
-  if(editId){await sbUpd('skincare_sales',editId,data);var idx=allSales.findIndex(function(s){return s.id===editId;});if(idx>=0)allSales[idx]=Object.assign(allSales[idx],data);}
-  else{await sbIns('skincare_sales',Object.assign({id:genId()},data));await loadAll();}
-  closeModal('modal-ski-income');setSyncDot('synced');renderAll();showToast(editId?'Sale updated!':'Sale saved!');
-}
-async function deleteSale(){var id=document.getElementById('ski-income-edit-id').value;if(!id||!confirm('Delete?'))return;setSyncDot('syncing');await sbDel('skincare_sales',id);allSales=allSales.filter(function(s){return s.id!==id;});closeModal('modal-ski-income');setSyncDot('synced');renderAll();showToast('Deleted');}
-function editSale(id){var s=allSales.find(function(x){return x.id===id;});if(!s)return;resetModal('modal-ski-income');document.getElementById('ski-income-title').textContent='Edit Sale';document.getElementById('ski-income-edit-id').value=id;document.getElementById('ski-date').value=s.date||'';document.getElementById('ski-product').value=s.product_type||'';document.getElementById('ski-price').value=s.price||'';document.getElementById('ski-qty').value=s.quantity||'';document.getElementById('ski-marketplace').value=s.marketplace||'';document.getElementById('ski-payment').value=s.payment_method||'';document.getElementById('ski-notes').value=s.notes||'';document.getElementById('ski-income-del').style.display='';openModal('modal-ski-income');}
-
-function toggleRepeatOpts(prefix){var cb=document.getElementById(prefix+'-exp-repeat');var opts=document.getElementById(prefix+'-repeat-opts');if(opts)opts.style.display=(cb&&cb.checked)?'block':'none';}
-function calcNextDate(dateStr,freq){var p=dateStr.split('-');var d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));if(freq==='monthly')d.setMonth(d.getMonth()+1);else d.setFullYear(d.getFullYear()+1);return d.toISOString().split('T')[0];}
-
-async function saveExpense(biz){
-  var p=pfx(biz);
-  var editId=document.getElementById(p+'-exp-edit-id').value;
-  var date=document.getElementById(p+'-exp-date').value;
-  var vendor=document.getElementById(p+'-exp-vendor').value.trim();
-  var amount=parseFloat(document.getElementById(p+'-exp-amount').value)||0;
-  var category=document.getElementById(p+'-exp-cat').value;
-  var payment=document.getElementById(p+'-exp-pay').value;
-  var notes=document.getElementById(p+'-exp-notes').value.trim();
-  var isRepeat=(document.getElementById(p+'-exp-repeat')||{}).checked;
-  var freq=(document.getElementById(p+'-exp-freq')||{}).value||'monthly';
-  if(!date||!vendor||amount<=0){showToast('Please fill all required fields');return;}
-  setSyncDot('syncing');
-  var fileObjs=pendingFileObjects[p]||[];
-  var uploaded=await (fileObjs.length>0?uploadFiles(fileObjs,genId()):Promise.resolve([])).catch(function(){return[];});
-  var data={business:biz,date:date,vendor:vendor,amount:amount,category:category,payment_method:payment,notes:notes,files:JSON.stringify(uploaded)};
-  if(editId){
-    await sbUpd('expenses',editId,data);
-    var idx=allExpenses.findIndex(function(e){return e.id===editId;});if(idx>=0)allExpenses[idx]=Object.assign(allExpenses[idx],data);
-  } else {
-    var ops=[sbIns('expenses',Object.assign({id:genId()},data))];
-    if(isRepeat)ops.push(sbIns('repeat_expenses',{id:genId(),business:biz,vendor:vendor,amount:amount,category:category,payment_method:payment,notes:notes,freq:freq,next_date:calcNextDate(date,freq)}));
-    await Promise.all(ops);await loadAll();
-  }
-  pendingFiles[p]=[];pendingFileObjects[p]=[];
-  closeModal('modal-'+p+'-expense');setSyncDot('synced');renderAll();
-  showToast(isRepeat?'&#10003; Expense + repeat scheduled!':(editId?'Expense updated!':'Expense saved!'));
-}
-
-async function deleteExpense(biz){
-  var p=pfx(biz);var id=document.getElementById(p+'-exp-edit-id').value;
-  if(!id||!confirm('Delete?'))return;setSyncDot('syncing');
-  await sbDel('expenses',id);allExpenses=allExpenses.filter(function(e){return e.id!==id;});
-  closeModal('modal-'+p+'-expense');setSyncDot('synced');renderAll();showToast('Deleted');
-}
-
-function openExpEdit(biz,id,evt){
-  if(evt)evt.stopPropagation();
-  var e=allExpenses.find(function(x){return x.id===id;});if(!e)return;
-  var p=pfx(biz);
-  resetModal('modal-'+p+'-expense');
-  document.getElementById(p+'-exp-title').textContent='Edit Expense';
-  document.getElementById(p+'-exp-edit-id').value=id;
-  document.getElementById(p+'-exp-date').value=e.date||'';
-  document.getElementById(p+'-exp-vendor').value=e.vendor||'';
-  document.getElementById(p+'-exp-amount').value=e.amount||'';
-  document.getElementById(p+'-exp-cat').value=e.category||'';
-  document.getElementById(p+'-exp-pay').value=e.payment_method||'';
-  document.getElementById(p+'-exp-notes').value=e.notes||'';
-  document.getElementById(p+'-exp-del').style.display='';
-  var repeatRow=document.getElementById(p+'-repeat-row');if(repeatRow)repeatRow.style.display='none';
-  var files=parseFiles(e.files);
-  var chipsEl=document.getElementById(p+'-exp-chips');
-  if(chipsEl&&files.length)chipsEl.innerHTML=files.map(function(f){var fn=typeof f==='object'?f.name:f;return'<span class="file-chip">📎 '+fn+'</span>';}).join('');
-  openModal('modal-'+p+'-expense');
-}
-
-async function delExpById(biz,id,evt){
-  if(evt)evt.stopPropagation();if(!confirm('Delete?'))return;
-  setSyncDot('syncing');await sbDel('expenses',id);allExpenses=allExpenses.filter(function(e){return e.id!==id;});
-  setSyncDot('synced');renderAll();showToast('Deleted');
-}
-
-async function dupeExp(biz,id,evt){
-  if(evt)evt.stopPropagation();
-  var orig=allExpenses.find(function(x){return x.id===id;});if(!orig)return;
-  var row={id:genId(),business:biz,date:tod(),vendor:orig.vendor,amount:orig.amount,category:orig.category,payment_method:orig.payment_method,notes:(orig.notes?orig.notes+' (copy)':'(copy)'),files:''};
-  setSyncDot('syncing');await sbIns('expenses',row);await loadAll();
-  setSyncDot('synced');renderAll();showToast('&#10003; Duplicated with today\'s date');
-}
-
-async function logRepeat(id){
-  var r=allRepeats.find(function(x){return x.id===id;});if(!r)return;
-  var today=tod(),next=calcNextDate(r.next_date||today,r.freq||'monthly');
-  setSyncDot('syncing');
-  await Promise.all([sbIns('expenses',{id:genId(),business:r.business,date:today,vendor:r.vendor,amount:r.amount,category:r.category,payment_method:r.payment_method,notes:r.notes||'',files:''}),sbUpd('repeat_expenses',id,{next_date:next})]);
-  await loadAll();setSyncDot('synced');renderAll();showToast('&#10003; Logged! Next: '+fmtDate(next));
-}
-async function delRepeat(id){
-  if(!confirm('Remove repeating expense?'))return;setSyncDot('syncing');
-  await sbDel('repeat_expenses',id);allRepeats=allRepeats.filter(function(r){return r.id!==id;});
-  setSyncDot('synced');renderAll();showToast('Repeat removed');
-}
-
-function autoLogDueRepeats(){
-  var today=tod();
-  var due=allRepeats.filter(function(r){return r.next_date<=today;});
-  if(!due.length)return;
-  var ops=due.map(function(r){
-    var next=calcNextDate(r.next_date||today,r.freq||'monthly');
-    return Promise.all([sbIns('expenses',{id:genId(),business:r.business,date:today,vendor:r.vendor,amount:r.amount,category:r.category,payment_method:r.payment_method,notes:r.notes||'',files:''}),sbUpd('repeat_expenses',r.id,{next_date:next})]);
-  });
-  Promise.all(ops).then(function(){return loadAll();}).then(function(){setSyncDot('synced');showToast('&#128260; '+due.length+' repeat expense'+(due.length>1?'s':'')+' auto-logged');renderAll();}).catch(function(){setSyncDot('error');});
-}
-
-function switchPage(page){
-  activePage=page;
-  document.querySelectorAll('.page').forEach(function(v){v.classList.remove('active');});
-  document.querySelectorAll('.tnav-btn').forEach(function(b){b.classList.remove('active');});
-  document.getElementById('page-'+page).classList.add('active');
-  document.getElementById('tnav-'+page).classList.add('active');
-  document.getElementById('main').scrollTop=0;
-  if(page==='overview')renderOverview();
-  else if(page==='docs')renderDocs();
-  else if(page==='export')renderExport();
-  else if(page==='earnings')renderEarnings();
-}
-function switchBiz(biz){
-  activeBiz=biz;
-  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
-  document.getElementById('tab-'+biz).classList.add('active');
-  document.getElementById('header-biz-label').textContent=BN[biz];
-  if(activePage==='overview')renderOverview();
-  else if(activePage==='export')renderExport();
-  else if(activePage==='earnings')renderEarnings();
-}
-
-function showAddOptions(biz){addPickerBiz=biz;document.getElementById('add-type-title').textContent='Add to '+BN[biz];openModal('add-type-modal');}
-function openIncomeFromPicker(){closeModal('add-type-modal');openIncomeModal(addPickerBiz);}
-function openExpenseFromPicker(){closeModal('add-type-modal');openExpenseModal(addPickerBiz);}
-function openIncomeModal(biz){var p=pfx(biz);resetModal('modal-'+p+'-income');var titles={tutoring:'Log Session',music:'Log Event',dance:'Log Class',skincare:'Log Product Sale'};document.getElementById(p+'-income-title').textContent=titles[biz];openModal('modal-'+p+'-income');}
-function openExpenseModal(biz){var p=pfx(biz);resetModal('modal-'+p+'-expense');document.getElementById(p+'-exp-title').textContent='Add Expense';var rr=document.getElementById(p+'-repeat-row');if(rr)rr.style.display='';openModal('modal-'+p+'-expense');}
-
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-function resetModal(id){
-  var sheet=document.querySelector('#'+id+' .modal-sheet');if(!sheet)return;
-  sheet.querySelectorAll('input[type="hidden"]').forEach(function(h){h.value='';});
-  sheet.querySelectorAll('.delete-btn').forEach(function(b){b.style.display='none';});
-  sheet.querySelectorAll('input[type="text"],input[type="number"]').forEach(function(i){i.value='';});
-  sheet.querySelectorAll('select').forEach(function(s){s.selectedIndex=0;if(s.getAttribute('onchange')==='flagSel(this)')s.classList.add('unassigned');else s.classList.remove('unassigned');});
-  sheet.querySelectorAll('input[type="date"]').forEach(function(d){d.value=tod();});
-  sheet.querySelectorAll('input[type="checkbox"]').forEach(function(c){c.checked=false;});
-  sheet.querySelectorAll('[id$="-repeat-opts"]').forEach(function(o){o.style.display='none';});
-  sheet.querySelectorAll('[id$="-exp-chips"]').forEach(function(c){c.innerHTML='';});
-  if(id==='modal-mus-income')setMusPay('flat');
-}
-document.querySelectorAll('.modal-overlay').forEach(function(o){o.addEventListener('click',function(e){if(e.target===o)o.classList.remove('open');});});
-
-function flagSel(sel){var empty=!sel.value||sel.value===''||sel.value==='— Select —';if(empty)sel.classList.add('unassigned');else sel.classList.remove('unassigned');}
-
-function showToast(msg){var t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2400);}
-
-(function init(){
-  try{
-    setTimeout(function(){showApp();},8000);
-    loadAll().then(function(){
-      try{autoLogDueRepeats();}catch(e){}
-      try{renderAll();}catch(e){}
-      showApp();
-    }).catch(function(){showApp();});
-  }catch(e){showApp();}
-})();
+// Init with 1 business
+addBusiness();
 </script>
 </body>
 </html>
