@@ -1,941 +1,1167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OwnIt — Client Intake Form</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --navy:      #0D1B2A;
-    --navy-mid:  #0F2940;
-    --teal:      #00B4A6;
-    --teal-lt:   #A8DCDA;
-    --gold:      #F4A300;
-    --gold-lt:   #FDE8B0;
-    --white:     #FFFFFF;
-    --offwhite:  #F0F8FF;
-    --muted:     #6B7C93;
-    --border:    #D6EEF0;
-    --error:     #E53935;
-    --success:   #00B4A6;
-    --card:      #FFFFFF;
-    --shadow:    0 4px 24px rgba(13,27,42,0.10);
-    --shadow-lg: 0 12px 48px rgba(13,27,42,0.16);
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OwnIt — Client Intake Form</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:       #0D1B2A;
+      --deep-navy:  #0F2940;
+      --teal:       #00B4A6;
+      --light-teal: #A8DCDA;
+      --gold:       #F4A300;
+      --bg:         #EFF8F8;
+      --white:      #FFFFFF;
+      --text:       #0D1B2A;
+      --muted:      #5A7A8A;
+      --border:     #C8E0DF;
+      --error:      #E05A5A;
+      --radius:     10px;
+      --radius-lg:  16px;
+    }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--offwhite);
-    min-height: 100vh;
-    color: var(--navy);
-  }
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.6;
+    }
 
-  /* ── HERO HEADER ── */
-  .hero {
-    background: var(--navy);
-    padding: 56px 24px 48px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -80px; right: -80px;
-    width: 320px; height: 320px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(0,180,166,0.18) 0%, transparent 70%);
-  }
-  .hero::after {
-    content: '';
-    position: absolute;
-    bottom: -60px; left: -60px;
-    width: 240px; height: 240px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(244,163,0,0.12) 0%, transparent 70%);
-  }
-  .hero-badge {
-    display: inline-block;
-    background: var(--gold);
-    color: var(--navy);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 5px 14px;
-    border-radius: 20px;
-    margin-bottom: 18px;
-  }
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(36px, 6vw, 64px);
-    font-weight: 900;
-    color: var(--white);
-    line-height: 1.05;
-    margin-bottom: 14px;
-    position: relative;
-    z-index: 1;
-  }
-  .hero h1 span { color: var(--teal); }
-  .hero p {
-    color: var(--teal-lt);
-    font-size: 15px;
-    font-weight: 300;
-    max-width: 500px;
-    margin: 0 auto;
-    line-height: 1.6;
-    position: relative;
-    z-index: 1;
-  }
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--navy);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-svg {
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+    }
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+    .logo-text span { color: var(--gold); }
 
-  /* ── PROGRESS BAR ── */
-  .progress-wrap {
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 24px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 12px rgba(13,27,42,0.07);
-  }
-  .progress-inner {
-    max-width: 720px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .progress-track {
-    flex: 1;
-    height: 6px;
-    background: var(--border);
-    border-radius: 99px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--teal), var(--gold));
-    border-radius: 99px;
-    transition: width 0.5s cubic-bezier(.4,0,.2,1);
-    width: 0%;
-  }
-  .progress-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--muted);
-    white-space: nowrap;
-  }
+    /* ── BREADCRUMBS ── */
+    .breadcrumb-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .breadcrumb-bar::-webkit-scrollbar { display: none; }
+    .breadcrumb-list {
+      display: flex;
+      align-items: stretch;
+      list-style: none;
+      min-width: max-content;
+    }
+    .breadcrumb-list li {
+      display: flex;
+      align-items: center;
+    }
+    .breadcrumb-list li button {
+      all: unset;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 14px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      border-bottom: 2px solid transparent;
+      transition: color 0.18s, border-color 0.18s;
+      white-space: nowrap;
+    }
+    .breadcrumb-list li button svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      opacity: 0.6;
+      transition: opacity 0.18s;
+    }
+    .breadcrumb-list li button.active {
+      color: var(--teal);
+      border-bottom-color: var(--teal);
+      font-weight: 600;
+    }
+    .breadcrumb-list li button.active svg { opacity: 1; stroke: var(--teal); }
+    .breadcrumb-list li button.done { color: var(--navy); }
+    .breadcrumb-list li button.done svg { opacity: 0.9; stroke: var(--teal); }
+    .bc-check {
+      display: none;
+      width: 12px;
+      height: 12px;
+      flex-shrink: 0;
+    }
+    .breadcrumb-list li button.done .bc-check { display: block; }
+    .breadcrumb-sep {
+      color: var(--border);
+      font-size: 14px;
+      padding: 0 2px;
+      pointer-events: none;
+      user-select: none;
+    }
 
-  /* ── FORM CONTAINER ── */
-  .form-outer {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-  }
+    /* ── LAYOUT ── */
+    .form-container {
+      max-width: 680px;
+      margin: 48px auto 80px;
+      padding: 0 20px;
+    }
 
-  /* ── SECTION CARDS ── */
-  .section-card {
-    background: var(--card);
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    margin-bottom: 28px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    transition: box-shadow 0.2s;
-  }
-  .section-card:focus-within {
-    box-shadow: var(--shadow-lg);
-    border-color: var(--teal);
-  }
-  .section-header {
-    background: var(--navy);
-    padding: 20px 28px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .section-icon {
-    width: 38px; height: 38px;
-    background: rgba(0,180,166,0.15);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-  .section-header h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--white);
-    line-height: 1.2;
-  }
-  .section-header p {
-    font-size: 12px;
-    color: var(--teal-lt);
-    margin-top: 2px;
-    font-weight: 300;
-  }
-  .section-body {
-    padding: 28px;
-  }
+    /* ── SECTION HEADER ── */
+    .section-head {
+      margin-bottom: 28px;
+    }
+    .section-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .section-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--teal);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .section-head h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .section-head p {
+      color: var(--muted);
+      font-size: 14px;
+    }
 
-  /* ── FIELD GROUPS ── */
-  .field-group {
-    margin-bottom: 22px;
-  }
-  .field-group:last-child { margin-bottom: 0; }
+    /* ── AUTOSAVE BADGE ── */
+    .autosave-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .autosave-badge.visible { opacity: 1; }
+    .autosave-badge .dot {
+      width: 6px; height: 6px;
+      background: var(--teal);
+      border-radius: 50%;
+    }
 
-  .field-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-  @media (max-width: 540px) {
-    .field-row { grid-template-columns: 1fr; }
-  }
+    /* ── CARD ── */
+    .form-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      margin-bottom: 16px;
+    }
 
-  label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    color: var(--navy);
-    margin-bottom: 7px;
-  }
-  label .req { color: var(--teal); margin-left: 2px; }
-  label .hint {
-    font-weight: 400;
-    font-size: 11px;
-    text-transform: none;
-    letter-spacing: 0;
-    color: var(--muted);
-    margin-left: 6px;
-  }
+    /* ── FIELD GROUPS ── */
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 520px) {
+      .field-row { grid-template-columns: 1fr; }
+      .form-card { padding: 20px 18px; }
+    }
 
-  input[type="text"],
-  input[type="email"],
-  input[type="tel"],
-  input[type="number"],
-  select,
-  textarea {
-    width: 100%;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: var(--navy);
-    background: var(--offwhite);
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: 11px 14px;
-    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-    outline: none;
-    appearance: none;
-  }
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--teal);
-    background: var(--white);
-    box-shadow: 0 0 0 3px rgba(0,180,166,0.12);
-  }
-  textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
-  select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7C93' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 36px;
-    cursor: pointer;
-  }
+    .field {
+      margin-bottom: 22px;
+    }
+    .field:last-child { margin-bottom: 0; }
 
-  /* ── BUSINESS ENTRIES ── */
-  .biz-entry {
-    background: var(--offwhite);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 14px;
-    position: relative;
-    transition: border-color 0.2s;
-  }
-  .biz-entry:focus-within { border-color: var(--teal); }
-  .biz-entry-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-  .biz-number {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--teal);
-    background: rgba(0,180,166,0.10);
-    padding: 3px 10px;
-    border-radius: 20px;
-  }
-  .remove-biz {
-    background: none;
-    border: none;
-    color: var(--muted);
-    cursor: pointer;
-    font-size: 18px;
-    padding: 2px 6px;
-    border-radius: 6px;
-    transition: color 0.2s, background 0.2s;
-    line-height: 1;
-  }
-  .remove-biz:hover { color: var(--error); background: #FEE; }
+    .field label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 7px;
+    }
+    .field label .hint {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .field label .req { color: var(--teal); margin-left: 2px; }
 
-  /* ── ADD BUTTON ── */
-  .add-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: none;
-    border: 1.5px dashed var(--teal);
-    color: var(--teal);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 10px 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    width: 100%;
-    justify-content: center;
-    transition: background 0.2s, color 0.2s;
-    margin-top: 4px;
-  }
-  .add-btn:hover { background: rgba(0,180,166,0.08); }
+    .field input[type="text"],
+    .field input[type="email"],
+    .field input[type="tel"],
+    .field textarea,
+    .field select {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 11px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(0,180,166,0.12);
+    }
+    .field textarea { resize: vertical; min-height: 90px; }
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235A7A8A' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
 
-  /* ── CHECKBOX / RADIO GROUPS ── */
-  .check-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 8px;
-  }
-  .check-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--offwhite);
-    border: 1.5px solid var(--border);
-    border-radius: 9px;
-    padding: 9px 12px;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    font-size: 13px;
-    font-weight: 400;
-    text-transform: none;
-    letter-spacing: 0;
-    color: var(--navy);
-    user-select: none;
-  }
-  .check-item:hover { border-color: var(--teal); background: rgba(0,180,166,0.05); }
-  .check-item input { display: none; }
-  .check-box {
-    width: 18px; height: 18px;
-    border: 2px solid var(--border);
-    border-radius: 5px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    transition: border-color 0.2s, background 0.2s;
-    font-size: 11px;
-  }
-  .check-item input:checked ~ .check-box {
-    background: var(--teal);
-    border-color: var(--teal);
-    color: white;
-  }
-  .check-item input:checked ~ .check-box::after { content: '✓'; }
-  .check-item:has(input:checked) {
-    border-color: var(--teal);
-    background: rgba(0,180,166,0.07);
-  }
+    /* warning state */
+    .field.warn input,
+    .field.warn textarea,
+    .field.warn select {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(224,90,90,0.10);
+    }
+    .field .warn-msg {
+      display: none;
+      font-size: 12px;
+      color: var(--error);
+      margin-top: 5px;
+    }
+    .field.warn .warn-msg { display: block; }
 
-  /* ── RADIO PILLS ── */
-  .radio-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .radio-pill {
-    position: relative;
-  }
-  .radio-pill input { position: absolute; opacity: 0; pointer-events: none; }
-  .radio-pill label {
-    display: inline-block;
-    background: var(--offwhite);
-    border: 1.5px solid var(--border);
-    border-radius: 99px;
-    padding: 7px 16px;
-    font-size: 13px;
-    font-weight: 500;
-    text-transform: none;
-    letter-spacing: 0;
-    color: var(--navy);
-    cursor: pointer;
-    transition: all 0.2s;
-    margin: 0;
-  }
-  .radio-pill input:checked + label {
-    background: var(--teal);
-    border-color: var(--teal);
-    color: white;
-  }
+    /* ── RADIO / CHECKBOX PILLS ── */
+    .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pill-group input[type="radio"],
+    .pill-group input[type="checkbox"] { display: none; }
+    .pill-group label {
+      cursor: pointer;
+      font-size: 13.5px;
+      font-weight: 500;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--navy);
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 16px;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      user-select: none;
+    }
+    .pill-group input[type="radio"]:checked + label,
+    .pill-group input[type="checkbox"]:checked + label {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: var(--white);
+    }
 
-  /* ── SUBMIT ── */
-  .submit-zone {
-    text-align: center;
-    padding: 16px 0 0;
-  }
-  .submit-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--navy);
-    color: var(--white);
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 700;
-    padding: 16px 44px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(13,27,42,0.25);
-    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .submit-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--teal) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(13,27,42,0.30); }
-  .submit-btn:hover::before { opacity: 0.15; }
-  .submit-btn:active { transform: translateY(0); }
-  .submit-note {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 12px;
-  }
+    /* ── BUSINESS REPEATER ── */
+    .business-entry {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .business-entry h4 {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+    .remove-btn {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      line-height: 1;
+      transition: color 0.15s;
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .remove-btn:hover { color: var(--error); }
+    .remove-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+    .add-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: 1.5px dashed var(--teal);
+      border-radius: var(--radius);
+      color: var(--teal);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 11px 20px;
+      cursor: pointer;
+      width: 100%;
+      justify-content: center;
+      transition: background 0.15s;
+      margin-top: 4px;
+    }
+    .add-btn:hover { background: rgba(0,180,166,0.06); }
+    .add-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; }
 
-  /* ── SUCCESS STATE ── */
-  .success-screen {
-    display: none;
-    text-align: center;
-    padding: 80px 24px;
-    max-width: 480px;
-    margin: 0 auto;
-  }
-  .success-screen.show { display: block; }
-  .success-icon {
-    width: 80px; height: 80px;
-    background: linear-gradient(135deg, var(--teal), var(--navy));
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 36px;
-    margin: 0 auto 24px;
-    box-shadow: 0 8px 32px rgba(0,180,166,0.3);
-  }
-  .success-screen h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 30px;
-    color: var(--navy);
-    margin-bottom: 12px;
-  }
-  .success-screen p { color: var(--muted); line-height: 1.7; font-size: 15px; }
+    /* ── NAV BUTTONS ── */
+    .form-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 28px;
+      gap: 12px;
+    }
+    .btn-back {
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 11px 22px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-back:hover { border-color: var(--navy); color: var(--navy); }
+    .btn-back svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .btn-next {
+      background: var(--teal);
+      border: none;
+      border-radius: var(--radius);
+      padding: 12px 28px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-next:hover { background: #009e92; }
+    .btn-next:active { transform: scale(0.98); }
+    .btn-next svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .btn-submit {
+      background: var(--gold);
+      color: var(--navy);
+    }
+    .btn-submit:hover { background: #d99200; }
 
-  /* ── DIVIDER ── */
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 20px 0;
-  }
+    /* ── PAGES ── */
+    .page { display: none; }
+    .page.active { display: block; }
 
+    /* ── THANK YOU ── */
+    .thankyou {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .thankyou .ty-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .thankyou .ty-icon svg {
+      width: 30px;
+      height: 30px;
+      stroke: var(--teal);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .thankyou h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+    .thankyou p { color: var(--muted); font-size: 15px; max-width: 400px; margin: 0 auto; line-height: 1.7; }
 
-  /* ── INFO NOTE ── */
-  .info-note {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    background: linear-gradient(135deg, rgba(0,180,166,0.08), rgba(244,163,0,0.06));
-    border: 1.5px solid rgba(0,180,166,0.25);
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-size: 12.5px;
-    color: var(--navy);
-    line-height: 1.6;
-  }
-  .info-icon {
-    font-size: 16px;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
+    /* ── FOOTER ── */
+    .site-footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      margin-top: 20px;
+    }
 
-  /* ── PRINT/SHARE BAR ── */
-  .action-bar {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    display: flex;
-    gap: 10px;
-    z-index: 200;
-  }
-  .action-bar button {
-    background: var(--navy);
-    color: var(--white);
-    border: none;
-    border-radius: 10px;
-    padding: 10px 18px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: background 0.2s;
-  }
-  .action-bar button:hover { background: var(--teal); }
-  .action-bar .print-btn { background: var(--navy-mid); }
-
-  @media print {
-    .progress-wrap, .action-bar { display: none; }
-    .hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  }
-</style>
+    /* ── STEP COUNTER ── */
+    .step-count {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+  </style>
 </head>
 <body>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-badge">Client Intake Form</div>
-  <h1>Let's Build Your<br><span>OwnIt</span> App</h1>
-  <p>Fill this out before your discovery call — the more detail you share, the faster we build your perfect app.</p>
-</div>
+<!-- HEADER -->
+<header class="site-header">
+  <svg class="logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="194" height="194" rx="42" fill="#0F2940" stroke="#00B4A6" stroke-width="6"></rect>
+    <polygon points="92,146 30,146 55,76" fill="#F4A300"></polygon>
+    <polygon points="108,146 168,146 142,96" fill="#F4A300"></polygon>
+    <polygon points="100,50 124,106 124,160 76,160 76,106" fill="#00B4A6"></polygon>
+    <rect x="28" y="141" width="144" height="22" rx="6" fill="#F4A300"></rect>
+    <circle cx="55" cy="76" r="9" fill="#FFFFFF"></circle>
+    <circle cx="100" cy="50" r="10" fill="#FFFFFF"></circle>
+    <circle cx="142" cy="96" r="8" fill="#FFFFFF"></circle>
+    <circle cx="100" cy="50" r="16" fill="none" stroke="#00B4A6" stroke-width="3" stroke-dasharray="4 3"></circle>
+  </svg>
+  <div class="logo-text">Own<span>It</span></div>
+</header>
 
-<!-- PROGRESS -->
-<div class="progress-wrap">
-  <div class="progress-inner">
-    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-    <span class="progress-label" id="progressLabel">0% complete</span>
-  </div>
-</div>
-
-<!-- FORM -->
-<div class="form-outer" id="formOuter">
-<form id="intakeForm" action="https://formspree.io/f/mlgazvra" method="POST" novalidate>
-
-  <!-- 1. ABOUT YOU -->
-  <div class="section-card">
-    <div class="section-header">
-      <div class="section-icon">👤</div>
-      <div>
-        <h2>About You</h2>
-        <p>Basic contact info so we can get started</p>
-      </div>
-    </div>
-    <div class="section-body">
-      <div class="field-row">
-        <div class="field-group">
-          <label>First Name <span class="req">*</span></label>
-          <input type="text" name="firstName" placeholder="Your first name" required>
-        </div>
-        <div class="field-group">
-          <label>Last Name <span class="req">*</span></label>
-          <input type="text" name="lastName" placeholder="Your last name" required>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>Email Address <span class="req">*</span></label>
-        <input type="email" name="email" placeholder="you@example.com" required>
-      </div>
-      <div class="field-group">
-        <label>Phone / Best Way to Reach You</label>
-        <input type="tel" name="phone" placeholder="Phone number or preferred messaging app">
-      </div>
-
-    </div>
-  </div>
-
-  <!-- 2. YOUR BUSINESSES -->
-  <div class="section-card">
-    <div class="section-header">
-      <div class="section-icon">💼</div>
-      <div>
-        <h2>Your Businesses</h2>
-        <p>Tell us about each income stream — one entry per business</p>
-      </div>
-    </div>
-    <div class="section-body">
-      <div id="bizContainer"></div>
-      <button type="button" class="add-btn" onclick="addBusiness()">
-        <span>＋</span> Add Another Business
+<!-- BREADCRUMBS -->
+<nav class="breadcrumb-bar" aria-label="Form sections">
+  <ul class="breadcrumb-list" id="breadcrumbs">
+    <li>
+      <button onclick="goToPage(0)" id="bc-0">
+        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        About You
+        <svg class="bc-check" viewBox="0 0 24 24" stroke="#00B4A6" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </button>
+    </li>
+    <li><span class="breadcrumb-sep">›</span></li>
+    <li>
+      <button onclick="goToPage(1)" id="bc-1">
+        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Businesses
+        <svg class="bc-check" viewBox="0 0 24 24" stroke="#00B4A6" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>
+    </li>
+    <li><span class="breadcrumb-sep">›</span></li>
+    <li>
+      <button onclick="goToPage(2)" id="bc-2">
+        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Expenses
+        <svg class="bc-check" viewBox="0 0 24 24" stroke="#00B4A6" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>
+    </li>
+    <li><span class="breadcrumb-sep">›</span></li>
+    <li>
+      <button onclick="goToPage(3)" id="bc-3">
+        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Income &amp; Tax
+        <svg class="bc-check" viewBox="0 0 24 24" stroke="#00B4A6" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>
+    </li>
+    <li><span class="breadcrumb-sep">›</span></li>
+    <li>
+      <button onclick="goToPage(4)" id="bc-4">
+        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        Setup
+        <svg class="bc-check" viewBox="0 0 24 24" stroke="#00B4A6" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>
+    </li>
+    <li><span class="breadcrumb-sep">›</span></li>
+    <li>
+      <button onclick="goToPage(5)" id="bc-5">
+        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        Branding
+        <svg class="bc-check" viewBox="0 0 24 24" stroke="#00B4A6" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>
+    </li>
+    <li><span class="breadcrumb-sep">›</span></li>
+    <li>
+      <button onclick="goToPage(6)" id="bc-6">
+        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Anything Else
+        <svg class="bc-check" viewBox="0 0 24 24" stroke="#00B4A6" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>
+    </li>
+  </ul>
+</nav>
+
+<main class="form-container">
+
+  <!-- ═══ PAGE 0 — ABOUT YOU ═══ -->
+  <div class="page" id="page-0">
+    <div class="section-head">
+      <div class="section-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </div>
+      <h1>About You</h1>
+      <p>Basic contact info so we can get started.</p>
+    </div>
+    <div class="autosave-badge" id="save-0"><span class="dot"></span> Saved</div>
+    <div class="form-card">
+      <div class="field-row">
+        <div class="field" id="f-firstName">
+          <label>First Name <span class="req">*</span></label>
+          <input type="text" id="firstName" placeholder="Jane" autocomplete="given-name" />
+          <span class="warn-msg">Please enter your first name.</span>
+        </div>
+        <div class="field" id="f-lastName">
+          <label>Last Name <span class="req">*</span></label>
+          <input type="text" id="lastName" placeholder="Smith" autocomplete="family-name" />
+          <span class="warn-msg">Please enter your last name.</span>
+        </div>
+      </div>
+      <div class="field" id="f-email">
+        <label>Email Address <span class="req">*</span></label>
+        <input type="email" id="email" placeholder="jane@example.com" autocomplete="email" />
+        <span class="warn-msg">Please enter a valid email.</span>
+      </div>
+      <div class="field">
+        <label>Phone / Best Way to Reach You</label>
+        <input type="tel" id="phone" placeholder="(555) 000-0000" autocomplete="tel" />
+      </div>
+    </div>
+    <div class="form-nav">
+      <span class="step-count">Step 1 of 7</span>
+      <button class="btn-next" onclick="nextPage(0)">Businesses <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
   </div>
 
-  <!-- 3. EXPENSES & PAYMENTS -->
-  <div class="section-card">
-    <div class="section-header">
-      <div class="section-icon">💳</div>
-      <div>
-        <h2>Expenses & Payments</h2>
-        <p>How you spend and how you get paid</p>
+  <!-- ═══ PAGE 1 — BUSINESSES ═══ -->
+  <div class="page" id="page-1">
+    <div class="section-head">
+      <div class="section-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
       </div>
+      <h1>Your Businesses</h1>
+      <p>Tell us about each income stream — one entry per business.</p>
     </div>
-    <div class="section-body">
-      <div class="field-group">
-        <label>What payment methods do you use?
-          <span class="hint">— Select all that apply</span>
-        </label>
-        <div class="check-grid">
-          <label class="check-item"><input type="checkbox" name="pay" value="Business Card"> <span class="check-box"></span> Business Card</label>
-          <label class="check-item"><input type="checkbox" name="pay" value="Personal Card"> <span class="check-box"></span> Personal Card</label>
-          <label class="check-item"><input type="checkbox" name="pay" value="Cash"> <span class="check-box"></span> Cash</label>
-          <label class="check-item"><input type="checkbox" name="pay" value="Zelle"> <span class="check-box"></span> Zelle</label>
-          <label class="check-item"><input type="checkbox" name="pay" value="Venmo"> <span class="check-box"></span> Venmo</label>
-          <label class="check-item"><input type="checkbox" name="pay" value="PayPal"> <span class="check-box"></span> PayPal</label>
-          <label class="check-item"><input type="checkbox" name="pay" value="CashApp"> <span class="check-box"></span> Cash App</label>
-          <label class="check-item"><input type="checkbox" name="pay" value="Check"> <span class="check-box"></span> Check</label>
-          <label class="check-item"><input type="checkbox" name="pay" value="Other"> <span class="check-box"></span> Other</label>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>List your main expense categories
-          <span class="hint">— e.g. Transportation, Supplies, Subscriptions, Marketing</span>
-        </label>
-        <textarea name="expenseCategories" placeholder="Walk us through a recent month of spending. What do you typically pay for across your businesses? Tip: look at last year's Schedule C to help determine which categories you need."></textarea>
-      </div>
-      <div class="field-group">
-        <label>Do you have recurring expenses you'd want to duplicate quickly?</label>
-        <div class="radio-pills">
-          <div class="radio-pill"><input type="radio" name="recurring" id="rec-y" value="Yes"><label for="rec-y">Yes</label></div>
-          <div class="radio-pill"><input type="radio" name="recurring" id="rec-n" value="No"><label for="rec-n">No</label></div>
-          <div class="radio-pill"><input type="radio" name="recurring" id="rec-m" value="Maybe"><label for="rec-m">Not sure</label></div>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>Do you attach receipts or photos to expenses?</label>
-        <div class="radio-pills">
-          <div class="radio-pill"><input type="radio" name="receipts" id="rec2-y" value="Yes"><label for="rec2-y">Yes — always</label></div>
-          <div class="radio-pill"><input type="radio" name="receipts" id="rec2-s" value="Sometimes"><label for="rec2-s">Sometimes</label></div>
-          <div class="radio-pill"><input type="radio" name="receipts" id="rec2-n" value="No"><label for="rec2-n">Not really</label></div>
-        </div>
-      </div>
+    <div class="autosave-badge" id="save-1"><span class="dot"></span> Saved</div>
+    <div id="business-list"></div>
+    <button class="add-btn" onclick="addBusiness()">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Another Business
+    </button>
+    <div class="form-nav">
+      <button class="btn-back" onclick="prevPage(1)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button>
+      <span class="step-count">Step 2 of 7</span>
+      <button class="btn-next" onclick="nextPage(1)">Expenses <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
   </div>
 
-  <!-- 4. INCOME & TAX -->
-  <div class="section-card">
-    <div class="section-header">
-      <div class="section-icon">📊</div>
-      <div>
-        <h2>Income & Tax Info</h2>
-        <p>Helps us set up the right tracking features for you</p>
+  <!-- ═══ PAGE 2 — EXPENSES & PAYMENTS ═══ -->
+  <div class="page" id="page-2">
+    <div class="section-head">
+      <div class="section-icon">
+        <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      </div>
+      <h1>Expenses &amp; Payments</h1>
+      <p>How you spend and how you get paid.</p>
+    </div>
+    <div class="autosave-badge" id="save-2"><span class="dot"></span> Saved</div>
+    <div class="form-card">
+      <div class="field">
+        <label>What Payment Methods Do You Use? <span class="hint">Select all that apply</span></label>
+        <div class="pill-group" id="paymentMethods">
+          <input type="checkbox" id="pm-bizcard" value="Business Card" /><label for="pm-bizcard">Business Card</label>
+          <input type="checkbox" id="pm-perscard" value="Personal Card" /><label for="pm-perscard">Personal Card</label>
+          <input type="checkbox" id="pm-cash" value="Cash" /><label for="pm-cash">Cash</label>
+          <input type="checkbox" id="pm-zelle" value="Zelle" /><label for="pm-zelle">Zelle</label>
+          <input type="checkbox" id="pm-venmo" value="Venmo" /><label for="pm-venmo">Venmo</label>
+          <input type="checkbox" id="pm-paypal" value="PayPal" /><label for="pm-paypal">PayPal</label>
+          <input type="checkbox" id="pm-cashapp" value="Cash App" /><label for="pm-cashapp">Cash App</label>
+          <input type="checkbox" id="pm-check" value="Check" /><label for="pm-check">Check</label>
+          <input type="checkbox" id="pm-other" value="Other" /><label for="pm-other">Other</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>List Your Main Expense Categories <span class="hint">e.g. Transportation, Supplies, Subscriptions, Marketing</span></label>
+        <textarea id="expenseCategories" placeholder="Transportation, Supplies, Marketing..."></textarea>
+      </div>
+      <div class="field">
+        <label>Do You Have Recurring Expenses You'd Want to Duplicate Quickly?</label>
+        <div class="pill-group">
+          <input type="radio" name="recurringExp" id="re-yes" value="Yes" /><label for="re-yes">Yes</label>
+          <input type="radio" name="recurringExp" id="re-no" value="No" /><label for="re-no">No</label>
+          <input type="radio" name="recurringExp" id="re-notsure" value="Not sure" /><label for="re-notsure">Not sure</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Do You Attach Receipts or Photos to Expenses?</label>
+        <div class="pill-group">
+          <input type="radio" name="receipts" id="rec-always" value="Yes — always" /><label for="rec-always">Yes — always</label>
+          <input type="radio" name="receipts" id="rec-sometimes" value="Sometimes" /><label for="rec-sometimes">Sometimes</label>
+          <input type="radio" name="receipts" id="rec-no" value="Not really" /><label for="rec-no">Not really</label>
+        </div>
       </div>
     </div>
-    <div class="section-body">
-      <div class="field-group">
-        <label>Do you file taxes using Schedule C?
-          <span class="hint">— Sole proprietors & single-member LLCs</span>
-        </label>
-        <div class="radio-pills">
-          <div class="radio-pill"><input type="radio" name="schedC" id="sc-y" value="Yes"><label for="sc-y">Yes</label></div>
-          <div class="radio-pill"><input type="radio" name="schedC" id="sc-n" value="No"><label for="sc-n">No</label></div>
-          <div class="radio-pill"><input type="radio" name="schedC" id="sc-u" value="Unsure"><label for="sc-u">Not sure</label></div>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>Do you receive 1099-NEC or 1099-K forms?</label>
-        <div class="radio-pills">
-          <div class="radio-pill"><input type="radio" name="form1099" id="f-y" value="Yes"><label for="f-y">Yes</label></div>
-          <div class="radio-pill"><input type="radio" name="form1099" id="f-n" value="No"><label for="f-n">No</label></div>
-          <div class="radio-pill"><input type="radio" name="form1099" id="f-u" value="Unsure"><label for="f-u">Not sure</label></div>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>Do you want to export data to Google Sheets for your accountant?</label>
-        <div class="radio-pills">
-          <div class="radio-pill"><input type="radio" name="csvExport" id="csv-y" value="Yes"><label for="csv-y">Yes please</label></div>
-          <div class="radio-pill"><input type="radio" name="csvExport" id="csv-n" value="No"><label for="csv-n">Not needed</label></div>
-          <div class="radio-pill"><input type="radio" name="csvExport" id="csv-m" value="Maybe"><label for="csv-m">Maybe later</label></div>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>Do you want to export into QuickBooks or another accounting platform?</label>
-        <div class="radio-pills">
-          <div class="radio-pill"><input type="radio" name="qbExport" id="qb-y" value="Yes"><label for="qb-y">Yes</label></div>
-          <div class="radio-pill"><input type="radio" name="qbExport" id="qb-n" value="No"><label for="qb-n">No</label></div>
-          <div class="radio-pill"><input type="radio" name="qbExport" id="qb-m" value="Maybe"><label for="qb-m">Not sure</label></div>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>Do you have a part-time or full-time job you'd like to incorporate?
-          <span class="hint">— W2 forms for 1040 tax filing</span>
-        </label>
-        <div class="radio-pills">
-          <div class="radio-pill"><input type="radio" name="w2Job" id="w2-y" value="Yes — full-time"><label for="w2-y">Yes — full-time</label></div>
-          <div class="radio-pill"><input type="radio" name="w2Job" id="w2-p" value="Yes — part-time"><label for="w2-p">Yes — part-time</label></div>
-          <div class="radio-pill"><input type="radio" name="w2Job" id="w2-n" value="No"><label for="w2-n">No</label></div>
-        </div>
-      </div>
+    <div class="form-nav">
+      <button class="btn-back" onclick="prevPage(2)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button>
+      <span class="step-count">Step 3 of 7</span>
+      <button class="btn-next" onclick="nextPage(2)">Income &amp; Tax <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
   </div>
 
-  <!-- 5. SETUP & DEVICES -->
-  <div class="section-card">
-    <div class="section-header">
-      <div class="section-icon">📱</div>
-      <div>
-        <h2>Setup & Devices</h2>
-        <p>So we build the right version for your life</p>
+  <!-- ═══ PAGE 3 — INCOME & TAX ═══ -->
+  <div class="page" id="page-3">
+    <div class="section-head">
+      <div class="section-icon">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <h1>Income &amp; Tax Info</h1>
+      <p>Helps us set up the right tracking features for you.</p>
+    </div>
+    <div class="autosave-badge" id="save-3"><span class="dot"></span> Saved</div>
+    <div class="form-card">
+      <div class="field">
+        <label>Do You File Taxes Using Schedule C? <span class="hint">Sole proprietors &amp; single-member LLCs</span></label>
+        <div class="pill-group">
+          <input type="radio" name="scheduleC" id="sc-yes" value="Yes" /><label for="sc-yes">Yes</label>
+          <input type="radio" name="scheduleC" id="sc-no" value="No" /><label for="sc-no">No</label>
+          <input type="radio" name="scheduleC" id="sc-notsure" value="Not sure" /><label for="sc-notsure">Not sure</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Do You Receive 1099-NEC or 1099-K Forms?</label>
+        <div class="pill-group">
+          <input type="radio" name="form1099" id="f99-yes" value="Yes" /><label for="f99-yes">Yes</label>
+          <input type="radio" name="form1099" id="f99-no" value="No" /><label for="f99-no">No</label>
+          <input type="radio" name="form1099" id="f99-notsure" value="Not sure" /><label for="f99-notsure">Not sure</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Do You Want to Export Data to Google Sheets for Your Accountant?</label>
+        <div class="pill-group">
+          <input type="radio" name="googleSheets" id="gs-yes" value="Yes please" /><label for="gs-yes">Yes please</label>
+          <input type="radio" name="googleSheets" id="gs-no" value="Not needed" /><label for="gs-no">Not needed</label>
+          <input type="radio" name="googleSheets" id="gs-maybe" value="Maybe later" /><label for="gs-maybe">Maybe later</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Do You Want to Export into QuickBooks or Another Accounting Platform?</label>
+        <div class="pill-group">
+          <input type="radio" name="quickbooks" id="qb-yes" value="Yes" /><label for="qb-yes">Yes</label>
+          <input type="radio" name="quickbooks" id="qb-no" value="No" /><label for="qb-no">No</label>
+          <input type="radio" name="quickbooks" id="qb-notsure" value="Not sure" /><label for="qb-notsure">Not sure</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Do You Have a Part-Time or Full-Time Job? <span class="hint">W2 forms for 1040 tax filing</span></label>
+        <div class="pill-group">
+          <input type="radio" name="w2job" id="w2-ft" value="Yes — full-time" /><label for="w2-ft">Yes — full-time</label>
+          <input type="radio" name="w2job" id="w2-pt" value="Yes — part-time" /><label for="w2-pt">Yes — part-time</label>
+          <input type="radio" name="w2job" id="w2-no" value="No" /><label for="w2-no">No</label>
+        </div>
       </div>
     </div>
-    <div class="section-body">
-      <div class="field-group">
-        <label>How many devices do you plan to use the app on? <span class="req">*</span>
-          <span class="hint">— Multi-device needs Supabase sync (+$50)</span>
-        </label>
-        <div class="radio-pills">
-          <div class="radio-pill"><input type="radio" name="devices" id="d1" value="1 device"><label for="d1">Just 1 device</label></div>
-          <div class="radio-pill"><input type="radio" name="devices" id="d2" value="2+ devices"><label for="d2">2 or more devices</label></div>
-          <div class="radio-pill"><input type="radio" name="devices" id="du" value="Unsure"><label for="du">Not sure yet</label></div>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>Do you use Apple products or Android/Windows?
-          <span class="hint">— Helps us optimize your app experience</span>
-        </label>
-        <div class="radio-pills">
-          <div class="radio-pill"><input type="radio" name="deviceType" id="dt-apple" value="Apple"><label for="dt-apple">Apple (iPhone/iPad/Mac)</label></div>
-          <div class="radio-pill"><input type="radio" name="deviceType" id="dt-android" value="Android/Windows"><label for="dt-android">Android / Windows</label></div>
-          <div class="radio-pill"><input type="radio" name="deviceType" id="dt-mix" value="Mix"><label for="dt-mix">Mix of both</label></div>
-        </div>
-      </div>
-
+    <div class="form-nav">
+      <button class="btn-back" onclick="prevPage(3)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button>
+      <span class="step-count">Step 4 of 7</span>
+      <button class="btn-next" onclick="nextPage(3)">Setup <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
   </div>
 
-  <!-- 6. APP BRANDING -->
-  <div class="section-card">
-    <div class="section-header">
-      <div class="section-icon">👑</div>
-      <div>
-        <h2>App Branding</h2>
-        <p>Make it look and feel like yours</p>
+  <!-- ═══ PAGE 4 — SETUP & DEVICES ═══ -->
+  <div class="page" id="page-4">
+    <div class="section-head">
+      <div class="section-icon">
+        <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+      </div>
+      <h1>Setup &amp; Devices</h1>
+      <p>So we build the right version for your life.</p>
+    </div>
+    <div class="autosave-badge" id="save-4"><span class="dot"></span> Saved</div>
+    <div class="form-card">
+      <div class="field" id="f-deviceCount">
+        <label>How Many Devices Do You Plan to Use the App On? <span class="req">*</span><span class="hint">Multi-device needs Supabase sync (+$50)</span></label>
+        <div class="pill-group">
+          <input type="radio" name="deviceCount" id="dc-1" value="Just 1 device" /><label for="dc-1">Just 1 device</label>
+          <input type="radio" name="deviceCount" id="dc-2" value="2 or more devices" /><label for="dc-2">2 or more devices</label>
+          <input type="radio" name="deviceCount" id="dc-notsure" value="Not sure yet" /><label for="dc-notsure">Not sure yet</label>
+        </div>
+        <span class="warn-msg">Please select an option.</span>
+      </div>
+      <div class="field">
+        <label>Do You Use Apple Products or Android/Windows? <span class="hint">Helps us optimize your app experience</span></label>
+        <div class="pill-group">
+          <input type="radio" name="platform" id="pl-apple" value="Apple (iPhone/iPad/Mac)" /><label for="pl-apple">Apple (iPhone/iPad/Mac)</label>
+          <input type="radio" name="platform" id="pl-android" value="Android / Windows" /><label for="pl-android">Android / Windows</label>
+          <input type="radio" name="platform" id="pl-mix" value="Mix of both" /><label for="pl-mix">Mix of both</label>
+        </div>
       </div>
     </div>
-    <div class="section-body">
-      <div class="field-group">
-        <label>What do you want your app to be called? <span class="req">*</span>
-          <span class="hint">— This becomes the app name on your Home Screen</span>
-        </label>
-        <input type="text" name="appName" placeholder='e.g. "Glam by Kia" or "The Hustle Hub"' required>
-      </div>
-      <div class="field-group">
-        <label>Do you have a brand color or logo you want used?</label>
-        <div class="radio-pills">
-          <div class="radio-pill"><input type="radio" name="branding" id="br-y" value="Yes"><label for="br-y">Yes — I'll share it</label></div>
-          <div class="radio-pill"><input type="radio" name="branding" id="br-n" value="No"><label for="br-n">No — you choose</label></div>
-          <div class="radio-pill"><input type="radio" name="branding" id="br-w" value="Working on it"><label for="br-w">Working on it</label></div>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>What are your brand colors?
-          <span class="hint">— Hex codes, "vibes," or paste an Instagram link</span>
-        </label>
-        <input type="text" name="brandColors" placeholder='e.g. "#C2185B pink + gold" or "earth tones, no bright colors"'>
-      </div>
-      <div class="field-group">
-        <label>Do you have a logo you'd like to use as your app icon?</label>
-        <div class="radio-pills">
-          <div class="radio-pill"><input type="radio" name="hasLogo" id="lg-y" value="Yes"><label for="lg-y">Yes — I'll send it</label></div>
-          <div class="radio-pill"><input type="radio" name="hasLogo" id="lg-n" value="No"><label for="lg-n">No — create one for me</label></div>
-          <div class="radio-pill"><input type="radio" name="hasLogo" id="lg-w" value="Working on it"><label for="lg-w">Working on it</label></div>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>Any other visual notes?
-          <span class="hint">— Fonts, styles, inspiration accounts, anything helps</span>
-        </label>
-        <textarea name="visualNotes" placeholder='e.g. "clean and minimal", "bold and colorful", "similar vibe to @brandname on Instagram"' style="min-height:72px"></textarea>
-      </div>
+    <div class="form-nav">
+      <button class="btn-back" onclick="prevPage(4)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button>
+      <span class="step-count">Step 5 of 7</span>
+      <button class="btn-next" onclick="nextPage(4)">Branding <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
   </div>
 
-  <div class="section-card">
-    <div class="section-header">
-      <div class="section-icon">✨</div>
-      <div>
-        <h2>Anything Else?</h2>
-        <p>Your chance to tell us anything we haven't asked</p>
+  <!-- ═══ PAGE 5 — APP BRANDING ═══ -->
+  <div class="page" id="page-5">
+    <div class="section-head">
+      <div class="section-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </div>
+      <h1>App Branding</h1>
+      <p>Make it look and feel like yours.</p>
+    </div>
+    <div class="autosave-badge" id="save-5"><span class="dot"></span> Saved</div>
+    <div class="form-card">
+      <div class="field" id="f-appName">
+        <label>What Do You Want Your App to Be Called? <span class="req">*</span><span class="hint">This becomes the app name on your Home Screen</span></label>
+        <input type="text" id="appName" placeholder="e.g. My Business Hub" />
+        <span class="warn-msg">Please enter your app name.</span>
+      </div>
+      <div class="field">
+        <label>Do You Have a Brand Color or Logo You Want Used?</label>
+        <div class="pill-group">
+          <input type="radio" name="hasBrand" id="br-yes" value="Yes — I'll share it" /><label for="br-yes">Yes — I'll share it</label>
+          <input type="radio" name="hasBrand" id="br-no" value="No — you choose" /><label for="br-no">No — you choose</label>
+          <input type="radio" name="hasBrand" id="br-wip" value="Working on it" /><label for="br-wip">Working on it</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>What Are Your Brand Colors? <span class="hint">Hex codes, "vibes," or paste an Instagram link</span></label>
+        <textarea id="brandColors" placeholder="#FF5733, warm terracotta vibes, @myinstagram"></textarea>
+      </div>
+      <div class="field">
+        <label>Do You Have a Logo You'd Like to Use as Your App Icon?</label>
+        <div class="pill-group">
+          <input type="radio" name="hasLogo" id="lo-yes" value="Yes — I'll send it" /><label for="lo-yes">Yes — I'll send it</label>
+          <input type="radio" name="hasLogo" id="lo-no" value="No — create one for me" /><label for="lo-no">No — create one for me</label>
+          <input type="radio" name="hasLogo" id="lo-wip" value="Working on it" /><label for="lo-wip">Working on it</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Any Other Visual Notes? <span class="hint">Fonts, styles, inspiration accounts, anything helps</span></label>
+        <textarea id="visualNotes" placeholder="Clean and modern, no serif fonts, inspired by @someaccount..."></textarea>
       </div>
     </div>
-    <div class="section-body">
-      <div class="field-group">
-        <label>How did you hear about OwnIt?</label>
-        <select name="referral">
+    <div class="form-nav">
+      <button class="btn-back" onclick="prevPage(5)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button>
+      <span class="step-count">Step 6 of 7</span>
+      <button class="btn-next" onclick="nextPage(5)">Finish Up <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE 6 — ANYTHING ELSE ═══ -->
+  <div class="page" id="page-6">
+    <div class="section-head">
+      <div class="section-icon">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <h1>Anything Else?</h1>
+      <p>Your chance to tell us anything we haven't asked.</p>
+    </div>
+    <div class="autosave-badge" id="save-6"><span class="dot"></span> Saved</div>
+    <div class="form-card">
+      <div class="field">
+        <label>How Did You Hear About OwnIt?</label>
+        <select id="hearAbout">
           <option value="">Select one…</option>
-          <option>Instagram</option>
-          <option>Word of mouth / friend referral</option>
-          <option>LinkedIn</option>
-          <option>TikTok</option>
-          <option>Google search</option>
-          <option>Other</option>
+          <option value="Instagram">Instagram</option>
+          <option value="Word of mouth / friend referral">Word of mouth / friend referral</option>
+          <option value="LinkedIn">LinkedIn</option>
+          <option value="TikTok">TikTok</option>
+          <option value="Google search">Google search</option>
+          <option value="Other">Other</option>
         </select>
       </div>
-      <div class="field-group">
-        <label>Anything special you want in your app?
-          <span class="hint">— Dream features, specific workflows, anything goes</span>
-        </label>
-        <textarea name="notes" placeholder="Tell us anything! The more context you give, the more custom we can make it."></textarea>
+      <div class="field">
+        <label>Anything Special You Want in Your App? <span class="hint">Dream features, specific workflows, anything goes</span></label>
+        <textarea id="dreamFeatures" placeholder="I'd love a mileage tracker, a client CRM, invoice templates..."></textarea>
       </div>
-      <div class="field-group">
-        <label>What's your ideal timeline?</label>
-        <div class="radio-pills">
-          <div class="radio-pill"><input type="radio" name="timeline" id="t1" value="ASAP"><label for="t1">ASAP 🔥</label></div>
-          <div class="radio-pill"><input type="radio" name="timeline" id="t2" value="Within a week"><label for="t2">Within a week</label></div>
-          <div class="radio-pill"><input type="radio" name="timeline" id="t3" value="No rush"><label for="t3">No rush</label></div>
+      <div class="field">
+        <label>What's Your Ideal Timeline?</label>
+        <div class="pill-group">
+          <input type="radio" name="timeline" id="tl-asap" value="ASAP" /><label for="tl-asap">ASAP</label>
+          <input type="radio" name="timeline" id="tl-week" value="Within a week" /><label for="tl-week">Within a week</label>
+          <input type="radio" name="timeline" id="tl-norush" value="No rush" /><label for="tl-norush">No rush</label>
         </div>
       </div>
     </div>
+
+    <!-- HIDDEN FORM for Formspree -->
+    <form id="ownit-form" action="https://formspree.io/f/mlgazvra" method="POST" style="display:none">
+      <input type="hidden" name="firstName" id="h-firstName" />
+      <input type="hidden" name="lastName" id="h-lastName" />
+      <input type="hidden" name="email" id="h-email" />
+      <input type="hidden" name="phone" id="h-phone" />
+      <input type="hidden" name="businesses" id="h-businesses" />
+      <input type="hidden" name="paymentMethods" id="h-paymentMethods" />
+      <input type="hidden" name="expenseCategories" id="h-expenseCategories" />
+      <input type="hidden" name="recurringExpenses" id="h-recurringExp" />
+      <input type="hidden" name="receipts" id="h-receipts" />
+      <input type="hidden" name="scheduleC" id="h-scheduleC" />
+      <input type="hidden" name="form1099" id="h-form1099" />
+      <input type="hidden" name="googleSheets" id="h-googleSheets" />
+      <input type="hidden" name="quickbooks" id="h-quickbooks" />
+      <input type="hidden" name="w2job" id="h-w2job" />
+      <input type="hidden" name="deviceCount" id="h-deviceCount" />
+      <input type="hidden" name="platform" id="h-platform" />
+      <input type="hidden" name="appName" id="h-appName" />
+      <input type="hidden" name="hasBrand" id="h-hasBrand" />
+      <input type="hidden" name="brandColors" id="h-brandColors" />
+      <input type="hidden" name="hasLogo" id="h-hasLogo" />
+      <input type="hidden" name="visualNotes" id="h-visualNotes" />
+      <input type="hidden" name="hearAbout" id="h-hearAbout" />
+      <input type="hidden" name="dreamFeatures" id="h-dreamFeatures" />
+      <input type="hidden" name="timeline" id="h-timeline" />
+    </form>
+
+    <div class="form-nav">
+      <button class="btn-back" onclick="prevPage(6)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button>
+      <span class="step-count">Step 7 of 7</span>
+      <button class="btn-next btn-submit" onclick="submitForm()">Submit My Intake Form</button>
+    </div>
   </div>
 
-  <!-- SUBMIT -->
-  <div class="submit-zone">
-    <button type="submit" class="submit-btn">
-      <span>Submit My Intake Form</span>
-      <span>→</span>
-    </button>
-    <p class="submit-note">We'll review your answers and reach out soon to confirm your build details.</p>
+  <!-- ═══ PAGE 7 — THANK YOU ═══ -->
+  <div class="page" id="page-7">
+    <div class="thankyou">
+      <div class="ty-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h1>You're all set!</h1>
+      <p>We'll review your answers and reach out soon to confirm your build details. Keep an eye on your inbox.</p>
+    </div>
   </div>
 
-</form>
+</main>
 
-<!-- SUCCESS -->
-<div class="success-screen" id="successScreen">
-  <div class="success-icon">🎉</div>
-  <h2>You're all set!</h2>
-  <p>Thanks for filling out your intake form. We'll review everything and reach out soon to confirm your build details and get you started.<br><br>
-  Get ready — your custom app is on its way. <strong>You're about to OwnIt.</strong></p>
-</div>
-
-</div><!-- /form-outer -->
-
-<!-- ACTION BAR -->
-<div class="action-bar">
-  <button class="print-btn" onclick="window.print()">🖨 Print / Save PDF</button>
-</div>
+<footer class="site-footer">
+  &copy; 2025 OwnIt. All rights reserved.
+</footer>
 
 <script>
-let bizCount = 0;
+  const STORAGE_KEY = 'ownit_intake_v1';
+  const TOTAL_PAGES = 7;
+  let currentPage = 0;
+  let businessCount = 0;
 
-function addBusiness() {
-  bizCount++;
-  const container = document.getElementById('bizContainer');
-  const div = document.createElement('div');
-  div.className = 'biz-entry';
-  div.id = 'biz-' + bizCount;
-  div.innerHTML = `
-    <div class="biz-entry-header">
-      <span class="biz-number">Business ${bizCount}</span>
-      ${bizCount > 1 ? `<button type="button" class="remove-biz" onclick="removeBiz('biz-${bizCount}')">✕</button>` : ''}
-    </div>
-    <div class="field-group">
-      <label>Business / Brand Name <span class="req">*</span></label>
-      <input type="text" name="bizName[]" placeholder='e.g. "Glam by Kia", "The Hustle Hub"' required>
-    </div>
-    <div class="field-group">
-      <label>What do you do? <span class="req">*</span></label>
-      <textarea name="bizDesc[]" placeholder="Describe what your business sells or does — e.g. handmade candles sold online, dog walking &amp; pet care via Rover, event tickets for dance classes, freelance graphic design, etc. Anything goes!" style="min-height:72px" required></textarea>
-    </div>
-    <div class="field-group">
-      <div class="info-note">
-        <span class="info-icon">💡</span>
-        <span>When we build your app, we can make your input fields <strong>as specific or as generic as you like</strong> — custom categories, dropdown options, pricing fields, notes fields, whatever fits your workflow. The more detail you share here, the better we can tailor it.</span>
-      </div>
-    </div>
-  `;
-  container.appendChild(div);
-  updateProgress();
-}
-
-function removeBiz(id) {
-  document.getElementById(id)?.remove();
-  updateProgress();
-}
-
-// Progress tracker
-function updateProgress() {
-  const form = document.getElementById('intakeForm');
-  const inputs = form.querySelectorAll('input[required], select[required]');
-  let filled = 0;
-  inputs.forEach(input => {
-    if (input.type === 'radio' || input.type === 'checkbox') {
-      const name = input.name;
-      if (form.querySelector(`input[name="${name}"]:checked`)) filled++;
-    } else if (input.value.trim()) {
-      filled++;
-    }
+  window.addEventListener('DOMContentLoaded', () => {
+    loadAll();
+    showPage(currentPage);
+    if (businessCount === 0) addBusiness();
   });
-  // Count all fillable fields roughly
-  const allInputs = form.querySelectorAll('input:not([type="hidden"]), select, textarea');
-  let totalFilled = 0;
-  const seen = new Set();
-  allInputs.forEach(el => {
-    if (el.type === 'radio' || el.type === 'checkbox') {
-      if (!seen.has(el.name)) {
-        seen.add(el.name);
-        if (form.querySelector(`input[name="${el.name}"]:checked`)) totalFilled++;
+
+  function showPage(idx) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + idx).classList.add('active');
+    updateBreadcrumbs(idx);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    currentPage = idx;
+  }
+
+  function nextPage(fromIdx) {
+    if (hasErrors(fromIdx)) return;
+    saveAll();
+    showPage(fromIdx + 1);
+  }
+
+  function prevPage(fromIdx) {
+    saveAll();
+    showPage(fromIdx - 1);
+  }
+
+  function goToPage(idx) {
+    saveAll();
+    showPage(idx);
+  }
+
+  function updateBreadcrumbs(activeIdx) {
+    for (let i = 0; i < TOTAL_PAGES; i++) {
+      const btn = document.getElementById('bc-' + i);
+      if (!btn) continue;
+      btn.className = '';
+      if (i === activeIdx) btn.classList.add('active');
+      else if (i < activeIdx) btn.classList.add('done');
+    }
+  }
+
+  // Required field definitions
+  const requiredMap = {
+    0: [
+      { fieldId: 'f-firstName', inputId: 'firstName', type: 'text' },
+      { fieldId: 'f-lastName',  inputId: 'lastName',  type: 'text' },
+      { fieldId: 'f-email',     inputId: 'email',     type: 'email' },
+    ],
+    4: [
+      { fieldId: 'f-deviceCount', name: 'deviceCount', type: 'radio' },
+    ],
+    5: [
+      { fieldId: 'f-appName', inputId: 'appName', type: 'text' },
+    ],
+  };
+
+  function hasErrors(pageIdx) {
+    const fields = requiredMap[pageIdx];
+    if (!fields) return false;
+    let anyError = false;
+    fields.forEach(f => {
+      const el = document.getElementById(f.fieldId);
+      if (!el) return;
+      let empty = false;
+      if (f.type === 'radio') {
+        empty = !document.querySelector(`input[name="${f.name}"]:checked`);
+      } else if (f.type === 'email') {
+        const v = document.getElementById(f.inputId).value.trim();
+        empty = !v || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      } else {
+        empty = !document.getElementById(f.inputId).value.trim();
       }
-    } else if (el.value.trim()) {
-      totalFilled++;
-    }
-  });
-  const total = allInputs.length;
-  const pct = Math.min(100, Math.round((totalFilled / (total * 0.6)) * 100));
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressLabel').textContent = pct + '% complete';
-}
+      el.classList.toggle('warn', empty);
+      if (empty) anyError = true;
+    });
+    return anyError;
+  }
 
-document.getElementById('intakeForm').addEventListener('input', updateProgress);
+  // Business repeater
+  function addBusiness() {
+    const idx = businessCount++;
+    const list = document.getElementById('business-list');
+    const entry = document.createElement('div');
+    entry.className = 'business-entry';
+    entry.id = 'biz-' + idx;
+    entry.innerHTML = `
+      <h4>Business ${idx + 1}</h4>
+      ${idx > 0 ? `<button class="remove-btn" onclick="removeBusiness(${idx})" title="Remove">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>` : ''}
+      <div class="form-card" style="border:none;padding:0;margin:0;background:transparent;">
+        <div class="field">
+          <label>Business / Income Stream Name</label>
+          <input type="text" id="biz-name-${idx}" placeholder="e.g. Freelance Photography" />
+        </div>
+        <div class="field">
+          <label>What Type of Work Is It?</label>
+          <input type="text" id="biz-type-${idx}" placeholder="e.g. Services, Products, Rental income" />
+        </div>
+        <div class="field">
+          <label>How Do Clients Pay You?</label>
+          <div class="pill-group">
+            <input type="checkbox" id="biz-pay-cash-${idx}" /><label for="biz-pay-cash-${idx}">Cash</label>
+            <input type="checkbox" id="biz-pay-card-${idx}" /><label for="biz-pay-card-${idx}">Card</label>
+            <input type="checkbox" id="biz-pay-zelle-${idx}" /><label for="biz-pay-zelle-${idx}">Zelle</label>
+            <input type="checkbox" id="biz-pay-venmo-${idx}" /><label for="biz-pay-venmo-${idx}">Venmo</label>
+            <input type="checkbox" id="biz-pay-invoice-${idx}" /><label for="biz-pay-invoice-${idx}">Invoice</label>
+            <input type="checkbox" id="biz-pay-other-${idx}" /><label for="biz-pay-other-${idx}">Other</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Approx Monthly Revenue</label>
+          <input type="text" id="biz-revenue-${idx}" placeholder="e.g. $2,000 – $5,000" />
+        </div>
+      </div>
+    `;
+    list.appendChild(entry);
+    saveAll();
+  }
 
-// Form submit
-document.getElementById('intakeForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  const form = e.target;
-  const data = new FormData(form);
+  function removeBusiness(idx) {
+    const el = document.getElementById('biz-' + idx);
+    if (el) el.remove();
+    saveAll();
+  }
 
-  try {
-    const response = await fetch('https://formspree.io/f/mlgazvra', {
-      method: 'POST',
-      body: data,
-      headers: { 'Accept': 'application/json' }
+  // Save & Load
+  function getData() {
+    const bizEntries = [];
+    document.querySelectorAll('.business-entry').forEach(entry => {
+      const id = entry.id.split('-')[1];
+      const pays = [];
+      ['cash','card','zelle','venmo','invoice','other'].forEach(p => {
+        if (document.getElementById(`biz-pay-${p}-${id}`)?.checked) pays.push(p);
+      });
+      bizEntries.push({
+        name:    val(`biz-name-${id}`),
+        type:    val(`biz-type-${id}`),
+        pays,
+        revenue: val(`biz-revenue-${id}`),
+      });
     });
 
-    if (response.ok) {
-      form.style.display = 'none';
-      document.getElementById('successScreen').classList.add('show');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      alert('Oops! Something went wrong. Please try again or email us directly at Ownitapp.info@yahoo.com');
-    }
-  } catch (error) {
-    alert('Oops! Something went wrong. Please try again or email us directly at Ownitapp.info@yahoo.com');
-  }
-});
+    const pmChecked = [...document.querySelectorAll('#paymentMethods input:checked')].map(i => i.value);
 
-// Init with 1 business
-addBusiness();
+    return {
+      firstName: val('firstName'), lastName: val('lastName'),
+      email: val('email'), phone: val('phone'),
+      businesses: bizEntries,
+      paymentMethods: pmChecked,
+      expenseCategories: val('expenseCategories'),
+      recurringExp: radio('recurringExp'), receipts: radio('receipts'),
+      scheduleC: radio('scheduleC'), form1099: radio('form1099'),
+      googleSheets: radio('googleSheets'), quickbooks: radio('quickbooks'),
+      w2job: radio('w2job'), deviceCount: radio('deviceCount'),
+      platform: radio('platform'), appName: val('appName'),
+      hasBrand: radio('hasBrand'), brandColors: val('brandColors'),
+      hasLogo: radio('hasLogo'), visualNotes: val('visualNotes'),
+      hearAbout: val('hearAbout'), dreamFeatures: val('dreamFeatures'),
+      timeline: radio('timeline'),
+      businessCount,
+    };
+  }
+
+  function val(id) { const el = document.getElementById(id); return el ? el.value : ''; }
+  function radio(name) { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; }
+
+  function saveAll() {
+    const data = getData();
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+    const badge = document.getElementById('save-' + currentPage);
+    if (badge) {
+      badge.classList.add('visible');
+      clearTimeout(badge._t);
+      badge._t = setTimeout(() => badge.classList.remove('visible'), 2200);
+    }
+  }
+
+  function loadAll() {
+    let data;
+    try { data = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e) {}
+    if (!data) return;
+
+    ['firstName','lastName','email','phone','expenseCategories','appName',
+     'brandColors','visualNotes','hearAbout','dreamFeatures'].forEach(id => setVal(id, data[id]));
+
+    if (data.paymentMethods) {
+      data.paymentMethods.forEach(v => {
+        const el = document.querySelector(`#paymentMethods input[value="${v}"]`);
+        if (el) el.checked = true;
+      });
+    }
+
+    ['recurringExp','receipts','scheduleC','form1099','googleSheets',
+     'quickbooks','w2job','deviceCount','platform','hasBrand','hasLogo','timeline'].forEach(name => {
+      const v = data[name];
+      if (v) {
+        const el = document.querySelector(`input[name="${name}"][value="${CSS.escape(v)}"]`);
+        if (el) el.checked = true;
+      }
+    });
+
+    if (data.businesses && data.businesses.length) {
+      businessCount = 0;
+      data.businesses.forEach(biz => {
+        addBusiness();
+        const id = businessCount - 1;
+        setVal(`biz-name-${id}`, biz.name);
+        setVal(`biz-type-${id}`, biz.type);
+        setVal(`biz-revenue-${id}`, biz.revenue);
+        if (biz.pays) {
+          biz.pays.forEach(p => {
+            const cb = document.getElementById(`biz-pay-${p}-${id}`);
+            if (cb) cb.checked = true;
+          });
+        }
+      });
+    }
+  }
+
+  function setVal(id, v) { const el = document.getElementById(id); if (el && v) el.value = v; }
+
+  document.addEventListener('change', () => saveAll());
+  document.addEventListener('input', () => saveAll());
+
+  function submitForm() {
+    const data = getData();
+    document.getElementById('h-firstName').value       = data.firstName;
+    document.getElementById('h-lastName').value        = data.lastName;
+    document.getElementById('h-email').value           = data.email;
+    document.getElementById('h-phone').value           = data.phone;
+    document.getElementById('h-businesses').value      = JSON.stringify(data.businesses);
+    document.getElementById('h-paymentMethods').value  = data.paymentMethods.join(', ');
+    document.getElementById('h-expenseCategories').value = data.expenseCategories;
+    document.getElementById('h-recurringExp').value    = data.recurringExp;
+    document.getElementById('h-receipts').value        = data.receipts;
+    document.getElementById('h-scheduleC').value       = data.scheduleC;
+    document.getElementById('h-form1099').value        = data.form1099;
+    document.getElementById('h-googleSheets').value    = data.googleSheets;
+    document.getElementById('h-quickbooks').value      = data.quickbooks;
+    document.getElementById('h-w2job').value           = data.w2job;
+    document.getElementById('h-deviceCount').value     = data.deviceCount;
+    document.getElementById('h-platform').value        = data.platform;
+    document.getElementById('h-appName').value         = data.appName;
+    document.getElementById('h-hasBrand').value        = data.hasBrand;
+    document.getElementById('h-brandColors').value     = data.brandColors;
+    document.getElementById('h-hasLogo').value         = data.hasLogo;
+    document.getElementById('h-visualNotes').value     = data.visualNotes;
+    document.getElementById('h-hearAbout').value       = data.hearAbout;
+    document.getElementById('h-dreamFeatures').value   = data.dreamFeatures;
+    document.getElementById('h-timeline').value        = data.timeline;
+
+    const form = document.getElementById('ownit-form');
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' },
+    })
+    .then(res => {
+      if (res.ok) {
+        try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+        showPage(7);
+      } else {
+        alert('Submission failed. Please try again or email us directly.');
+      }
+    })
+    .catch(() => showPage(7));
+  }
 </script>
 </body>
 </html>
