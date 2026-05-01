@@ -871,12 +871,12 @@ footer {
   <circle cx="142" cy="96" r="8" fill="#FFFFFF"/>
   <circle cx="100" cy="50" r="16" fill="none" stroke="#00B4A6" stroke-width="3" stroke-dasharray="4 3"/></svg>
   </div>
-    <div class="hero-badge">Make Tax Season Easier</div>
+    <div class="hero-badge">Make Tax Season Simple</div>
     <h1>
-      <span style="color:#FFFFFF;">Your businesses, your app.</span>
+      <span style="color:#FFFFFF;">Track everything. Stress nothing.</span>
       <span class="line2" style="color:var(--teal-lt);">OwnIt.</span>
     </h1>
-    <p class="hero-sub">Stop dreading tax season. OwnIt is a mobile-first expense tracker that keeps your business finances organized all year — so filing taxes is simple, not stressful. Customized with your name, your colors, and your icon.</p>
+    <p class="hero-sub">Stop piecing together spreadsheets every April. OwnIt keeps every dollar organized all year — so when tax season hits, you're already ready.</p>
     <div class="hero-btns">
       <a href="#get-started" class="btn-primary">Get Your App →</a>
       <a href="#features" class="btn-secondary">See Features</a>
@@ -915,7 +915,7 @@ footer {
     <div class="what-grid">
       <div class="what-text reveal reveal-delay-1">
         <p>OwnIt is a <strong>mobile-first web app</strong> that lives on your iPhone Home Screen. Open it like any app — no download required.</p>
-        <p>Track expenses, income, ticket sales, and events across <strong>all your businesses</strong> from one beautifully designed dashboard, customized just for you.</p>
+        <p>Track expenses, income, and events across <strong>all your businesses</strong> from one beautifully designed dashboard, customized just for you. At tax time, export a <strong>Schedule C summary</strong> or CSV straight to your accountant — no scrambling, no guesswork.</p>
         <p>When we build your app, <strong>you even own the name.</strong> It shows up on your Home Screen as your business — not ours.</p>
         <div class="what-pills">
           <span class="pill">📱 Home Screen App</span>
@@ -926,31 +926,230 @@ footer {
         </div>
       </div>
       <div class="reveal reveal-delay-2">
-        <div class="phone-mock">
-          <div class="mock-header">
-            <span class="mock-title">Glam by Kia</span>
-            <span class="mock-dot"></span>
-          </div>
-          <div class="mock-tabs">
-            <div class="mock-tab on">💄 Glam</div>
-            <div class="mock-tab">🐾 Rover</div>
-            <div class="mock-tab">✂️ Studio</div>
-          </div>
-          <div class="mock-body">
-            <div class="mock-card">
-              <div class="mock-label">Income YTD</div>
-              <div class="mock-val" style="color:#0070E0">$4,820.00</div>
+        <div class="phone-mock" style="position:relative;overflow:hidden;">
+          <!-- Animated screen scenes -->
+          <div id="anim-screen" style="width:100%;height:100%;position:relative;">
+
+            <!-- SCENE 1: Log Expense -->
+            <div class="anim-scene" id="ascene-1">
+              <div class="mock-header">
+                <span class="mock-title">Add Expense</span>
+                <span class="mock-dot"></span>
+              </div>
+              <div class="mock-body" style="border-radius:0;padding:8px 10px;">
+                <div class="anim-field" id="af-date" style="opacity:0;transform:translateY(6px)">
+                  <div class="mock-label">Date</div>
+                  <div class="mock-val" style="font-size:11px;color:#fff;" id="af-date-val"></div>
+                </div>
+                <div class="anim-field" id="af-vendor" style="opacity:0;transform:translateY(6px);margin-top:5px">
+                  <div class="mock-label">Vendor</div>
+                  <div class="mock-val" style="font-size:11px;color:#fff;" id="af-vendor-val"></div>
+                </div>
+                <div class="anim-field" id="af-cat" style="opacity:0;transform:translateY(6px);margin-top:5px">
+                  <div class="mock-label">Category</div>
+                  <div class="mock-val" style="font-size:11px;color:#fff;" id="af-cat-val"></div>
+                </div>
+                <div class="anim-field" id="af-amt" style="opacity:0;transform:translateY(6px);margin-top:5px">
+                  <div class="mock-label">Amount</div>
+                  <div class="mock-val" style="font-size:11px;color:#fff;" id="af-amt-val"></div>
+                </div>
+                <div id="af-btn" style="opacity:0;transform:translateY(6px);margin-top:10px;background:#00B4A6;color:#fff;font-size:9px;font-weight:700;padding:7px;border-radius:8px;text-align:center;letter-spacing:0.3px;">+ Add Expense</div>
+              </div>
             </div>
-            <div class="mock-card">
-              <div class="mock-label">Expenses YTD</div>
-              <div class="mock-val" style="color:#E53935">$1,240.50</div>
+
+            <!-- SCENE 2: Overview -->
+            <div class="anim-scene" id="ascene-2" style="display:none;">
+              <div class="mock-header">
+                <span class="mock-title">Glam by Kia</span>
+                <span class="mock-dot"></span>
+              </div>
+              <div class="mock-tabs">
+                <div class="mock-tab on">💄 Glam</div>
+                <div class="mock-tab">🐾 Rover</div>
+                <div class="mock-tab">✂️ Studio</div>
+              </div>
+              <div class="mock-body" style="border-radius:0 0 12px 12px;padding:8px 10px;">
+                <div class="mock-card">
+                  <div class="mock-label">Income YTD</div>
+                  <div class="mock-val" id="ov-income" style="color:#0070E0;font-size:0px;">$4,820.00</div>
+                </div>
+                <div class="mock-card" style="margin-top:5px">
+                  <div class="mock-label">Expenses YTD</div>
+                  <div class="mock-val" id="ov-expense" style="color:#E53935;font-size:0px;">$1,240.50</div>
+                </div>
+                <div class="mock-card" style="margin-top:5px">
+                  <div class="mock-label">Net Profit</div>
+                  <div class="mock-val" id="ov-profit" style="color:#1a7a12;font-size:0px;">$3,579.50</div>
+                </div>
+              </div>
             </div>
-            <div class="mock-card">
-              <div class="mock-label">Net Profit</div>
-              <div class="mock-val" style="color:#1a7a12">$3,579.50</div>
+
+            <!-- SCENE 3: Schedule C -->
+            <div class="anim-scene" id="ascene-3" style="display:none;">
+              <div class="mock-header">
+                <span class="mock-title">Schedule C Summary</span>
+                <span class="mock-dot"></span>
+              </div>
+              <div class="mock-body" style="border-radius:0;padding:8px 10px;">
+                <div style="font-size:8px;color:#A8DCDA;font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase;">Glam by Kia · 2025</div>
+                <div class="sc-row" id="sc1" style="opacity:0"><span style="font-size:9px;color:rgba(255,255,255,0.6);"><span style="color:#A8DCDA;font-weight:700;margin-right:4px;">Ln 8</span>Advertising</span><span style="font-size:9px;color:#fff;font-weight:600;">$320.00</span></div>
+                <div class="sc-row" id="sc2" style="opacity:0"><span style="font-size:9px;color:rgba(255,255,255,0.6);"><span style="color:#A8DCDA;font-weight:700;margin-right:4px;">Ln 9</span>Car &amp; Travel</span><span style="font-size:9px;color:#fff;font-weight:600;">$280.00</span></div>
+                <div class="sc-row" id="sc3" style="opacity:0"><span style="font-size:9px;color:rgba(255,255,255,0.6);"><span style="color:#A8DCDA;font-weight:700;margin-right:4px;">Ln 22</span>Supplies</span><span style="font-size:9px;color:#fff;font-weight:600;">$415.50</span></div>
+                <div class="sc-row" id="sc4" style="opacity:0"><span style="font-size:9px;color:rgba(255,255,255,0.6);"><span style="color:#A8DCDA;font-weight:700;margin-right:4px;">Ln 24b</span>Meals (50%)</span><span style="font-size:9px;color:#fff;font-weight:600;">$225.00</span></div>
+                <div style="border-top:1px solid rgba(255,255,255,0.1);margin-top:5px;padding-top:5px;display:flex;justify-content:space-between;" id="sc-total" style="opacity:0">
+                  <span style="font-size:9px;color:#F4A300;font-weight:700;">Total Deductions</span>
+                  <span style="font-size:10px;color:#F4A300;font-weight:900;">$1,240.50</span>
+                </div>
+                <div id="sc-export-btn" style="opacity:0;margin-top:8px;background:linear-gradient(135deg,#0D1B2A,#0F2940);border:1px solid #00B4A6;color:#00B4A6;font-size:9px;font-weight:700;padding:7px;border-radius:8px;text-align:center;letter-spacing:0.3px;">📤 Export CSV</div>
+              </div>
             </div>
+
+            <!-- SCENE 4: Export toast -->
+            <div class="anim-scene" id="ascene-4" style="display:none;">
+              <div class="mock-header">
+                <span class="mock-title">Schedule C Summary</span>
+                <span class="mock-dot"></span>
+              </div>
+              <div class="mock-body" style="border-radius:0;padding:8px 10px;position:relative;">
+                <div style="font-size:8px;color:#A8DCDA;font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase;">Glam by Kia · 2025</div>
+                <div class="sc-row"><span style="font-size:9px;color:rgba(255,255,255,0.6);"><span style="color:#A8DCDA;font-weight:700;margin-right:4px;">Ln 8</span>Advertising</span><span style="font-size:9px;color:#fff;font-weight:600;">$320.00</span></div>
+                <div class="sc-row"><span style="font-size:9px;color:rgba(255,255,255,0.6);"><span style="color:#A8DCDA;font-weight:700;margin-right:4px;">Ln 9</span>Car &amp; Travel</span><span style="font-size:9px;color:#fff;font-weight:600;">$280.00</span></div>
+                <div class="sc-row"><span style="font-size:9px;color:rgba(255,255,255,0.6);"><span style="color:#A8DCDA;font-weight:700;margin-right:4px;">Ln 22</span>Supplies</span><span style="font-size:9px;color:#fff;font-weight:600;">$415.50</span></div>
+                <div class="sc-row"><span style="font-size:9px;color:rgba(255,255,255,0.6);"><span style="color:#A8DCDA;font-weight:700;margin-right:4px;">Ln 24b</span>Meals (50%)</span><span style="font-size:9px;color:#fff;font-weight:600;">$225.00</span></div>
+                <div style="border-top:1px solid rgba(255,255,255,0.1);margin-top:5px;padding-top:5px;display:flex;justify-content:space-between;">
+                  <span style="font-size:9px;color:#F4A300;font-weight:700;">Total Deductions</span>
+                  <span style="font-size:10px;color:#F4A300;font-weight:900;">$1,240.50</span>
+                </div>
+                <div style="margin-top:8px;background:linear-gradient(135deg,#0D1B2A,#0F2940);border:1px solid #00B4A6;color:#00B4A6;font-size:9px;font-weight:700;padding:7px;border-radius:8px;text-align:center;letter-spacing:0.3px;opacity:0.5;">📤 Export CSV</div>
+                <div id="toast-msg" style="position:absolute;bottom:12px;left:10px;right:10px;background:#1DB954;color:#fff;font-size:9px;font-weight:700;padding:8px 10px;border-radius:8px;text-align:center;opacity:0;transform:translateY(10px);transition:all 0.4s ease;">✓ CSV Downloaded!</div>
+              </div>
+            </div>
+
           </div>
         </div>
+
+        <style>
+          .anim-field { background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:5px 8px;transition:all 0.4s ease; }
+          .sc-row { display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.06);transition:opacity 0.3s ease; }
+        </style>
+
+        <script>
+        (function() {
+          const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+          async function typeInto(elId, text, speed=55) {
+            const el = document.getElementById(elId);
+            el.textContent = '';
+            for (const ch of text) { el.textContent += ch; await sleep(speed); }
+          }
+
+          function show(elId, delay=0) {
+            return new Promise(r => setTimeout(() => {
+              const el = document.getElementById(elId);
+              if (el) { el.style.opacity='1'; el.style.transform='translateY(0)'; }
+              r();
+            }, delay));
+          }
+
+          function switchScene(from, to) {
+            const f = document.getElementById('ascene-'+from);
+            const t = document.getElementById('ascene-'+to);
+            if (f) f.style.display='none';
+            if (t) t.style.display='block';
+          }
+
+          async function runLoop() {
+            // Reset all
+            ['af-date','af-vendor','af-cat','af-amt','af-btn'].forEach(id => {
+              const el = document.getElementById(id);
+              if(el){el.style.opacity='0';el.style.transform='translateY(6px)';}
+            });
+            ['af-date-val','af-vendor-val','af-cat-val','af-amt-val'].forEach(id => {
+              const el = document.getElementById(id); if(el) el.textContent='';
+            });
+            ['ov-income','ov-expense','ov-profit'].forEach(id => {
+              const el = document.getElementById(id); if(el) el.style.fontSize='0px';
+            });
+            ['sc1','sc2','sc3','sc4'].forEach(id => {
+              const el = document.getElementById(id); if(el) el.style.opacity='0';
+            });
+            const scTotal = document.getElementById('sc-total');
+            if(scTotal) scTotal.style.opacity='0';
+            const scBtn = document.getElementById('sc-export-btn');
+            if(scBtn) scBtn.style.opacity='0';
+            const toast = document.getElementById('toast-msg');
+            if(toast){toast.style.opacity='0';toast.style.transform='translateY(10px)';}
+
+            // ── SCENE 1: Log Expense (0–7s) ──
+            switchScene(2,'1'); switchScene(3,'1'); switchScene(4,'1');
+            document.getElementById('ascene-1').style.display='block';
+
+            await sleep(400);
+            await show('af-date'); await sleep(200);
+            await typeInto('af-date-val', 'May 14, 2025');
+            await sleep(200);
+            await show('af-vendor'); await sleep(200);
+            await typeInto('af-vendor-val', 'Sephora');
+            await sleep(200);
+            await show('af-cat'); await sleep(200);
+            await typeInto('af-cat-val', 'Supplies');
+            await sleep(200);
+            await show('af-amt'); await sleep(200);
+            await typeInto('af-amt-val', '$87.50');
+            await sleep(300);
+            await show('af-btn');
+            // Button press
+            await sleep(600);
+            const btn = document.getElementById('af-btn');
+            if(btn){btn.style.background='#009E91';btn.style.transform='scale(0.97)';}
+            await sleep(200);
+            if(btn){btn.style.background='#00B4A6';btn.style.transform='scale(1)';}
+            await sleep(800);
+
+            // ── SCENE 2: Overview (7–12s) ──
+            switchScene(1,2);
+            await sleep(400);
+            const vals = [
+              ['ov-income', '18px'],
+              ['ov-expense', '18px'],
+              ['ov-profit', '18px']
+            ];
+            for (const [id, fs] of vals) {
+              const el = document.getElementById(id);
+              if(el){ el.style.transition='font-size 0.4s ease'; el.style.fontSize=fs; }
+              await sleep(350);
+            }
+            await sleep(1500);
+
+            // ── SCENE 3: Schedule C (12–17s) ──
+            switchScene(2,3);
+            await sleep(400);
+            for (const id of ['sc1','sc2','sc3','sc4']) { await show(id); await sleep(300); }
+            await sleep(200);
+            const st = document.getElementById('sc-total');
+            if(st){st.style.opacity='1';}
+            await sleep(400);
+            await show('sc-export-btn');
+            await sleep(1200);
+
+            // ── SCENE 4: Export (17–20s) ──
+            switchScene(3,4);
+            await sleep(500);
+            const t = document.getElementById('toast-msg');
+            if(t){t.style.opacity='1';t.style.transform='translateY(0)';}
+            await sleep(2000);
+
+            // Loop
+            runLoop();
+          }
+
+          // Start when visible
+          const observer = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting) { observer.disconnect(); runLoop(); }
+          }, { threshold: 0.3 });
+          observer.observe(document.getElementById('anim-screen'));
+        })();
+        </script>
       </div>
     </div>
   </div>
@@ -1011,8 +1210,8 @@ footer {
   <div class="section-inner">
     <div class="reveal" style="text-align:center">
       <div class="section-label" style="justify-content:center"><span style="display:none"></span>How It Works</div>
-      <h2>From intake form to Home Screen<br>in 48–72 hours.</h2>
-      <p class="section-desc" style="margin:0 auto"><span style="color:var(--gold);font-weight:600;">No tech knowledge needed. We handle everything.</span></p>
+      <h2>First we listen.<br>Then we deliver.</h2>
+      <p class="section-desc" style="margin:0 auto">Every step is designed around you.</p>
     </div>
     <div class="steps-grid">
       <div class="step reveal reveal-delay-1">
@@ -1059,11 +1258,9 @@ footer {
         <ul class="price-features">
           <li>Free discovery call included</li>
           <li>Full custom build — name, icon & colors</li>
-          <li>Expense + income tracking</li>
-          <li>Ticket & event sales tracking</li>
+          <li>Customized expense + income tracking</li>
           <li>CSV + Schedule C export</li>
           <li>1099 form storage</li>
-          <li>GitHub Pages deployment</li>
           <li>2-week trial with free revisions</li>
           <li>Yours forever — no monthly fees</li>
         </ul>
@@ -1131,7 +1328,7 @@ footer {
           <div class="custom-item-icon">✦</div>
           <div>
             <div class="custom-item-title">Your Icon</div>
-            <div class="custom-item-desc">A custom Home Screen icon that matches your brand — so it looks like your app from the moment they see it.</div>
+            <div class="custom-item-desc">A custom Home Screen icon that matches your brand — so it looks like your app from the moment you see it.</div>
           </div>
         </div>
         <div class="custom-item reveal reveal-delay-4">
@@ -1146,7 +1343,7 @@ footer {
         <div class="palette-demo">
           <div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:600;margin-bottom:8px">Example Client Palettes</div>
           <div class="palette-row">
-            <div class="palette-label">Glam by Kia</div>
+            <div class="palette-label" style="color:var(--navy);font-weight:700;">Glam by Kia</div>
             <div class="palette-swatches">
               <div class="palette-dot" style="background:#C2185B"></div>
               <div class="palette-dot" style="background:#880E4F"></div>
@@ -1155,7 +1352,7 @@ footer {
             </div>
           </div>
           <div class="palette-row">
-            <div class="palette-label">The Hustle Hub</div>
+            <div class="palette-label" style="color:var(--navy);font-weight:700;">The Hustle Hub</div>
             <div class="palette-swatches">
               <div class="palette-dot" style="background:#F4A300"></div>
               <div class="palette-dot" style="background:#B07800"></div>
@@ -1164,7 +1361,7 @@ footer {
             </div>
           </div>
           <div class="palette-row">
-            <div class="palette-label">My Empire</div>
+            <div class="palette-label" style="color:var(--navy);font-weight:700;">My Empire</div>
             <div class="palette-swatches">
               <div class="palette-dot" style="background:#6C2FAF"></div>
               <div class="palette-dot" style="background:#9B59D6"></div>
@@ -1173,7 +1370,7 @@ footer {
             </div>
           </div>
           <div class="palette-row">
-            <div class="palette-label">Green & Clean</div>
+            <div class="palette-label" style="color:var(--navy);font-weight:700;">Green & Clean</div>
             <div class="palette-swatches">
               <div class="palette-dot" style="background:#1DB954"></div>
               <div class="palette-dot" style="background:#145E30"></div>
@@ -1220,7 +1417,7 @@ footer {
   <circle cx="100" cy="50" r="10" fill="#FFFFFF"/>
   <circle cx="142" cy="96" r="8" fill="#FFFFFF"/>
   <circle cx="100" cy="50" r="16" fill="none" stroke="#00B4A6" stroke-width="3" stroke-dasharray="4 3"/></svg>Own<span>It</span></a>
-    <div class="footer-tagline">Your custom app. Your business. Your name.</div>
+    <div class="footer-tagline">Your businesses. Your app.</div>
   </div>
   <ul class="footer-links">
     <li><a href="#features">Features</a></li>
