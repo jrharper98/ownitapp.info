@@ -60,6 +60,97 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 .orb3 { width: 300px; height: 300px; background: var(--gold);   bottom: 50px;  right: 100px; opacity: 0.10; }
 
 /* ═══════════════════════════════════════════
+   PRE-PHONE FULLSCREEN TITLE CARD
+═══════════════════════════════════════════ */
+#title-card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  background: var(--navy);
+  padding: 32px 24px;
+  text-align: center;
+  opacity: 1;
+  transition: opacity 0.8s ease;
+  gap: 0;
+}
+#title-card.hidden {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.tc-line {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  line-height: 1.3;
+}
+.tc-line.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tc-line-1 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(16px, 4.5vw, 22px);
+  font-weight: 400;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 18px;
+  letter-spacing: 0.2px;
+}
+.tc-line-2 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(14px, 4vw, 20px);
+  font-weight: 400;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 22px;
+}
+.tc-line-3 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(18px, 5.5vw, 30px);
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.tc-line-4 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(18px, 5.5vw, 30px);
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 28px;
+}
+.tc-pause-line {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(14px, 3.8vw, 19px);
+  font-weight: 400;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 6px;
+}
+.tc-emphasis {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(16px, 4.5vw, 24px);
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 0;
+  letter-spacing: 0.3px;
+}
+
+.tc-divider {
+  width: 48px;
+  height: 2px;
+  background: var(--teal);
+  border-radius: 99px;
+  margin: 0 auto 24px;
+  opacity: 0;
+  transition: opacity 0.5s ease 0.2s;
+}
+.tc-divider.show { opacity: 1; }
+
+/* ═══════════════════════════════════════════
    PHONE SHELL
 ═══════════════════════════════════════════ */
 #phone-wrap {
@@ -70,8 +161,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
   width: var(--phone-w);
   height: var(--phone-h);
   z-index: 10;
-  margin-top: 12px;
+  margin-top: 8px;
   flex-shrink: 0;
+  transition: transform 0.8s cubic-bezier(0.34,1.2,0.64,1), opacity 0.6s ease;
 }
 .phone-shell {
   width: 100%;
@@ -198,48 +290,52 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
   font-size: 32px;
   filter: drop-shadow(0 8px 24px rgba(0,180,166,0.4));
   opacity: 0;
-  transform: scale(0.5) translateY(20px);
+  transform: scale(0.7) translateY(-10px);
   transition: all 0.6s cubic-bezier(.34,1.56,.64,1);
-  margin-bottom: 16px;
 }
 .intro-appname {
   font-family: 'Playfair Display', serif;
-  font-size: 22px;
+  font-size: 28px;
   font-weight: 900;
   color: var(--white);
-  opacity: 0;
-  transform: translateY(16px);
-  transition: all 0.5s ease 0.4s;
+  margin-top: 14px;
   margin-bottom: 6px;
+  letter-spacing: 0.5px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.5s ease 0.2s;
 }
 .intro-tagline {
   font-size: 10px;
-  color: var(--teal);
-  letter-spacing: 1.5px;
+  color: var(--muted);
+  letter-spacing: 1px;
   text-transform: uppercase;
+  margin-bottom: 18px;
   opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.5s ease 0.65s;
-  margin-bottom: 28px;
+  transform: translateY(6px);
+  transition: all 0.5s ease 0.4s;
 }
 .intro-badges {
-  display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  padding: 0 12px;
   opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.5s ease 0.85s;
+  transform: translateY(6px);
+  transition: all 0.5s ease 0.6s;
 }
 .badge {
-  background: rgba(0,180,166,0.15);
-  border: 1px solid rgba(0,180,166,0.3);
-  color: var(--teal);
-  font-size: 8px;
-  font-weight: 600;
-  padding: 4px 8px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 20px;
-  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
 }
-.badge.gold { background: rgba(244,163,0,0.15); border-color: rgba(244,163,0,0.3); color: var(--gold); }
-.badge.pink { background: rgba(194,24,91,0.15); border-color: rgba(194,24,91,0.3); color: #F48FB1; }
+.badge.gold { border-color: rgba(244,163,0,0.4); color: var(--gold); }
+.badge.pink { border-color: rgba(194,24,91,0.4); color: #F06292; }
 
 #scene-intro.active .intro-icon    { opacity: 1; transform: scale(1) translateY(0); }
 #scene-intro.active .intro-appname { opacity: 1; transform: translateY(0); }
@@ -251,297 +347,231 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 ═══════════════════════════════════════════ */
 .biz-tabs {
   display: flex;
-  gap: 6px;
-  padding: 8px 12px;
+  gap: 0;
   background: #0A1525;
-  overflow-x: auto;
-  scrollbar-width: none;
   border-bottom: 1px solid rgba(255,255,255,0.07);
+  padding: 0 8px;
+  position: relative;
+  z-index: 4;
 }
 .biz-tab {
-  flex-shrink: 0;
-  padding: 5px 10px;
-  border-radius: 8px;
+  flex: 1;
+  text-align: center;
+  padding: 8px 4px;
   font-size: 9px;
   font-weight: 600;
   color: var(--muted);
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.08);
-  transition: all 0.3s;
+  border-bottom: 2px solid transparent;
+  transition: all 0.25s ease;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.biz-tab.active-tab {
-  background: var(--teal);
-  color: var(--white);
-  border-color: var(--teal);
-  box-shadow: 0 2px 8px rgba(0,180,166,0.4);
-}
+.biz-tab.active-tab { color: var(--teal); border-bottom-color: var(--teal); }
 
-/* Overview cards */
 .overview-card {
   background: var(--card);
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: 10px;
+  padding: 10px 12px;
   margin-bottom: 8px;
-  border: 1px solid rgba(255,255,255,0.06);
+  border-left: 3px solid rgba(255,255,255,0.08);
   opacity: 0;
-  transform: translateY(12px);
-  transition: all 0.4s ease;
-}
-.overview-card.show { opacity: 1; transform: translateY(0); }
-.ov-label { font-size: 9px; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
-.ov-val { font-size: 20px; font-weight: 700; }
-.ov-val.income  { color: var(--income); }
-.ov-val.expense { color: var(--expense); }
-.ov-val.profit  { color: var(--profit); }
-
-.expense-row {
-  background: var(--card);
-  border-radius: 8px;
-  padding: 8px 10px;
-  margin-bottom: 5px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  opacity: 0;
-  transform: translateX(-12px);
+  transform: translateX(-8px);
   transition: all 0.35s ease;
 }
-.expense-row.show { opacity: 1; transform: translateX(0); }
-.exp-left { display: flex; flex-direction: column; gap: 1px; }
-.exp-vendor { font-size: 9px; font-weight: 600; color: var(--white); }
-.exp-cat { font-size: 8px; color: var(--muted); }
-.exp-amt { font-size: 11px; font-weight: 700; color: var(--expense); }
+.overview-card.show { opacity: 1; transform: translateX(0); }
+.ov-label { font-size: 9px; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+.ov-val { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; }
+.ov-val.income  { color: var(--income); }
+.ov-val.expense { color: var(--expense); }
+.ov-val.profit  { color: var(--green); }
 
 /* ═══════════════════════════════════════════
    SCENE 3 — EXPENSE LOGGING
 ═══════════════════════════════════════════ */
 .form-field {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--card);
   border-radius: 8px;
-  padding: 7px 10px;
+  padding: 8px 10px;
   margin-bottom: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(4px);
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
 }
 .form-field.show { opacity: 1; transform: translateY(0); }
-.form-field.typing::after {
-  content: '';
-  position: absolute;
-  right: 8px; top: 50%;
-  transform: translateY(-50%);
-  width: 2px; height: 14px;
-  background: var(--teal);
-  animation: blink 0.7s infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.form-field.typing { border: 1px solid rgba(0,180,166,0.5); }
 .ff-label { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-.ff-val { font-size: 11px; color: var(--white); font-weight: 500; min-height: 14px; }
+.ff-val   { font-size: 12px; color: var(--white); font-weight: 500; min-height: 18px; margin-top: 2px; }
 
 .add-btn-app {
+  display: block;
+  width: 100%;
   background: var(--teal);
   color: var(--white);
-  font-size: 10px;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
   font-weight: 700;
-  padding: 9px;
-  border-radius: 10px;
   text-align: center;
+  margin-top: 4px;
   opacity: 0;
-  transform: translateY(8px);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  letter-spacing: 0.3px;
+  transform: translateY(4px);
+  transition: all 0.3s ease, transform 0.1s ease, background 0.15s ease;
+  cursor: pointer;
 }
 .add-btn-app.show { opacity: 1; transform: translateY(0); }
-.add-btn-app.pressed {
-  background: #009E91;
-  transform: scale(0.97);
-  box-shadow: 0 0 0 3px rgba(0,180,166,0.3);
-}
+.add-btn-app.pressed { transform: scale(0.96); background: #009D91; }
 
 /* ═══════════════════════════════════════════
    SCENE 4 — EVENT / TICKET TRACKING
 ═══════════════════════════════════════════ */
-.event-card {
+.event-row {
   background: var(--card);
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 8px;
-  border: 1px solid rgba(255,255,255,0.06);
-}
-.event-name { font-size: 11px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
-.event-stats { display: flex; gap: 6px; }
-.evt-stat {
-  flex: 1;
-  background: rgba(255,255,255,0.04);
-  border-radius: 8px;
-  padding: 6px 8px;
-  text-align: center;
-}
-.evt-stat-val { font-size: 16px; font-weight: 700; color: var(--teal); transition: all 0.1s; }
-.evt-stat-lbl { font-size: 7px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px; }
-
-.ticket-btn {
-  background: linear-gradient(135deg, var(--purple), var(--pink));
-  color: var(--white);
-  font-size: 10px;
-  font-weight: 700;
-  padding: 9px;
   border-radius: 10px;
-  text-align: center;
-  margin-top: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
   opacity: 0;
-  transition: all 0.3s ease 0.8s;
-  letter-spacing: 0.3px;
+  transform: translateY(6px);
+  transition: all 0.35s ease;
 }
-.ticket-btn.show { opacity: 1; }
-.ticket-btn.pressed {
-  transform: scale(0.97);
-  box-shadow: 0 0 0 3px rgba(194,24,91,0.3);
+.event-row.show { opacity: 1; transform: translateY(0); }
+.ev-title { font-size: 11px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+.ev-sub   { font-size: 9px; color: var(--muted); margin-bottom: 6px; }
+.ev-stats { display: flex; gap: 8px; }
+.ev-stat  { flex:1; background: rgba(255,255,255,0.05); border-radius: 6px; padding: 5px 6px; text-align:center; }
+.ev-stat-val  { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--white); }
+.ev-stat-lbl  { font-size: 7px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+
+.ticket-log-btn {
+  display: block;
+  width: 100%;
+  background: rgba(0,180,166,0.12);
+  border: 1.5px solid var(--teal);
+  color: var(--teal);
+  border-radius: 8px;
+  padding: 9px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 6px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 0.3s ease, transform 0.1s ease;
+  cursor: pointer;
 }
+.ticket-log-btn.show { opacity: 1; transform: translateY(0); }
+.ticket-log-btn.pressed { transform: scale(0.96); background: rgba(0,180,166,0.25); }
 
 /* ═══════════════════════════════════════════
    SCENE 5 — TOTAL EARNINGS
 ═══════════════════════════════════════════ */
+.earnings-header {
+  background: #0A1525;
+  padding: 38px 14px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.earnings-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--white);
+}
+.earnings-sub { font-size: 9px; color: var(--muted); margin-top: 2px; }
+
 .earnings-card {
   background: var(--card);
   border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 6px;
-  border: 1px solid rgba(255,255,255,0.06);
+  padding: 10px 12px;
+  margin-bottom: 7px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 3px solid rgba(0,180,166,0.3);
   opacity: 0;
-  transform: translateX(20px);
+  transform: translateY(8px);
   transition: all 0.4s ease;
 }
-.earnings-card.show { opacity: 1; transform: translateX(0); }
-.ec-name { font-size: 9px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
-.ec-row { display: flex; justify-content: space-between; margin-bottom: 3px; }
-.ec-lbl { font-size: 8px; color: var(--muted); }
-.ec-val { font-size: 9px; font-weight: 600; }
+.earnings-card.show { opacity: 1; transform: translateY(0); }
+.ec-name { font-size: 11px; font-weight: 600; color: var(--white); }
+.ec-sub  { font-size: 8px; color: var(--muted); margin-top: 1px; }
+.ec-val  { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--income); }
+
 .grand-total {
-  background: linear-gradient(135deg, rgba(0,180,166,0.15), rgba(26,122,18,0.15));
-  border: 1px solid rgba(0,180,166,0.3);
-  border-radius: 10px;
-  padding: 10px;
+  background: linear-gradient(135deg, rgba(0,180,166,0.15), rgba(244,163,0,0.1));
+  border: 1.5px solid rgba(0,180,166,0.4);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-top: 4px;
   opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.5s ease;
+  transform: translateY(8px) scale(0.97);
+  transition: all 0.5s cubic-bezier(.34,1.2,.64,1);
 }
-.grand-total.show { opacity: 1; transform: translateY(0); }
+.grand-total.show { opacity: 1; transform: translateY(0) scale(1); }
 .gt-label { font-size: 9px; font-weight: 700; color: var(--teal); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-.gt-profit { font-size: 22px; font-weight: 900; color: var(--profit); font-family: 'Playfair Display', serif; }
+.gt-val   { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; color: var(--gold); }
 
 /* ═══════════════════════════════════════════
    SCENE 6 — EXPORT
 ═══════════════════════════════════════════ */
-.export-options {
+.export-section {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
+  padding: 60px 14px 20px;
+  gap: 10px;
+}
+.export-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.export-sub {
+  font-size: 9px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  line-height: 1.5;
 }
 .export-btn {
-  background: var(--card);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.15);
   border-radius: 10px;
-  padding: 12px;
+  padding: 11px 14px;
   display: flex;
   align-items: center;
   gap: 10px;
   opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.35s ease;
+  transform: translateX(-6px);
+  transition: all 0.35s ease, transform 0.1s ease;
+  cursor: pointer;
 }
-.export-btn.show { opacity: 1; transform: translateY(0); }
-.export-btn.pressed {
-  background: rgba(0,180,166,0.15);
-  border-color: var(--teal);
-  transform: scale(0.98);
-}
-.exp-icon { font-size: 20px; }
-.exp-info { flex: 1; }
-.exp-title { font-size: 10px; font-weight: 700; color: var(--white); }
-.exp-sub   { font-size: 8px; color: var(--muted); margin-top: 1px; }
-.exp-arrow { font-size: 14px; color: var(--muted); }
+.export-btn.show { opacity: 1; transform: translateX(0); }
+.export-btn.pressed { transform: scale(0.97); background: rgba(0,180,166,0.1); }
+.eb-icon { font-size: 18px; }
+.eb-label { font-size: 11px; font-weight: 700; color: var(--white); }
+.eb-sub   { font-size: 8px; color: var(--muted); margin-top: 1px; }
 
 .toast {
   position: absolute;
-  bottom: 70px; left: 12px; right: 12px;
+  bottom: 70px; left: 14px; right: 14px;
   background: var(--green);
-  color: var(--white);
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 14px;
   font-size: 11px;
   font-weight: 700;
-  padding: 10px 14px;
-  border-radius: 10px;
   text-align: center;
   opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
-  box-shadow: 0 4px 20px rgba(29,185,84,0.4);
+  transform: translateY(8px);
+  transition: all 0.35s ease;
   z-index: 20;
 }
 .toast.show { opacity: 1; transform: translateY(0); }
-
-
-
-/* ═══════════════════════════════════════════
-   CALLOUT LABELS (outside phone)
-═══════════════════════════════════════════ */
-.callout {
-  position: relative;
-  left: auto !important;
-  right: auto !important;
-  top: auto !important;
-  background: rgba(13,27,42,0.92);
-  border: 1px solid rgba(0,180,166,0.4);
-  backdrop-filter: blur(12px);
-  border-radius: 12px;
-  padding: 10px 14px;
-  width: 88vw;
-  max-width: 340px;
-  z-index: 50;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
-  pointer-events: none;
-  display: none;
-  margin: 10px auto 0;
-}
-.callout.show {
-  opacity: 1;
-  transform: translateY(0);
-  display: block;
-}
-.callout-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--teal);
-  margin-bottom: 4px;
-}
-.callout-body {
-  font-size: 10px;
-  color: rgba(255,255,255,0.75);
-  line-height: 1.5;
-}
-.callout-line { display: none; }
-
-/* Callout container — sits below phone */
-#callout-zone {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  min-height: 70px;
-  padding: 0 16px;
-}
-
 
 /* ═══════════════════════════════════════════
    SCENE 7 — NAME CUSTOMIZATION
@@ -598,79 +628,168 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
   font-weight: 600;
   color: rgba(255,255,255,0.6);
   transition: all 0.3s ease;
-  cursor: default;
 }
 .name-chip.active {
-  background: rgba(244,163,0,0.15);
+  background: rgba(244,163,0,0.12);
   border-color: var(--gold);
   color: var(--gold);
-  transform: scale(1.05);
+}
+
+.custom-app-header {
+  background: #0A1525;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  width: 100%;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
 /* ═══════════════════════════════════════════
-   SCENE 8 — ICON & COLOR CUSTOMIZATION
+   SCENE 8 — ICON & COLORS
 ═══════════════════════════════════════════ */
+.custom-look-screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  gap: 12px;
+}
+
 .icon-preview {
-  width: 72px; height: 72px;
-  border-radius: 18px;
+  width: 64px; height: 64px;
+  border-radius: 16px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 32px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  transition: all 0.5s cubic-bezier(.34,1.56,.64,1);
+  font-size: 28px;
   opacity: 0;
-  transform: scale(0.7);
+  transform: scale(0.8);
+  transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
 }
 .icon-preview.show { opacity: 1; transform: scale(1); }
 
 .color-swatches {
-  display: flex;
-  gap: 8px;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: all 0.4s ease 0.3s;
+  display: flex; gap: 10px;
+  opacity: 0; transform: translateY(6px);
+  transition: all 0.4s ease;
 }
 .color-swatches.show { opacity: 1; transform: translateY(0); }
 .swatch {
-  width: 26px; height: 26px;
+  width: 24px; height: 24px;
   border-radius: 50%;
+  cursor: pointer;
   border: 2px solid transparent;
-  transition: all 0.3s ease;
-  cursor: default;
+  transition: all 0.25s ease;
 }
-.swatch.active {
-  border-color: var(--white);
-  transform: scale(1.2);
-  box-shadow: 0 0 10px rgba(255,255,255,0.3);
-}
+.swatch.active { transform: scale(1.3); border-color: rgba(255,255,255,0.5); }
 
 .theme-preview {
-  width: 100%;
-  background: rgba(255,255,255,0.05);
+  width: 100%; max-width: 180px;
+  background: rgba(255,255,255,0.04);
   border-radius: 10px;
   padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  opacity: 0;
+  opacity: 0; transform: translateY(6px);
   transition: all 0.4s ease;
 }
-.theme-preview.show { opacity: 1; }
-.theme-bar {
-  height: 6px;
-  border-radius: 99px;
-  flex: 1;
-  margin: 0 4px;
-  transition: background 0.5s ease;
-}
-.theme-dot {
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  transition: background 0.5s ease;
-  flex-shrink: 0;
-}
+.theme-preview.show { opacity: 1; transform: translateY(0); }
+.theme-dot-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.theme-dot  { width: 10px; height: 10px; border-radius: 50%; transition: background 0.3s ease; }
+.theme-dot2 { width: 8px;  height: 8px;  border-radius: 50%; transition: background 0.3s ease; }
+.theme-bar1 { height: 5px; border-radius: 3px; margin-bottom: 4px; transition: background 0.3s ease; }
+.theme-bar2 { height: 5px; border-radius: 3px; width: 70%;         transition: background 0.3s ease; }
 
 /* ═══════════════════════════════════════════
-   SCENE 9 — FINALE
+   SCENE 9 — HOME SCREEN ZOOM-OUT
+═══════════════════════════════════════════ */
+#scene-homescreen {
+  background: linear-gradient(160deg, #0D1B2A 0%, #0F2940 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 36px;
+}
+
+.hs-status {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 14px 8px;
+  font-size: 8px;
+  color: rgba(255,255,255,0.5);
+  font-weight: 600;
+}
+
+.hs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 0 14px;
+  width: 100%;
+}
+
+.hs-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.35s ease;
+}
+.hs-icon.show { opacity: 1; transform: scale(1); }
+.hs-icon.highlight .hs-app-icon {
+  box-shadow: 0 0 0 2.5px var(--teal), 0 0 20px rgba(0,180,166,0.6);
+  transform: scale(1.12);
+}
+.hs-icon.highlight .hs-app-label {
+  color: var(--teal);
+  font-weight: 700;
+}
+
+.hs-app-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  transition: all 0.4s cubic-bezier(.34,1.4,.64,1);
+}
+.hs-app-label {
+  font-size: 7px;
+  color: rgba(255,255,255,0.75);
+  text-align: center;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 48px;
+}
+
+.hs-dock {
+  position: absolute;
+  bottom: 16px; left: 12px; right: 12px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-around;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.4s ease;
+}
+.hs-dock.show { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════════════════
+   SCENE 10 — FINALE
 ═══════════════════════════════════════════ */
 .finale-screen {
   width: 100%; height: 100%;
@@ -680,30 +799,28 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
   justify-content: center;
   padding: 20px;
   gap: 10px;
-  position: relative;
-  overflow: hidden;
 }
 .finale-icon {
-  width: 70px; height: 70px;
-  border-radius: 18px;
+  width: 64px; height: 64px;
+  border-radius: 16px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 30px;
-  opacity: 0;
-  transform: scale(0.5) rotate(-10deg);
-  transition: all 0.6s cubic-bezier(.34,1.56,.64,1);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  font-size: 28px;
+  opacity: 0; transform: scale(0.8);
+  transition: all 0.5s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
 }
-.finale-icon.show { opacity: 1; transform: scale(1) rotate(0deg); }
+.finale-icon.show { opacity: 1; transform: scale(1); }
+
 .finale-name {
   font-family: 'Playfair Display', serif;
   font-size: 22px;
   font-weight: 900;
   text-align: center;
-  opacity: 0;
-  transform: translateY(10px);
+  opacity: 0; transform: translateY(10px);
   transition: all 0.5s ease 0.3s;
 }
 .finale-name.show { opacity: 1; transform: translateY(0); }
+
 .finale-tag {
   font-size: 9px;
   letter-spacing: 1.5px;
@@ -713,6 +830,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
   text-align: center;
 }
 .finale-tag.show { opacity: 1; }
+
 .finale-divider {
   width: 40px; height: 2px;
   border-radius: 99px;
@@ -720,17 +838,18 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
   transition: all 0.4s ease 0.6s;
 }
 .finale-divider.show { opacity: 1; }
+
 .finale-tagline {
   font-size: 13px;
   font-weight: 700;
   text-align: center;
-  opacity: 0;
-  transform: translateY(6px);
+  opacity: 0; transform: translateY(6px);
   transition: all 0.5s ease 0.8s;
   line-height: 1.4;
   padding: 0 10px;
 }
 .finale-tagline.show { opacity: 1; transform: translateY(0); }
+
 .finale-sub {
   font-size: 9px;
   text-align: center;
@@ -740,6 +859,73 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
   line-height: 1.5;
 }
 .finale-sub.show { opacity: 1; }
+
+/* ═══════════════════════════════════════════
+   CALLOUT BOXES — NOW ABOVE PHONE
+═══════════════════════════════════════════ */
+.callout {
+  position: relative;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  background: rgba(13,27,42,0.92);
+  border: 1px solid rgba(0,180,166,0.4);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  padding: 10px 14px;
+  width: 88vw;
+  max-width: 340px;
+  z-index: 50;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
+  pointer-events: none;
+  display: none;
+  margin: 0 auto 6px;
+}
+.callout.show {
+  opacity: 1;
+  transform: translateY(0);
+  display: block;
+}
+.callout-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 4px;
+}
+.callout-body {
+  font-size: 11px;
+  color: rgba(255,255,255,0.80);
+  line-height: 1.5;
+}
+.callout-line { display: none; }
+
+/* Callout container — sits ABOVE phone */
+#callout-zone {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  min-height: 70px;
+  padding: 4px 16px 0;
+  order: -1;
+}
+
+/* ═══════════════════════════════════════════
+   SCENE LABEL
+═══════════════════════════════════════════ */
+#scene-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  z-index: 200;
+  transition: opacity 0.3s;
+  padding: 6px 0 2px;
+  text-align: center;
+  width: 100%;
+}
 
 /* ═══════════════════════════════════════════
    PROGRESS BAR
@@ -756,23 +942,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 }
 
 /* ═══════════════════════════════════════════
-   SCENE LABEL
-═══════════════════════════════════════════ */
-#scene-label {
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.35);
-  z-index: 200;
-  transition: opacity 0.3s;
-  padding: 10px 0 2px;
-  text-align: center;
-  width: 100%;
-}
-
-/* ═══════════════════════════════════════════
-   REPLAY BUTTON
+   REPLAY / CTA BUTTONS
 ═══════════════════════════════════════════ */
 #replay-btn {
   background: var(--teal);
@@ -789,9 +959,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
   z-index: 200;
   letter-spacing: 0.5px;
   box-shadow: 0 4px 20px rgba(0,180,166,0.4);
-  margin: 12px auto 16px;
+  margin: 8px auto 4px;
   display: block;
   pointer-events: none;
+  flex-shrink: 0;
 }
 #replay-btn.show { opacity: 1; pointer-events: auto; }
 #replay-btn:hover { transform: scale(1.05); }
@@ -810,12 +981,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
   transition: opacity 0.5s ease 0.3s, transform 0.2s ease;
   z-index: 200;
   letter-spacing: 0.5px;
-  margin: 0 auto 8px;
+  margin: 4px auto 0;
   display: block;
   pointer-events: none;
   box-shadow: 0 4px 20px rgba(244,163,0,0.35);
   text-decoration: none;
   text-align: center;
+  flex-shrink: 0;
 }
 #cta-btn.show { opacity: 1; pointer-events: auto; }
 #cta-btn:hover { transform: scale(1.05); }
@@ -830,8 +1002,61 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
   <div class="orb orb2"></div>
   <div class="orb orb3"></div>
 
+  <!-- ══ FULLSCREEN TITLE CARD (pre-phone) ══ -->
+  <div id="title-card">
+    <div class="tc-line tc-line-1" id="tc1">Every receipt.</div>
+    <div class="tc-line tc-line-1" id="tc2">Every gig.</div>
+    <div class="tc-line tc-line-1" id="tc2b">Every deduction.</div>
+    <div class="tc-divider" id="tc-div1"></div>
+    <div class="tc-line tc-line-3" id="tc3">OwnIt tracks it all —</div>
+    <div class="tc-line tc-line-4" id="tc4">so your Schedule C fills itself.</div>
+  </div>
+
   <!-- Scene label -->
   <div id="scene-label">INTRO</div>
+
+  <!-- ══ CALLOUT LABELS — above phone ══ -->
+  <div id="callout-zone">
+    <div class="callout" id="co-tabs">
+      <div class="callout-title">All Your Businesses, One App</div>
+      <div class="callout-body">Separate tabs for each business — income, expenses, and profit tracked independently. Switch between them instantly.</div>
+    </div>
+
+    <div class="callout" id="co-expense">
+      <div class="callout-title">Log Expenses in Seconds</div>
+      <div class="callout-body">Capture the date, vendor, category, amount, and payment method. Every entry is automatically mapped to the right IRS Schedule C line.</div>
+    </div>
+
+    <div class="callout" id="co-events">
+      <div class="callout-title">Track Ticket Sales & Events</div>
+      <div class="callout-body">Log singles, couples, and revenue for each event. See your net profit per show — no spreadsheet required.</div>
+    </div>
+
+    <div class="callout" id="co-earnings">
+      <div class="callout-title">See the Full Picture</div>
+      <div class="callout-body">Income, expenses, and net profit across every business — at a glance. Know exactly where you stand before April comes around.</div>
+    </div>
+
+    <div class="callout" id="co-export">
+      <div class="callout-title">Export When You're Ready</div>
+      <div class="callout-body">One tap exports your data as a CSV — or generates a Schedule C summary with IRS line numbers, ready for your accountant.</div>
+    </div>
+
+    <div class="callout" id="co-customname">
+      <div class="callout-title">Your Name on the Home Screen</div>
+      <div class="callout-body">Your app shows up on your phone with your business name — not "OwnIt." You literally own the name.</div>
+    </div>
+
+    <div class="callout" id="co-customlook">
+      <div class="callout-title">Branded to Match Your Business</div>
+      <div class="callout-body">Custom icon and color palette built around your brand. Every client gets something completely unique.</div>
+    </div>
+
+    <div class="callout" id="co-homescreen">
+      <div class="callout-title">Lives Right on Your Home Screen</div>
+      <div class="callout-body">No App Store. No subscription. It installs like a native app — tap it anytime to log, review, and export.</div>
+    </div>
+  </div>
 
   <!-- ══ PHONE ══ -->
   <div id="phone-wrap">
@@ -842,16 +1067,16 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
         <!-- ── SCENE 1: INTRO ── -->
         <div class="scene active" id="scene-intro">
           <div class="intro-icon" style="background:none;box-shadow:none;padding:0;">
-  <svg width="72" height="72" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style=""><rect x="3" y="3" width="194" height="194" rx="42" fill="#0F2940" stroke="#00B4A6" stroke-width="6"/>
-  <polygon points="92,146 30,146 55,76" fill="#F4A300"/>
-  <polygon points="108,146 168,146 142,96" fill="#F4A300"/>
-  <polygon points="100,50 124,106 124,160 76,160 76,106" fill="#00B4A6"/>
-  <rect x="28" y="141" width="144" height="22" rx="6" fill="#F4A300"/>
-  <circle cx="55" cy="76" r="9" fill="#FFFFFF"/>
-  <circle cx="100" cy="50" r="10" fill="#FFFFFF"/>
-  <circle cx="142" cy="96" r="8" fill="#FFFFFF"/>
-  <circle cx="100" cy="50" r="16" fill="none" stroke="#00B4A6" stroke-width="3" stroke-dasharray="4 3"/></svg>
-</div>
+            <svg width="72" height="72" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="194" height="194" rx="42" fill="#0F2940" stroke="#00B4A6" stroke-width="6"/>
+            <polygon points="92,146 30,146 55,76" fill="#F4A300"/>
+            <polygon points="108,146 168,146 142,96" fill="#F4A300"/>
+            <polygon points="100,50 124,106 124,160 76,160 76,106" fill="#00B4A6"/>
+            <rect x="28" y="141" width="144" height="22" rx="6" fill="#F4A300"/>
+            <circle cx="55" cy="76" r="9" fill="#FFFFFF"/>
+            <circle cx="100" cy="50" r="10" fill="#FFFFFF"/>
+            <circle cx="142" cy="96" r="8" fill="#FFFFFF"/>
+            <circle cx="100" cy="50" r="16" fill="none" stroke="#00B4A6" stroke-width="3" stroke-dasharray="4 3"/></svg>
+          </div>
           <div class="intro-appname">OwnIt</div>
           <div class="intro-tagline">Custom Business Tracker</div>
           <div class="intro-badges">
@@ -864,13 +1089,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
         <!-- ── SCENE 2: BUSINESS TABS ── -->
         <div class="scene" id="scene-tabs">
           <div class="app-header">
-            <span class="app-title">OwnIt</span>
+            <span class="app-title">Dog Walking</span>
             <span class="sync-dot"></span>
           </div>
           <div class="biz-tabs" id="biz-tabs-row">
-            <div class="biz-tab active-tab" id="tab-rover">🐾 Rover</div>
-            <div class="biz-tab" id="tab-wyzant">📚 Wyzant</div>
-            <div class="biz-tab" id="tab-itt">💃 It Takes Two</div>
+            <div class="biz-tab active-tab" id="tab-rover">🐾 Dog Walking</div>
+            <div class="biz-tab" id="tab-wyzant">📚 Tutoring</div>
+            <div class="biz-tab" id="tab-itt">💃 Dance Class</div>
           </div>
           <div class="scroll-area" id="tabs-scroll" style="top:116px">
             <div class="overview-card" id="ov-income">
@@ -901,7 +1126,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
             <span class="app-title">Add Expense</span>
             <span class="sync-dot"></span>
           </div>
-          <div class="scroll-area">
+          <div class="scroll-area" style="top:68px">
             <div class="form-field" id="ff-date">
               <div class="ff-label">Date</div>
               <div class="ff-val" id="ff-date-val"></div>
@@ -922,54 +1147,40 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
               <div class="ff-label">Payment Method</div>
               <div class="ff-val" id="ff-pay-val"></div>
             </div>
-            <div class="add-btn-app" id="add-expense-btn">+ Add Expense</div>
-          </div>
-          <div class="bottom-nav">
-            <div class="nav-item"><span class="nav-icon">🏠</span>Overview</div>
-            <div class="nav-item active"><span class="nav-icon">➕</span>Add</div>
-            <div class="nav-item"><span class="nav-icon">📋</span>Log</div>
-            <div class="nav-item"><span class="nav-icon">💰</span>Earnings</div>
-            <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
+            <button class="add-btn-app" id="add-expense-btn">+ Add Expense</button>
           </div>
         </div>
 
         <!-- ── SCENE 4: EVENT TRACKING ── -->
         <div class="scene" id="scene-events">
           <div class="app-header">
-            <span class="app-title">💃 It Takes Two</span>
+            <span class="app-title">Dance Class</span>
             <span class="sync-dot"></span>
           </div>
-          <div class="scroll-area" style="top:70px">
-            <div class="event-card">
-              <div class="event-name">Tango Night — April 2025</div>
-              <div class="event-stats">
-                <div class="evt-stat">
-                  <div class="evt-stat-val" id="single-count">0</div>
-                  <div class="evt-stat-lbl">Singles</div>
+          <div class="scroll-area" style="top:68px">
+            <div class="event-row" id="ev-row1">
+              <div class="ev-title">Spring Showcase — May 3</div>
+              <div class="ev-sub">Dance Class · Venue: Studio A</div>
+              <div class="ev-stats">
+                <div class="ev-stat">
+                  <div class="ev-stat-val" id="single-count">0</div>
+                  <div class="ev-stat-lbl">Singles</div>
                 </div>
-                <div class="evt-stat">
-                  <div class="evt-stat-val" id="couple-count">0</div>
-                  <div class="evt-stat-lbl">Couples</div>
+                <div class="ev-stat">
+                  <div class="ev-stat-val" id="couple-count">0</div>
+                  <div class="ev-stat-lbl">Couples</div>
                 </div>
-                <div class="evt-stat">
-                  <div class="evt-stat-val" id="revenue-count">$0</div>
-                  <div class="evt-stat-lbl">Revenue</div>
+                <div class="ev-stat">
+                  <div class="ev-stat-val" id="revenue-count">$0</div>
+                  <div class="ev-stat-lbl">Revenue</div>
                 </div>
               </div>
-              <div class="ticket-btn" id="ticket-log-btn">🎟 Log Ticket Sales</div>
             </div>
-            <div class="expense-row" id="ev-row1" style="background:#1A2E42">
-              <div class="exp-left">
-                <div class="exp-vendor">Venue Rental</div>
-                <div class="exp-cat">Operating Cost</div>
-              </div>
-              <div class="exp-amt">-$120.00</div>
-            </div>
+            <button class="ticket-log-btn" id="ticket-log-btn">🎟 Log Ticket Sales</button>
           </div>
           <div class="bottom-nav">
-            <div class="nav-item active"><span class="nav-icon">🏠</span>Overview</div>
-            <div class="nav-item"><span class="nav-icon">➕</span>Add</div>
-            <div class="nav-item"><span class="nav-icon">📋</span>Log</div>
+            <div class="nav-item"><span class="nav-icon">🏠</span>Overview</div>
+            <div class="nav-item active"><span class="nav-icon">📋</span>Log</div>
             <div class="nav-item"><span class="nav-icon">💰</span>Earnings</div>
             <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
           </div>
@@ -977,133 +1188,139 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 
         <!-- ── SCENE 5: TOTAL EARNINGS ── -->
         <div class="scene" id="scene-earnings">
-          <div class="app-header">
-            <span class="app-title">💰 Total Earnings</span>
-            <span class="sync-dot"></span>
+          <div class="earnings-header">
+            <div class="earnings-title">Total Earnings</div>
+            <div class="earnings-sub">All businesses · YTD</div>
           </div>
-          <div class="scroll-area" style="top:70px; padding-top:8px">
+          <div class="scroll-area" style="top:68px">
             <div class="earnings-card" id="ec1">
-              <div class="ec-name">🐾 Rover</div>
-              <div class="ec-row"><span class="ec-lbl">Income</span><span class="ec-val" style="color:var(--income)">$3,240</span></div>
-              <div class="ec-row"><span class="ec-lbl">Expenses</span><span class="ec-val" style="color:var(--expense)">$842</span></div>
-              <div class="ec-row"><span class="ec-lbl">Net Profit</span><span class="ec-val" style="color:var(--profit)">$2,398</span></div>
+              <div><div class="ec-name">🐾 Dog Walking</div><div class="ec-sub">Net profit</div></div>
+              <div class="ec-val">$2,397</div>
             </div>
             <div class="earnings-card" id="ec2">
-              <div class="ec-name">📚 Wyzant</div>
-              <div class="ec-row"><span class="ec-lbl">Income</span><span class="ec-val" style="color:var(--income)">$1,850</span></div>
-              <div class="ec-row"><span class="ec-lbl">Expenses</span><span class="ec-val" style="color:var(--expense)">$210</span></div>
-              <div class="ec-row"><span class="ec-lbl">Net Profit</span><span class="ec-val" style="color:var(--profit)">$1,640</span></div>
+              <div><div class="ec-name">📚 Tutoring</div><div class="ec-sub">Net profit</div></div>
+              <div class="ec-val">$1,639</div>
             </div>
             <div class="earnings-card" id="ec3">
-              <div class="ec-name">💃 It Takes Two</div>
-              <div class="ec-row"><span class="ec-lbl">Ticket Revenue</span><span class="ec-val" style="color:var(--income)">$2,760</span></div>
-              <div class="ec-row"><span class="ec-lbl">Expenses</span><span class="ec-val" style="color:var(--expense)">$580</span></div>
-              <div class="ec-row"><span class="ec-lbl">Net Profit</span><span class="ec-val" style="color:var(--profit)">$2,180</span></div>
+              <div><div class="ec-name">💃 Dance Class</div><div class="ec-sub">Net profit</div></div>
+              <div class="ec-val">$2,180</div>
             </div>
             <div class="grand-total" id="grand-total-card">
               <div class="gt-label">✦ Combined Grand Total</div>
-              <div class="ec-row"><span class="ec-lbl" style="font-size:9px;color:rgba(255,255,255,0.5)">Total Income</span><span class="ec-val" style="color:var(--income);font-size:11px">$7,850</span></div>
-              <div class="ec-row" style="margin-top:3px"><span class="ec-lbl" style="font-size:9px;color:rgba(255,255,255,0.5)">Net Profit</span><span class="gt-profit">$6,218</span></div>
+              <div class="gt-val">$6,216</div>
             </div>
-          </div>
-          <div class="bottom-nav">
-            <div class="nav-item"><span class="nav-icon">🏠</span>Overview</div>
-            <div class="nav-item"><span class="nav-icon">➕</span>Add</div>
-            <div class="nav-item"><span class="nav-icon">📋</span>Log</div>
-            <div class="nav-item active"><span class="nav-icon">💰</span>Earnings</div>
-            <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
           </div>
         </div>
 
         <!-- ── SCENE 6: EXPORT ── -->
         <div class="scene" id="scene-export">
-          <div class="app-header">
-            <span class="app-title">Export Data</span>
-            <span class="sync-dot"></span>
-          </div>
-          <div class="scroll-area" style="top:70px">
-            <div style="font-size:9px;color:var(--muted);margin-bottom:10px;line-height:1.5">
-              Export your data anytime — send to your accountant or open in Google Sheets.
+          <div class="export-section">
+            <div>
+              <div class="export-title">Export Your Data</div>
+              <div class="export-sub">Tax season ready — export your records in one tap.</div>
             </div>
-            <div class="export-options">
-              <div class="export-btn" id="csv-btn">
-                <span class="exp-icon">📊</span>
-                <div class="exp-info">
-                  <div class="exp-title">Export CSV</div>
-                  <div class="exp-sub">All expenses → Google Sheets</div>
-                </div>
-                <span class="exp-arrow">›</span>
-              </div>
-              <div class="export-btn" id="schedC-btn">
-                <span class="exp-icon">📋</span>
-                <div class="exp-info">
-                  <div class="exp-title">Schedule C Summary</div>
-                  <div class="exp-sub">IRS-ready tax breakdown</div>
-                </div>
-                <span class="exp-arrow">›</span>
+            <div class="export-btn" id="csv-btn">
+              <span class="eb-icon">📊</span>
+              <div>
+                <div class="eb-label">Export as CSV</div>
+                <div class="eb-sub">All transactions, all businesses</div>
               </div>
             </div>
-          </div>
-          <div class="toast" id="export-toast">✓ CSV Downloaded Successfully!</div>
-          <div class="bottom-nav">
-            <div class="nav-item"><span class="nav-icon">🏠</span>Overview</div>
-            <div class="nav-item"><span class="nav-icon">➕</span>Add</div>
-            <div class="nav-item active"><span class="nav-icon">📋</span>Log</div>
-            <div class="nav-item"><span class="nav-icon">💰</span>Earnings</div>
-            <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
+            <div class="export-btn" id="schedC-btn">
+              <span class="eb-icon">📋</span>
+              <div>
+                <div class="eb-label">Schedule C Summary</div>
+                <div class="eb-sub">IRS line numbers included</div>
+              </div>
+            </div>
+            <div class="toast" id="export-toast">✓ Downloaded! Check your files.</div>
           </div>
         </div>
 
         <!-- ── SCENE 7: NAME CUSTOMIZATION ── -->
         <div class="scene" id="scene-custom-name">
-          <div class="app-header">
-            <span class="app-title" id="custom-app-title">OwnIt</span>
-            <span class="sync-dot"></span>
-          </div>
-          <div class="custom-screen" style="top:60px;position:absolute;bottom:0;left:0;right:0;justify-content:center;">
+          <div class="custom-screen">
             <div class="custom-label" id="cn-label">YOUR APP NAME</div>
+            <div class="custom-app-header" id="custom-app-title">OwnIt</div>
             <div class="name-display" id="name-display">OwnIt</div>
             <div class="name-row" id="name-chips">
-              <span class="name-chip" id="chip-glam">Glam by Kia</span>
-              <span class="name-chip" id="chip-hustle">The Hustle Hub</span>
-              <span class="name-chip" id="chip-empire">My Empire</span>
+              <div class="name-chip" id="chip-glam">Glam by Kia</div>
+              <div class="name-chip" id="chip-hustle">The Hustle Hub</div>
+              <div class="name-chip" id="chip-empire">My Empire</div>
             </div>
           </div>
         </div>
 
         <!-- ── SCENE 8: ICON & COLORS ── -->
         <div class="scene" id="scene-custom-look">
-          <div class="app-header">
-            <span class="app-title">Glam by Kia</span>
-            <span class="sync-dot"></span>
-          </div>
-          <div style="position:absolute;top:70px;bottom:58px;left:0;right:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:14px;">
+          <div class="custom-look-screen">
             <div class="custom-label show" style="opacity:1;">YOUR ICON &amp; COLORS</div>
-            <div class="icon-preview" id="icon-preview" style="background:linear-gradient(135deg,#C2185B,#880E4F);">💄</div>
+            <div class="icon-preview" id="icon-preview">💄</div>
             <div class="color-swatches" id="color-swatches">
               <div class="swatch" id="sw1" style="background:#C2185B;"></div>
               <div class="swatch" id="sw2" style="background:#6C2FAF;"></div>
               <div class="swatch" id="sw3" style="background:#00B4A6;"></div>
               <div class="swatch" id="sw4" style="background:#F4A300;"></div>
-              <div class="swatch" id="sw5" style="background:#1DB954;"></div>
             </div>
             <div class="theme-preview" id="theme-preview">
-              <div class="theme-dot" id="theme-dot" style="background:#C2185B;"></div>
-              <div class="theme-bar" id="theme-bar1" style="background:rgba(194,24,91,0.4);"></div>
-              <div class="theme-bar" id="theme-bar2" style="background:rgba(194,24,91,0.2);"></div>
-              <div class="theme-dot" id="theme-dot2" style="background:rgba(194,24,91,0.6);width:14px;height:14px;"></div>
+              <div class="theme-dot-row">
+                <div class="theme-dot" id="theme-dot"></div>
+                <div class="theme-dot2" id="theme-dot2"></div>
+              </div>
+              <div class="theme-bar1" id="theme-bar1"></div>
+              <div class="theme-bar2" id="theme-bar2"></div>
             </div>
-          </div>
-          <div class="bottom-nav">
-            <div class="nav-item active"><span class="nav-icon">🏠</span>Overview</div>
-            <div class="nav-item"><span class="nav-icon">➕</span>Add</div>
-            <div class="nav-item"><span class="nav-icon">📋</span>Log</div>
-            <div class="nav-item"><span class="nav-icon">💰</span>Earnings</div>
-            <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
           </div>
         </div>
 
-        <!-- ── SCENE 9: FINALE ── -->
+        <!-- ── SCENE 9: HOME SCREEN ── -->
+        <div class="scene" id="scene-homescreen">
+          <div class="hs-status">
+            <span>9:41</span>
+            <span>📶 🔋</span>
+          </div>
+          <div class="hs-grid">
+            <div class="hs-icon" id="hs-messages">
+              <div class="hs-app-icon" style="background:linear-gradient(135deg,#34C759,#1A7A35);">💬</div>
+              <div class="hs-app-label">Messages</div>
+            </div>
+            <div class="hs-icon" id="hs-photos">
+              <div class="hs-app-icon" style="background:linear-gradient(135deg,#FF9F0A,#FF375F);">📷</div>
+              <div class="hs-app-label">Photos</div>
+            </div>
+            <div class="hs-icon" id="hs-maps">
+              <div class="hs-app-icon" style="background:linear-gradient(135deg,#30B0C7,#1A6B80);">🗺️</div>
+              <div class="hs-app-label">Maps</div>
+            </div>
+            <div class="hs-icon" id="hs-calendar">
+              <div class="hs-app-icon" style="background:linear-gradient(135deg,#FF3B30,#C0392B);">📅</div>
+              <div class="hs-app-label">Calendar</div>
+            </div>
+            <div class="hs-icon" id="hs-notes">
+              <div class="hs-app-icon" style="background:linear-gradient(135deg,#FFD60A,#B8960A);">📝</div>
+              <div class="hs-app-label">Notes</div>
+            </div>
+            <div class="hs-icon" id="hs-music">
+              <div class="hs-app-icon" style="background:linear-gradient(135deg,#FF375F,#8B0000);">🎵</div>
+              <div class="hs-app-label">Music</div>
+            </div>
+            <div class="hs-icon" id="hs-ownitapp">
+              <div class="hs-app-icon" id="hs-ownitapp-icon" style="background:linear-gradient(135deg,#C2185B,#880E4F);">💄</div>
+              <div class="hs-app-label" id="hs-ownitapp-label">Glam by Kia</div>
+            </div>
+            <div class="hs-icon" id="hs-settings">
+              <div class="hs-app-icon" style="background:linear-gradient(135deg,#8E8E93,#48484A);">⚙️</div>
+              <div class="hs-app-label">Settings</div>
+            </div>
+          </div>
+          <div class="hs-dock" id="hs-dock">
+            <div class="hs-app-icon" style="background:linear-gradient(135deg,#0A84FF,#0040C1);width:44px;height:44px;border-radius:12px;font-size:20px;display:flex;align-items:center;justify-content:center;">📞</div>
+            <div class="hs-app-icon" style="background:linear-gradient(135deg,#34C759,#1A7A35);width:44px;height:44px;border-radius:12px;font-size:20px;display:flex;align-items:center;justify-content:center;">💬</div>
+            <div class="hs-app-icon" style="background:linear-gradient(135deg,#0A84FF,#005BB5);width:44px;height:44px;border-radius:12px;font-size:20px;display:flex;align-items:center;justify-content:center;">🌐</div>
+          </div>
+        </div>
+
+        <!-- ── SCENE 10: FINALE ── -->
         <div class="scene" id="scene-finale">
           <div class="finale-screen">
             <div class="finale-icon" id="finale-icon" style="background:linear-gradient(135deg,#C2185B,#880E4F);">💄</div>
@@ -1119,51 +1336,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
     </div><!-- /phone-shell -->
   </div><!-- /phone-wrap -->
 
-  <!-- ══ CALLOUT LABELS ══ -->
-  <div id="callout-zone">
-  <div class="callout" id="co-tabs" style="right: calc(50% + 170px); top: 28%;">
-    <div class="callout-title">4 Business Tabs</div>
-    <div class="callout-body">Separate tabs for each business, all in one app.</div>
-  </div>
-
-  <div class="callout" id="co-expense" style="left: calc(50% + 160px); top: 22%;">
-    <div class="callout-title">Expense Logging</div>
-    <div class="callout-body">Date, vendor, category, amount & payment method.</div>
-  </div>
-
-  <div class="callout" id="co-events" style="right: calc(50% + 170px); top: 32%;">
-    <div class="callout-title">Ticket & Event Tracking</div>
-    <div class="callout-body">Singles, couples, revenue & net profit per event.</div>
-  </div>
-
-  <div class="callout" id="co-earnings" style="left: calc(50% + 160px); top: 20%;">
-    <div class="callout-title">Total Earnings View</div>
-    <div class="callout-body">Income, expenses & net profit — all businesses.</div>
-  </div>
-
-  <div class="callout" id="co-export" style="right: calc(50% + 170px); top: 30%;">
-    <div class="callout-title">One-Tap Export</div>
-    <div class="callout-body">Export CSV or Schedule C — ready for your accountant.</div>
-  </div>
-
-
-  <div class="callout" id="co-customname">
-    <div class="callout-title">Make It Yours</div>
-    <div class="callout-body">Your app gets your business name on the Home Screen.</div>
-  </div>
-
-  <div class="callout" id="co-customlook">
-    <div class="callout-title">Custom Icon &amp; Colors</div>
-    <div class="callout-body">Brand colors &amp; icon matched to your business.</div>
-  </div>
-
-  </div><!-- /callout-zone -->
-
   <!-- Progress bar -->
   <div id="progress-bar"></div>
 
-  <!-- Replay -->
-  <a id="cta-btn" href="https://ownitapp.info/intake" target="_blank">Get Your App →</a>
+  <!-- CTA & Replay -->
+  <a id="cta-btn" href="https://ownitapp.info" target="_blank">Get More Info →</a>
   <button id="replay-btn" onclick="startShow()">↺ Watch Again</button>
 
 </div><!-- /stage -->
@@ -1174,8 +1351,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 ═══════════════════════════════════════════ */
 const $ = id => document.getElementById(id);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-
 
 async function moveCursor() {}
 async function clickAt() { await sleep(250); }
@@ -1190,7 +1365,7 @@ function showScene(id) {
 function showCallout(id) { $(id).classList.add('show'); }
 function hideAllCallouts() { document.querySelectorAll('.callout').forEach(c => c.classList.remove('show')); }
 
-let totalDuration = 38750;
+let totalDuration = 85000;
 let startTime = null;
 let animRunning = false;
 
@@ -1219,7 +1394,7 @@ async function typeInto(elId, text, speed = 60) {
 }
 
 // Count up number
-async function countUp(elId, target, prefix='', suffix='', steps=20, duration=600) {
+async function countUp(elId, target, prefix='', suffix='', steps=20, duration=800) {
   const el = $(elId);
   const stepTime = duration / steps;
   for (let i = 1; i <= steps; i++) {
@@ -1227,6 +1402,35 @@ async function countUp(elId, target, prefix='', suffix='', steps=20, duration=60
     el.textContent = prefix + val + suffix;
     await sleep(stepTime);
   }
+}
+
+/* ═══════════════════════════════════════════
+   TITLE CARD ANIMATION
+═══════════════════════════════════════════ */
+async function runTitleCard() {
+  // Line 1: "Every receipt." — pause — "Every gig." — pause — "Every deduction."
+  $('tc1').classList.add('show');
+  await sleep(900);
+  $('tc2').classList.add('show');
+  await sleep(900);
+  $('tc2b').classList.add('show');
+  await sleep(900);
+
+  // Divider
+  $('tc-div1').classList.add('show');
+  await sleep(500);
+
+  // "OwnIt tracks it all —"
+  $('tc3').classList.add('show');
+  await sleep(1600);
+
+  // Pause — then the payoff
+  $('tc4').classList.add('show');
+  await sleep(2800);
+
+  // Fade out title card
+  $('title-card').classList.add('hidden');
+  await sleep(900);
 }
 
 /* ═══════════════════════════════════════════
@@ -1240,6 +1444,12 @@ async function startShow() {
   hideCursor();
   $('progress-bar').style.width = '0%';
 
+  // Reset title card
+  $('title-card').classList.remove('hidden');
+  $('title-card').style.opacity = '1';
+  $('title-card').style.pointerEvents = 'auto';
+  ['tc1','tc2','tc2b','tc3','tc4','tc-div1'].forEach(id => $(id).classList.remove('show'));
+
   // Reset all animated states
   document.querySelectorAll('.overview-card').forEach(e => e.classList.remove('show'));
   document.querySelectorAll('.expense-row').forEach(e => e.classList.remove('show'));
@@ -1247,7 +1457,6 @@ async function startShow() {
   document.querySelectorAll('.add-btn-app').forEach(e => { e.classList.remove('show','pressed'); });
   document.querySelectorAll('.earnings-card,.grand-total').forEach(e => e.classList.remove('show'));
   document.querySelectorAll('.export-btn').forEach(e => e.classList.remove('show','pressed'));
-  // Reset custom scenes
   ['cn-label','name-chips'].forEach(id => $(id) && $(id).classList.remove('show'));
   document.querySelectorAll('.name-chip').forEach(c => c.classList.remove('active'));
   $('name-display').textContent = 'OwnIt';
@@ -1264,35 +1473,42 @@ async function startShow() {
   $('couple-count').textContent = '0';
   $('revenue-count').textContent = '$0';
   ['ff-date-val','ff-vendor-val','ff-cat-val','ff-amt-val','ff-pay-val'].forEach(id => $(id).textContent = '');
+  // Reset home screen
+  document.querySelectorAll('.hs-icon').forEach(e => e.classList.remove('show','highlight'));
+  $('hs-dock').classList.remove('show');
 
   startTime = Date.now();
   requestAnimationFrame(updateProgress);
 
   /* ─────────────────────────────────────────
-     SCENE 1 — INTRO (0–5s)
+     TITLE CARD (~7s)
+  ───────────────────────────────────────── */
+  await runTitleCard();
+
+  /* ─────────────────────────────────────────
+     SCENE 1 — INTRO (7–13s)
   ───────────────────────────────────────── */
   setLabel('INTRO');
   showScene('scene-intro');
-  await sleep(3000);
+  await sleep(4500);
 
   /* ─────────────────────────────────────────
-     SCENE 2 — BUSINESS TABS (5–10s)
+     SCENE 2 — BUSINESS TABS (13–24s)
   ───────────────────────────────────────── */
   setLabel('BUSINESS TABS');
   showScene('scene-tabs');
 
-  // Per-tab data
   const tabData = {
-    rover:  { income: '$3,240.00', expense: '$842.16',  profit: '$2,397.84' },
-    wyzant: { income: '$1,850.00', expense: '$210.50',  profit: '$1,639.50' },
-    itt:    { income: '$2,760.00', expense: '$580.00',  profit: '$2,180.00' },
+    rover:  { income: '$3,240.00', expense: '$842.16',  profit: '$2,397.84', title: 'Dog Walking' },
+    wyzant: { income: '$1,850.00', expense: '$210.50',  profit: '$1,639.50', title: 'Tutoring' },
+    itt:    { income: '$2,760.00', expense: '$580.00',  profit: '$2,180.00', title: 'Dance Class' },
   };
 
   function switchTab(tabId) {
     document.querySelectorAll('.biz-tab').forEach(t => t.classList.remove('active-tab'));
     $('tab-' + tabId).classList.add('active-tab');
     const d = tabData[tabId];
-    // Flash out, update, flash in
+    document.querySelector('.app-title') && (document.querySelector('#scene-tabs .app-title').textContent = d.title);
     ['ov-income', 'ov-expense', 'ov-profit'].forEach(id => {
       $(id).style.opacity = '0.3';
       $(id).style.transform = 'translateY(4px)';
@@ -1309,160 +1525,151 @@ async function startShow() {
     }, 160);
   }
 
-  await sleep(400);
+  await sleep(500);
   showCallout('co-tabs');
 
-  // Start on Rover — call switchTab to guarantee correct values on every run
   switchTab('rover');
-  await sleep(300);
+  await sleep(400);
   $('ov-income').classList.add('show');
-  await sleep(200);
+  await sleep(250);
   $('ov-expense').classList.add('show');
-  await sleep(200);
+  await sleep(250);
   $('ov-profit').classList.add('show');
-  await sleep(900);
+  await sleep(2200);
 
-  // Switch to Wyzant
+  // Switch to Tutoring
   switchTab('wyzant');
-  await sleep(1100);
+  await sleep(2200);
 
-  // Switch to It Takes Two
+  // Switch to Dance Class
   switchTab('itt');
-  await sleep(900);
+  await sleep(2200);
 
   /* ─────────────────────────────────────────
-     SCENE 3 — EXPENSE LOGGING (10–16s)
+     SCENE 3 — EXPENSE LOGGING (24–38s)
   ───────────────────────────────────────── */
   setLabel('EXPENSE LOGGING');
   hideAllCallouts();
   showScene('scene-expense');
-  await sleep(300);
+  await sleep(400);
   showCallout('co-expense');
 
-  // Fields appear and fill in
   $('ff-date').classList.add('show');
-  await sleep(200);
+  await sleep(300);
   await typeInto('ff-date-val', 'Apr 23, 2025', 55);
-  await sleep(150);
+  await sleep(300);
 
   $('ff-vendor').classList.add('show');
-  await sleep(150);
+  await sleep(250);
   await typeInto('ff-vendor-val', 'PetSmart', 65);
-  await sleep(150);
+  await sleep(300);
 
   $('ff-cat').classList.add('show');
-  await sleep(150);
-  await typeInto('ff-cat-val', 'Supplies', 70);
-  await sleep(150);
+  await sleep(250);
+  await typeInto('ff-cat-val', 'Supplies → Sch C Line 22', 55);
+  await sleep(300);
 
   $('ff-amt').classList.add('show');
-  await sleep(150);
+  await sleep(250);
   await typeInto('ff-amt-val', '$34.99', 70);
-  await sleep(150);
+  await sleep(300);
 
   $('ff-pay').classList.add('show');
-  await sleep(150);
+  await sleep(250);
   await typeInto('ff-pay-val', 'Business Card', 55);
-  await sleep(300);
+  await sleep(600);
 
   $('add-expense-btn').classList.add('show');
-  await sleep(400);
-
-  // Click add
-  await clickAt(140, 430, 350);
-  $('add-expense-btn').classList.add('pressed');
-  await sleep(300);
-  $('add-expense-btn').classList.remove('pressed');
   await sleep(700);
 
+  await clickAt(140, 430, 350);
+  $('add-expense-btn').classList.add('pressed');
+  await sleep(400);
+  $('add-expense-btn').classList.remove('pressed');
+  await sleep(1500);
+
   /* ─────────────────────────────────────────
-     SCENE 4 — EVENT TRACKING (16–22s)
+     SCENE 4 — EVENT TRACKING (38–50s)
   ───────────────────────────────────────── */
   setLabel('EVENT TRACKING');
   hideAllCallouts();
   showScene('scene-events');
-  await sleep(300);
+  await sleep(400);
   showCallout('co-events');
   $('ev-row1').classList.add('show');
-  await sleep(500);
+  await sleep(800);
   $('ticket-log-btn').classList.add('show');
-  await sleep(500);
+  await sleep(900);
 
-  // Click Log Ticket Sales
   await clickAt(140, 315, 400);
   $('ticket-log-btn').classList.add('pressed');
-  await sleep(250);
+  await sleep(350);
   $('ticket-log-btn').classList.remove('pressed');
-  await sleep(200);
+  await sleep(300);
 
-  // Count up stats
-  countUp('single-count', 8, '', '', 15, 600);
-  await sleep(150);
-  countUp('couple-count', 5, '', '', 15, 600);
-  await sleep(150);
-  countUp('revenue-count', 1095, '$', '', 15, 700);
-  await sleep(1400);
+  countUp('single-count', 8, '', '', 15, 900);
+  await sleep(200);
+  countUp('couple-count', 5, '', '', 15, 900);
+  await sleep(200);
+  countUp('revenue-count', 1095, '$', '', 15, 1000);
+  await sleep(2500);
 
   /* ─────────────────────────────────────────
-     SCENE 5 — TOTAL EARNINGS (22–27s)
+     SCENE 5 — TOTAL EARNINGS (50–62s)
   ───────────────────────────────────────── */
   setLabel('TOTAL EARNINGS');
   hideAllCallouts();
   showScene('scene-earnings');
-  await sleep(300);
+  await sleep(400);
   showCallout('co-earnings');
   hideCursor();
 
   $('ec1').classList.add('show');
-  await sleep(250);
+  await sleep(400);
   $('ec2').classList.add('show');
-  await sleep(250);
+  await sleep(400);
   $('ec3').classList.add('show');
-  await sleep(350);
+  await sleep(600);
   $('grand-total-card').classList.add('show');
-  await sleep(3000);
+  await sleep(5000);
 
   /* ─────────────────────────────────────────
-     SCENE 6 — EXPORT (27–30s)
+     SCENE 6 — EXPORT (62–72s)
   ───────────────────────────────────────── */
   setLabel('EXPORT');
   hideAllCallouts();
   showScene('scene-export');
   showCursor();
-  await sleep(300);
+  await sleep(400);
   showCallout('co-export');
 
   $('csv-btn').classList.add('show');
-  await sleep(200);
+  await sleep(350);
   $('schedC-btn').classList.add('show');
-  await sleep(500);
+  await sleep(900);
 
-  // Click CSV export
   await clickAt(140, 200, 450);
   $('csv-btn').classList.add('pressed');
-  await sleep(300);
+  await sleep(400);
   $('csv-btn').classList.remove('pressed');
-  await sleep(200);
+  await sleep(300);
   $('export-toast').classList.add('show');
-  await sleep(2300);
-
+  await sleep(3500);
 
   /* ─────────────────────────────────────────
-     SCENE 7 — NAME CUSTOMIZATION (30–32.5s)
+     SCENE 7 — NAME CUSTOMIZATION (72–78s)
   ───────────────────────────────────────── */
   setLabel('YOUR APP NAME');
   hideAllCallouts();
   showScene('scene-custom-name');
-  await sleep(300);
+  await sleep(400);
   showCallout('co-customname');
   $('cn-label').classList.add('show');
-  await sleep(400);
-
-  // Show name chips
-  $('name-chips').classList.add('show');
   await sleep(600);
 
-  // Cycle through names
+  $('name-chips').classList.add('show');
+  await sleep(800);
+
   const names = [
     { id: 'chip-glam',   name: 'Glam by Kia',   emoji: '💄' },
     { id: 'chip-hustle', name: 'The Hustle Hub', emoji: '💼' },
@@ -1474,29 +1681,28 @@ async function startShow() {
     $('name-display').classList.add('highlight');
     $('name-display').textContent = n.name;
     $('custom-app-title').textContent = n.name;
-    await sleep(750);
+    await sleep(1000);
     $('name-display').classList.remove('highlight');
-    await sleep(100);
+    await sleep(200);
   }
-  await sleep(300);
+  await sleep(600);
 
   /* ─────────────────────────────────────────
-     SCENE 8 — ICON & COLORS (32.5–35.5s)
+     SCENE 8 — ICON & COLORS (78–84s)
   ───────────────────────────────────────── */
   setLabel('ICON & COLORS');
   hideAllCallouts();
   showScene('scene-custom-look');
-  await sleep(300);
+  await sleep(400);
   showCallout('co-customlook');
 
   $('icon-preview').classList.add('show');
-  await sleep(300);
+  await sleep(400);
   $('color-swatches').classList.add('show');
-  await sleep(300);
+  await sleep(400);
   $('theme-preview').classList.add('show');
-  await sleep(300);
+  await sleep(400);
 
-  // Cycle through color themes
   const themes = [
     { sw: 'sw1', color: '#C2185B', icon: '💄', grad: 'linear-gradient(135deg,#C2185B,#880E4F)' },
     { sw: 'sw2', color: '#6C2FAF', icon: '🔮', grad: 'linear-gradient(135deg,#6C2FAF,#3B1F6A)' },
@@ -1512,29 +1718,52 @@ async function startShow() {
     $('theme-dot2').style.background = t.color + '99';
     $('theme-bar1').style.background = t.color + '66';
     $('theme-bar2').style.background = t.color + '33';
-    await sleep(600);
+    await sleep(900);
   }
-  await sleep(200);
+  await sleep(500);
 
   /* ─────────────────────────────────────────
-     SCENE 9 — FINALE (35.5–38s)
+     SCENE 9 — HOME SCREEN (84–91s)
+  ───────────────────────────────────────── */
+  setLabel('HOME SCREEN');
+  hideAllCallouts();
+  showScene('scene-homescreen');
+  await sleep(400);
+  showCallout('co-homescreen');
+
+  // Stagger all icons in
+  const allIcons = ['hs-messages','hs-photos','hs-maps','hs-calendar','hs-notes','hs-music','hs-ownitapp','hs-settings'];
+  for (const id of allIcons) {
+    $(id).classList.add('show');
+    await sleep(120);
+  }
+  await sleep(500);
+  $('hs-dock').classList.add('show');
+  await sleep(1200);
+
+  // Highlight the OwnIt app
+  $('hs-ownitapp').classList.add('highlight');
+  await sleep(3500);
+
+  /* ─────────────────────────────────────────
+     SCENE 10 — FINALE (91–95s)
   ───────────────────────────────────────── */
   setLabel('');
   hideAllCallouts();
   showScene('scene-finale');
   await sleep(200);
   $('finale-icon').classList.add('show');
-  await sleep(200);
+  await sleep(250);
   $('finale-name').classList.add('show');
-  await sleep(150);
-  $('finale-tag').classList.add('show');
-  await sleep(150);
-  $('finale-divider').classList.add('show');
-  await sleep(150);
-  $('finale-tagline').classList.add('show');
   await sleep(200);
+  $('finale-tag').classList.add('show');
+  await sleep(200);
+  $('finale-divider').classList.add('show');
+  await sleep(200);
+  $('finale-tagline').classList.add('show');
+  await sleep(250);
   $('finale-sub').classList.add('show');
-  await sleep(1200);
+  await sleep(2000);
 
   /* ─────────────────────────────────────────
      DONE
@@ -1550,7 +1779,6 @@ async function startShow() {
 
 // Kick off on load
 window.addEventListener('load', () => {
-  // Small delay so fonts load
   setTimeout(startShow, 600);
 });
 </script>
