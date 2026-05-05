@@ -6,1795 +6,1286 @@
 <title>OwnIt — App Demo</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════════
-   ROOT & RESET
-═══════════════════════════════════════════ */
 :root {
-  --navy:    #0D1B2A;
-  --purple:  #3B1F6A;
-  --teal:    #00B4A6;
-  --gold:    #F4A300;
-  --pink:    #C2185B;
-  --white:   #FFFFFF;
-  --lt:      #F0F8FF;
-  --muted:   #8A9BB0;
-  --green:   #1DB954;
-  --red:     #E53935;
-  --blue:    #0070E0;
-  --income:  #0070E0;
-  --profit:  #1a7a12;
-  --expense: #E53935;
-  --card:    #1A2E42;
+  --navy:   #0D1B2A;
+  --teal:   #00B4A6;
+  --gold:   #F4A300;
+  --white:  #FFFFFF;
+  --muted:  #8A9BB0;
+  --green:  #1DB954;
+  --red:    #E53935;
+  --blue:   #0070E0;
+  --card:   #1A2E42;
   --phone-w: min(260px, 72vw);
-  --phone-h: min(520px, 143vw);
+  --phone-h: min(500px, 138vw);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 
-/* ═══════════════════════════════════════════
-   STAGE
-═══════════════════════════════════════════ */
+/* ── STAGE ── */
 #stage {
   width: 100vw;
-  min-height: 100vh;
+  height: 100vh;
   position: relative;
   overflow: hidden;
-  background: var(--navy);
   font-family: 'DM Sans', sans-serif;
+}
+
+/* ── PHASE A: TITLE CARD ── */
+#phase-title {
+  position: absolute;
+  inset: 0;
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 32px 24px;
+  text-align: center;
+  gap: 0;
+  transition: opacity 0.8s ease;
+}
+#phase-title.fadeout { opacity: 0; }
+
+.tc-line {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  line-height: 1.35;
+}
+.tc-line.show { opacity: 1; transform: translateY(0); }
+
+.tc-l1 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(15px, 4.2vw, 22px);
+  font-weight: 400;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 10px;
+}
+.tc-divider {
+  width: 44px; height: 2px;
+  background: var(--teal);
+  border-radius: 99px;
+  margin: 14px auto 18px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.tc-divider.show { opacity: 1; }
+.tc-l2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(17px, 5vw, 26px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.4;
+}
+.tc-l2 span { color: var(--teal); }
+
+/* ── PHASE B: DEMO ── */
+#phase-demo {
+  position: absolute;
+  inset: 0;
+  background: var(--navy);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  overflow: hidden;
+}
+#phase-demo.active {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-/* Ambient background orbs */
+/* orbs */
 .orb {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
   filter: blur(80px);
-  opacity: 0.18;
+  opacity: 0.15;
 }
-.orb1 { width: 500px; height: 500px; background: var(--teal);  top: -150px; right: -100px; }
-.orb2 { width: 400px; height: 400px; background: var(--purple); bottom: -120px; left: -80px; }
-.orb3 { width: 300px; height: 300px; background: var(--gold);   bottom: 50px;  right: 100px; opacity: 0.10; }
+.orb1 { width: 420px; height: 420px; background: var(--teal);  top: -120px; right: -80px; }
+.orb2 { width: 340px; height: 340px; background: #3B1F6A; bottom: -100px; left: -60px; }
 
-/* ═══════════════════════════════════════════
-   PRE-PHONE FULLSCREEN TITLE CARD
-═══════════════════════════════════════════ */
-#title-card {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 300;
-  background: var(--navy);
-  padding: 32px 24px;
-  text-align: center;
-  opacity: 1;
-  transition: opacity 0.8s ease;
-  gap: 0;
-}
-#title-card.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-#title-card.gone {
-  display: none;
-}
-
-.tc-line {
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  line-height: 1.3;
-}
-.tc-line.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.tc-line-1 {
-  font-family: 'DM Sans', sans-serif;
-  font-size: clamp(16px, 4.5vw, 22px);
-  font-weight: 400;
-  color: rgba(255,255,255,0.65);
-  margin-bottom: 18px;
-  letter-spacing: 0.2px;
-}
-.tc-line-2 {
-  font-family: 'DM Sans', sans-serif;
-  font-size: clamp(14px, 4vw, 20px);
-  font-weight: 400;
-  color: rgba(255,255,255,0.65);
-  margin-bottom: 22px;
-}
-.tc-line-3 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(18px, 5.5vw, 30px);
-  font-weight: 700;
-  color: var(--white);
-  margin-bottom: 6px;
-}
-.tc-line-4 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(18px, 5.5vw, 30px);
-  font-weight: 700;
-  color: var(--teal);
-  margin-bottom: 28px;
-}
-.tc-pause-line {
-  font-family: 'DM Sans', sans-serif;
-  font-size: clamp(14px, 3.8vw, 19px);
-  font-weight: 400;
-  color: rgba(255,255,255,0.65);
-  margin-bottom: 6px;
-}
-.tc-emphasis {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(16px, 4.5vw, 24px);
-  font-weight: 700;
-  color: var(--gold);
-  margin-bottom: 0;
-  letter-spacing: 0.3px;
-}
-
-.tc-divider {
-  width: 48px;
-  height: 2px;
-  background: var(--teal);
-  border-radius: 99px;
-  margin: 0 auto 24px;
-  opacity: 0;
-  transition: opacity 0.5s ease 0.2s;
-}
-.tc-divider.show { opacity: 1; }
-
-/* ═══════════════════════════════════════════
-   PHONE SHELL
-═══════════════════════════════════════════ */
-#phone-wrap {
-  position: relative;
-  left: auto;
-  top: auto;
-  transform: none;
-  width: var(--phone-w);
-  height: var(--phone-h);
-  z-index: 10;
-  margin-top: 8px;
-  flex-shrink: 0;
-  transition: transform 0.8s cubic-bezier(0.34,1.2,0.64,1), opacity 0.6s ease;
-}
-.phone-shell {
-  width: 100%;
-  height: 100%;
-  background: #111827;
-  border-radius: 42px;
-  border: 2.5px solid rgba(255,255,255,0.12);
-  box-shadow:
-    0 0 0 1px rgba(0,0,0,0.6),
-    0 40px 80px rgba(0,0,0,0.7),
-    inset 0 1px 0 rgba(255,255,255,0.08);
-  position: relative;
-  overflow: hidden;
-}
-/* Notch */
-.phone-notch {
-  position: absolute;
-  top: 10px; left: 50%;
-  transform: translateX(-50%);
-  width: 90px; height: 22px;
-  background: #111827;
-  border-radius: 0 0 18px 18px;
-  z-index: 20;
-  border: 2px solid rgba(255,255,255,0.06);
-  border-top: none;
-}
-/* Screen area */
-.phone-screen {
-  position: absolute;
-  inset: 0;
-  border-radius: 40px;
-  overflow: hidden;
-  background: #0D1B2A;
-}
-
-/* ═══════════════════════════════════════════
-   SLIDES (scenes inside phone)
-═══════════════════════════════════════════ */
-.scene {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
-  overflow: hidden;
-}
-.scene.active { opacity: 1; pointer-events: auto; }
-
-/* ── APP HEADER (shared) ── */
-.app-header {
-  background: #0A1525;
-  padding: 38px 14px 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-  position: relative;
-  z-index: 5;
-}
-.app-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--white);
-  letter-spacing: 0.3px;
-}
-.sync-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 6px var(--green);
-}
-
-/* ── BOTTOM NAV ── */
-.bottom-nav {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 58px;
-  background: #0A1525;
-  border-top: 1px solid rgba(255,255,255,0.07);
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 0 4px 8px;
-  z-index: 5;
-}
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  font-size: 8px;
-  color: var(--muted);
-  padding: 4px 8px;
-  border-radius: 8px;
-  transition: all 0.2s;
-}
-.nav-item.active { color: var(--teal); }
-.nav-item .nav-icon { font-size: 16px; }
-
-/* ── SCROLL AREA ── */
-.scroll-area {
-  position: absolute;
-  top: 70px; bottom: 58px; left: 0; right: 0;
-  overflow: hidden;
-  padding: 10px 12px;
-}
-
-/* ═══════════════════════════════════════════
-   SCENE 1 — INTRO / HOME SCREEN
-═══════════════════════════════════════════ */
-#scene-intro {
-  background: linear-gradient(160deg, #0D1B2A 0%, #1A0F35 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-}
-.intro-icon {
-  width: 72px; height: 72px;
-  border-radius: 18px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 32px;
-  filter: drop-shadow(0 8px 24px rgba(0,180,166,0.4));
-  opacity: 0;
-  transform: scale(0.7) translateY(-10px);
-  transition: all 0.6s cubic-bezier(.34,1.56,.64,1);
-}
-.intro-appname {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  font-weight: 900;
-  color: var(--white);
-  margin-top: 14px;
-  margin-bottom: 6px;
-  letter-spacing: 0.5px;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: all 0.5s ease 0.2s;
-}
-.intro-tagline {
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 18px;
-  opacity: 0;
-  transform: translateY(6px);
-  transition: all 0.5s ease 0.4s;
-}
-.intro-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  justify-content: center;
-  padding: 0 12px;
-  opacity: 0;
-  transform: translateY(6px);
-  transition: all 0.5s ease 0.6s;
-}
-.badge {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 20px;
-  padding: 4px 10px;
+/* ── SCENE LABEL ── */
+#scene-label {
   font-size: 9px;
   font-weight: 600;
-  color: rgba(255,255,255,0.7);
-}
-.badge.gold { border-color: rgba(244,163,0,0.4); color: var(--gold); }
-.badge.pink { border-color: rgba(194,24,91,0.4); color: #F06292; }
-
-#scene-intro.active .intro-icon    { opacity: 1; transform: scale(1) translateY(0); }
-#scene-intro.active .intro-appname { opacity: 1; transform: translateY(0); }
-#scene-intro.active .intro-tagline { opacity: 1; transform: translateY(0); }
-#scene-intro.active .intro-badges  { opacity: 1; transform: translateY(0); }
-
-/* ═══════════════════════════════════════════
-   SCENE 2 — BUSINESS TABS
-═══════════════════════════════════════════ */
-.biz-tabs {
-  display: flex;
-  gap: 0;
-  background: #0A1525;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-  padding: 0 8px;
-  position: relative;
-  z-index: 4;
-}
-.biz-tab {
-  flex: 1;
-  text-align: center;
-  padding: 8px 4px;
-  font-size: 9px;
-  font-weight: 600;
-  color: var(--muted);
-  border-bottom: 2px solid transparent;
-  transition: all 0.25s ease;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.biz-tab.active-tab { color: var(--teal); border-bottom-color: var(--teal); }
-
-.overview-card {
-  background: var(--card);
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-bottom: 8px;
-  border-left: 3px solid rgba(255,255,255,0.08);
-  opacity: 0;
-  transform: translateX(-8px);
-  transition: all 0.35s ease;
-}
-.overview-card.show { opacity: 1; transform: translateX(0); }
-.ov-label { font-size: 9px; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
-.ov-val { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; }
-.ov-val.income  { color: var(--income); }
-.ov-val.expense { color: var(--expense); }
-.ov-val.profit  { color: var(--green); }
-
-/* ═══════════════════════════════════════════
-   SCENE 3 — EXPENSE LOGGING
-═══════════════════════════════════════════ */
-.form-field {
-  background: var(--card);
-  border-radius: 8px;
-  padding: 8px 10px;
-  margin-bottom: 6px;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: all 0.3s ease;
-}
-.form-field.show { opacity: 1; transform: translateY(0); }
-.form-field.typing { border: 1px solid rgba(0,180,166,0.5); }
-.ff-label { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-.ff-val   { font-size: 12px; color: var(--white); font-weight: 500; min-height: 18px; margin-top: 2px; }
-
-.add-btn-app {
-  display: block;
-  width: 100%;
-  background: var(--teal);
-  color: var(--white);
-  border: none;
-  border-radius: 8px;
-  padding: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  text-align: center;
-  margin-top: 4px;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: all 0.3s ease, transform 0.1s ease, background 0.15s ease;
-  cursor: pointer;
-}
-.add-btn-app.show { opacity: 1; transform: translateY(0); }
-.add-btn-app.pressed { transform: scale(0.96); background: #009D91; }
-
-/* ═══════════════════════════════════════════
-   SCENE 4 — EVENT / TICKET TRACKING
-═══════════════════════════════════════════ */
-.event-row {
-  background: var(--card);
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-bottom: 8px;
-  opacity: 0;
-  transform: translateY(6px);
-  transition: all 0.35s ease;
-}
-.event-row.show { opacity: 1; transform: translateY(0); }
-.ev-title { font-size: 11px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
-.ev-sub   { font-size: 9px; color: var(--muted); margin-bottom: 6px; }
-.ev-stats { display: flex; gap: 8px; }
-.ev-stat  { flex:1; background: rgba(255,255,255,0.05); border-radius: 6px; padding: 5px 6px; text-align:center; }
-.ev-stat-val  { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--white); }
-.ev-stat-lbl  { font-size: 7px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
-
-.ticket-log-btn {
-  display: block;
-  width: 100%;
-  background: rgba(0,180,166,0.12);
-  border: 1.5px solid var(--teal);
-  color: var(--teal);
-  border-radius: 8px;
-  padding: 9px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  text-align: center;
-  margin-top: 6px;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: all 0.3s ease, transform 0.1s ease;
-  cursor: pointer;
-}
-.ticket-log-btn.show { opacity: 1; transform: translateY(0); }
-.ticket-log-btn.pressed { transform: scale(0.96); background: rgba(0,180,166,0.25); }
-
-/* ═══════════════════════════════════════════
-   SCENE 5 — TOTAL EARNINGS
-═══════════════════════════════════════════ */
-.earnings-header {
-  background: #0A1525;
-  padding: 38px 14px 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-}
-.earnings-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--white);
-}
-.earnings-sub { font-size: 9px; color: var(--muted); margin-top: 2px; }
-
-.earnings-card {
-  background: var(--card);
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-bottom: 7px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-left: 3px solid rgba(0,180,166,0.3);
-  opacity: 0;
-  transform: translateY(8px);
-  transition: all 0.4s ease;
-}
-.earnings-card.show { opacity: 1; transform: translateY(0); }
-.ec-name { font-size: 11px; font-weight: 600; color: var(--white); }
-.ec-sub  { font-size: 8px; color: var(--muted); margin-top: 1px; }
-.ec-val  { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--income); }
-
-.grand-total {
-  background: linear-gradient(135deg, rgba(0,180,166,0.15), rgba(244,163,0,0.1));
-  border: 1.5px solid rgba(0,180,166,0.4);
-  border-radius: 12px;
-  padding: 12px 14px;
-  margin-top: 4px;
-  opacity: 0;
-  transform: translateY(8px) scale(0.97);
-  transition: all 0.5s cubic-bezier(.34,1.2,.64,1);
-}
-.grand-total.show { opacity: 1; transform: translateY(0) scale(1); }
-.gt-label { font-size: 9px; font-weight: 700; color: var(--teal); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-.gt-val   { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; color: var(--gold); }
-
-/* ═══════════════════════════════════════════
-   SCENE 6 — EXPORT
-═══════════════════════════════════════════ */
-.export-section {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 60px 14px 20px;
-  gap: 10px;
-}
-.export-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--white);
-  margin-bottom: 4px;
-}
-.export-sub {
-  font-size: 9px;
-  color: var(--muted);
-  margin-bottom: 6px;
-  line-height: 1.5;
-}
-.export-btn {
-  background: rgba(255,255,255,0.06);
-  border: 1.5px solid rgba(255,255,255,0.15);
-  border-radius: 10px;
-  padding: 11px 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  opacity: 0;
-  transform: translateX(-6px);
-  transition: all 0.35s ease, transform 0.1s ease;
-  cursor: pointer;
-}
-.export-btn.show { opacity: 1; transform: translateX(0); }
-.export-btn.pressed { transform: scale(0.97); background: rgba(0,180,166,0.1); }
-.eb-icon { font-size: 18px; }
-.eb-label { font-size: 11px; font-weight: 700; color: var(--white); }
-.eb-sub   { font-size: 8px; color: var(--muted); margin-top: 1px; }
-
-.toast {
-  position: absolute;
-  bottom: 70px; left: 14px; right: 14px;
-  background: var(--green);
-  color: #fff;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 11px;
-  font-weight: 700;
-  text-align: center;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: all 0.35s ease;
-  z-index: 20;
-}
-.toast.show { opacity: 1; transform: translateY(0); }
-
-/* ═══════════════════════════════════════════
-   SCENE 7 — NAME CUSTOMIZATION
-═══════════════════════════════════════════ */
-.custom-screen {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px 16px;
-  gap: 14px;
-}
-.custom-label {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--teal);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-.custom-label.show { opacity: 1; }
-
-.name-display {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  font-weight: 900;
-  color: var(--white);
-  text-align: center;
-  min-height: 40px;
-  transition: color 0.3s ease;
-  letter-spacing: 0.5px;
-}
-.name-display.highlight { color: var(--gold); }
-
-.name-row {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  justify-content: center;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: all 0.4s ease;
-}
-.name-row.show { opacity: 1; transform: translateY(0); }
-.name-chip {
-  background: rgba(255,255,255,0.07);
-  border: 1.5px solid rgba(255,255,255,0.12);
-  border-radius: 20px;
-  padding: 5px 12px;
-  font-size: 10px;
-  font-weight: 600;
-  color: rgba(255,255,255,0.6);
-  transition: all 0.3s ease;
-}
-.name-chip.active {
-  background: rgba(244,163,0,0.12);
-  border-color: var(--gold);
-  color: var(--gold);
-}
-
-.custom-app-header {
-  background: #0A1525;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-family: 'Playfair Display', serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--white);
-  width: 100%;
-  text-align: center;
-  border: 1px solid rgba(255,255,255,0.08);
-}
-
-/* ═══════════════════════════════════════════
-   SCENE 8 — ICON & COLORS
-═══════════════════════════════════════════ */
-.custom-look-screen {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px 16px;
-  gap: 12px;
-}
-
-.icon-preview {
-  width: 64px; height: 64px;
-  border-radius: 16px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px;
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-}
-.icon-preview.show { opacity: 1; transform: scale(1); }
-
-.color-swatches {
-  display: flex; gap: 10px;
-  opacity: 0; transform: translateY(6px);
-  transition: all 0.4s ease;
-}
-.color-swatches.show { opacity: 1; transform: translateY(0); }
-.swatch {
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.25s ease;
-}
-.swatch.active { transform: scale(1.3); border-color: rgba(255,255,255,0.5); }
-
-.theme-preview {
-  width: 100%; max-width: 180px;
-  background: rgba(255,255,255,0.04);
-  border-radius: 10px;
-  padding: 10px;
-  opacity: 0; transform: translateY(6px);
-  transition: all 0.4s ease;
-}
-.theme-preview.show { opacity: 1; transform: translateY(0); }
-.theme-dot-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.theme-dot  { width: 10px; height: 10px; border-radius: 50%; transition: background 0.3s ease; }
-.theme-dot2 { width: 8px;  height: 8px;  border-radius: 50%; transition: background 0.3s ease; }
-.theme-bar1 { height: 5px; border-radius: 3px; margin-bottom: 4px; transition: background 0.3s ease; }
-.theme-bar2 { height: 5px; border-radius: 3px; width: 70%;         transition: background 0.3s ease; }
-
-/* ═══════════════════════════════════════════
-   SCENE 9 — HOME SCREEN ZOOM-OUT
-═══════════════════════════════════════════ */
-#scene-homescreen {
-  background: linear-gradient(160deg, #0D1B2A 0%, #0F2940 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 36px;
-}
-
-.hs-status {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0 14px 8px;
-  font-size: 8px;
-  color: rgba(255,255,255,0.5);
-  font-weight: 600;
-}
-
-.hs-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  padding: 0 14px;
-  width: 100%;
-}
-
-.hs-icon {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.35s ease;
-}
-.hs-icon.show { opacity: 1; transform: scale(1); }
-.hs-icon.highlight .hs-app-icon {
-  box-shadow: 0 0 0 2.5px var(--teal), 0 0 20px rgba(0,180,166,0.6);
-  transform: scale(1.12);
-}
-.hs-icon.highlight .hs-app-label {
-  color: var(--teal);
-  font-weight: 700;
-}
-
-.hs-app-icon {
-  width: 44px; height: 44px;
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-  transition: all 0.4s cubic-bezier(.34,1.4,.64,1);
-}
-.hs-app-label {
-  font-size: 7px;
-  color: rgba(255,255,255,0.75);
-  text-align: center;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 48px;
-}
-
-.hs-dock {
-  position: absolute;
-  bottom: 16px; left: 12px; right: 12px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 18px;
-  padding: 8px 12px;
-  display: flex;
-  justify-content: space-around;
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.1);
-  opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.4s ease;
-}
-.hs-dock.show { opacity: 1; transform: translateY(0); }
-
-/* ═══════════════════════════════════════════
-   SCENE 10 — FINALE
-═══════════════════════════════════════════ */
-.finale-screen {
-  width: 100%; height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  gap: 10px;
-}
-.finale-icon {
-  width: 64px; height: 64px;
-  border-radius: 16px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px;
-  opacity: 0; transform: scale(0.8);
-  transition: all 0.5s cubic-bezier(.34,1.56,.64,1);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-}
-.finale-icon.show { opacity: 1; transform: scale(1); }
-
-.finale-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  font-weight: 900;
-  text-align: center;
-  opacity: 0; transform: translateY(10px);
-  transition: all 0.5s ease 0.3s;
-}
-.finale-name.show { opacity: 1; transform: translateY(0); }
-
-.finale-tag {
-  font-size: 9px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  opacity: 0;
-  transition: all 0.5s ease 0.5s;
+  color: rgba(255,255,255,0.3);
+  padding: 8px 0 2px;
   text-align: center;
+  width: 100%;
+  flex-shrink: 0;
+  min-height: 22px;
 }
-.finale-tag.show { opacity: 1; }
 
-.finale-divider {
-  width: 40px; height: 2px;
-  border-radius: 99px;
-  opacity: 0;
-  transition: all 0.4s ease 0.6s;
+/* ── CALLOUT ── */
+#callout-zone {
+  width: 100%;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 16px 4px;
+  flex-shrink: 0;
 }
-.finale-divider.show { opacity: 1; }
-
-.finale-tagline {
-  font-size: 13px;
-  font-weight: 700;
-  text-align: center;
-  opacity: 0; transform: translateY(6px);
-  transition: all 0.5s ease 0.8s;
-  line-height: 1.4;
-  padding: 0 10px;
-}
-.finale-tagline.show { opacity: 1; transform: translateY(0); }
-
-.finale-sub {
-  font-size: 9px;
-  text-align: center;
-  opacity: 0;
-  transition: all 0.4s ease 1.0s;
-  padding: 0 16px;
-  line-height: 1.5;
-}
-.finale-sub.show { opacity: 1; }
-
-/* ═══════════════════════════════════════════
-   CALLOUT BOXES — NOW ABOVE PHONE
-═══════════════════════════════════════════ */
 .callout {
-  position: relative;
-  left: auto !important;
-  right: auto !important;
-  top: auto !important;
-  background: rgba(13,27,42,0.92);
+  background: rgba(13,27,42,0.95);
   border: 1px solid rgba(0,180,166,0.4);
-  backdrop-filter: blur(12px);
   border-radius: 12px;
-  padding: 10px 14px;
-  width: 88vw;
+  padding: 9px 13px;
+  width: 100%;
   max-width: 340px;
-  z-index: 50;
   opacity: 0;
-  transform: translateY(-6px);
-  transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
-  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
   display: none;
-  margin: 0 auto 6px;
 }
 .callout.show {
   opacity: 1;
   transform: translateY(0);
   display: block;
 }
-.callout-title {
-  font-size: 12px;
+.co-title {
+  font-size: 11px;
   font-weight: 700;
   color: var(--teal);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
-.callout-body {
-  font-size: 11px;
-  color: rgba(255,255,255,0.80);
+.co-body {
+  font-size: 10px;
+  color: rgba(255,255,255,0.78);
   line-height: 1.5;
 }
-.callout-line { display: none; }
 
-/* Callout container — sits ABOVE phone */
-#callout-zone {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  min-height: 70px;
-  padding: 4px 16px 0;
-  order: -1;
+/* ── PHONE WRAP ── */
+#phone-wrap {
+  width: var(--phone-w);
+  height: var(--phone-h);
+  flex-shrink: 0;
+  position: relative;
+  transition: height 0.5s ease, margin-bottom 0.5s ease;
 }
-
-/* ═══════════════════════════════════════════
-   SCENE LABEL
-═══════════════════════════════════════════ */
-#scene-label {
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.35);
-  z-index: 200;
-  transition: opacity 0.3s;
-  padding: 6px 0 2px;
-  text-align: center;
-  width: 100%;
-}
-
-/* ═══════════════════════════════════════════
-   PROGRESS BAR
-═══════════════════════════════════════════ */
-#progress-bar {
-  position: fixed;
-  bottom: 0; left: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--teal), var(--gold));
-  width: 0%;
-  z-index: 200;
-  transition: width 0.1s linear;
-  box-shadow: 0 0 8px var(--teal);
-}
-
-/* ═══════════════════════════════════════════
-   REPLAY / CTA BUTTONS
-═══════════════════════════════════════════ */
-
-/* When finale is active, shrink phone to make room for buttons */
 #phone-wrap.finale-mode {
-  height: min(400px, 108vw);
-  margin-top: 4px;
+  height: min(380px, 104vw);
+}
+.phone-shell {
+  width: 100%; height: 100%;
+  background: #111827;
+  border-radius: 40px;
+  border: 2.5px solid rgba(255,255,255,0.1);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.5), 0 32px 64px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.07);
+  position: relative;
+  overflow: hidden;
+}
+.phone-notch {
+  position: absolute;
+  top: 10px; left: 50%;
+  transform: translateX(-50%);
+  width: 86px; height: 20px;
+  background: #111827;
+  border-radius: 0 0 16px 16px;
+  z-index: 20;
+  border: 2px solid rgba(255,255,255,0.05);
+  border-top: none;
+}
+.phone-screen {
+  position: absolute;
+  inset: 0;
+  border-radius: 38px;
+  overflow: hidden;
+  background: var(--navy);
 }
 
-#replay-btn {
-  background: var(--teal);
+/* ── SCENES ── */
+.scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+  overflow: hidden;
+}
+.scene.active { opacity: 1; pointer-events: auto; }
+
+/* shared app header */
+.app-header {
+  background: #0A1525;
+  padding: 36px 13px 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: relative; z-index: 5;
+}
+.app-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px; font-weight: 700;
   color: var(--white);
-  border: none;
-  border-radius: 99px;
-  padding: 10px 24px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.5s ease, transform 0.2s ease;
-  z-index: 200;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 20px rgba(0,180,166,0.4);
-  margin: 6px auto 4px;
-  display: block;
-  pointer-events: none;
-  flex-shrink: 0;
 }
-#replay-btn.show { opacity: 1; pointer-events: auto; }
-#replay-btn:hover { transform: scale(1.05); }
+.sync-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 5px var(--green);
+}
 
-#cta-btn {
-  background: var(--gold);
-  color: var(--navy);
-  border: none;
-  border-radius: 99px;
-  padding: 10px 24px;
+/* shared bottom nav */
+.bottom-nav {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 54px;
+  background: #0A1525;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 4px 6px;
+  z-index: 5;
+}
+.nav-item {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 2px;
+  font-size: 7.5px; color: var(--muted);
+  padding: 3px 6px; border-radius: 7px;
+}
+.nav-item.active { color: var(--teal); }
+.nav-icon { font-size: 15px; }
+
+/* shared scroll area */
+.scroll-area {
+  position: absolute;
+  top: 66px; bottom: 54px;
+  left: 0; right: 0;
+  overflow: hidden;
+  padding: 9px 11px;
+}
+
+/* ── SCENE 1: INTRO ── */
+#scene-intro {
+  background: linear-gradient(155deg, #0D1B2A 0%, #1A0F35 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0;
+}
+.intro-icon {
+  opacity: 0; transform: scale(0.75) translateY(-8px);
+  transition: all 0.6s cubic-bezier(.34,1.5,.64,1);
+}
+.intro-appname {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 900;
+  color: var(--white);
+  margin-top: 12px; margin-bottom: 5px;
+  opacity: 0; transform: translateY(7px);
+  transition: all 0.5s ease 0.15s;
+}
+.intro-tagline {
+  font-size: 9px; color: var(--muted);
+  letter-spacing: 1px; text-transform: uppercase;
+  margin-bottom: 16px;
+  opacity: 0; transform: translateY(5px);
+  transition: all 0.5s ease 0.3s;
+}
+.intro-badges {
+  display: flex; flex-wrap: wrap; gap: 5px;
+  justify-content: center; padding: 0 10px;
+  opacity: 0; transform: translateY(5px);
+  transition: all 0.5s ease 0.45s;
+}
+.badge {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px; padding: 3px 9px;
+  font-size: 8.5px; font-weight: 600;
+  color: rgba(255,255,255,0.65);
+}
+.badge.gold { border-color: rgba(244,163,0,0.35); color: var(--gold); }
+.badge.pink { border-color: rgba(194,24,91,0.35); color: #F06292; }
+#scene-intro.active .intro-icon    { opacity: 1; transform: scale(1) translateY(0); }
+#scene-intro.active .intro-appname { opacity: 1; transform: translateY(0); }
+#scene-intro.active .intro-tagline { opacity: 1; transform: translateY(0); }
+#scene-intro.active .intro-badges  { opacity: 1; transform: translateY(0); }
+
+/* ── SCENE 2: TABS ── */
+.biz-tabs {
+  display: flex;
+  background: #0A1525;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 0 6px;
+  position: relative; z-index: 4;
+}
+.biz-tab {
+  flex: 1; text-align: center;
+  padding: 7px 3px;
+  font-size: 8.5px; font-weight: 600;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.biz-tab.active-tab { color: var(--teal); border-bottom-color: var(--teal); }
+
+.overview-card {
+  background: var(--card); border-radius: 9px;
+  padding: 9px 11px; margin-bottom: 7px;
+  opacity: 0; transform: translateX(-7px);
+  transition: all 0.35s ease;
+}
+.overview-card.show { opacity: 1; transform: translateX(0); }
+.ov-label { font-size: 8px; color: var(--muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+.ov-val { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; }
+.ov-val.income  { color: var(--blue); }
+.ov-val.expense { color: var(--red); }
+.ov-val.profit  { color: var(--green); }
+
+/* ── SCENE 3: EXPENSE ── */
+.form-field {
+  background: var(--card); border-radius: 7px;
+  padding: 7px 9px; margin-bottom: 5px;
+  opacity: 0; transform: translateY(4px);
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+.form-field.show { opacity: 1; transform: translateY(0); }
+.form-field.typing { border-color: rgba(0,180,166,0.45); }
+.ff-label { font-size: 7.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+.ff-val   { font-size: 11px; color: var(--white); font-weight: 500; min-height: 17px; margin-top: 2px; }
+.add-btn-app {
+  display: block; width: 100%;
+  background: var(--teal); color: var(--white);
+  border: none; border-radius: 7px;
+  padding: 9px; font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 700; text-align: center;
+  margin-top: 3px; cursor: pointer;
+  opacity: 0; transform: translateY(4px);
+  transition: all 0.3s ease;
+}
+.add-btn-app.show { opacity: 1; transform: translateY(0); }
+.add-btn-app.pressed { transform: scale(0.96); background: #009D91; }
+
+/* ── SCENE 4: INCOME ── */
+.event-row {
+  background: var(--card); border-radius: 9px;
+  padding: 9px 11px; margin-bottom: 7px;
+  opacity: 0; transform: translateY(5px);
+  transition: all 0.35s ease;
+}
+.event-row.show { opacity: 1; transform: translateY(0); }
+.ev-title { font-size: 11px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+.ev-sub   { font-size: 8.5px; color: var(--muted); margin-bottom: 6px; }
+.ev-stats { display: flex; gap: 7px; }
+.ev-stat  { flex: 1; background: rgba(255,255,255,0.05); border-radius: 6px; padding: 5px; text-align: center; }
+.ev-stat-val { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--white); }
+.ev-stat-lbl { font-size: 7px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+.ticket-btn {
+  display: block; width: 100%;
+  background: rgba(0,180,166,0.1);
+  border: 1.5px solid var(--teal); color: var(--teal);
+  border-radius: 7px; padding: 8px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 10.5px; font-weight: 700; text-align: center;
+  margin-top: 5px; cursor: pointer;
+  opacity: 0; transform: translateY(4px);
+  transition: all 0.3s ease;
+}
+.ticket-btn.show { opacity: 1; transform: translateY(0); }
+.ticket-btn.pressed { transform: scale(0.96); background: rgba(0,180,166,0.22); }
+
+/* ── SCENE 5: EARNINGS ── */
+.earnings-hdr {
+  background: #0A1525;
+  padding: 36px 13px 9px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.earnings-hdr-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: var(--white); }
+.earnings-hdr-sub   { font-size: 8.5px; color: var(--muted); margin-top: 1px; }
+.earnings-card {
+  background: var(--card); border-radius: 9px;
+  padding: 9px 11px; margin-bottom: 6px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-left: 3px solid rgba(0,180,166,0.25);
+  opacity: 0; transform: translateY(7px);
+  transition: all 0.4s ease;
+}
+.earnings-card.show { opacity: 1; transform: translateY(0); }
+.ec-name { font-size: 10.5px; font-weight: 600; color: var(--white); }
+.ec-sub  { font-size: 7.5px; color: var(--muted); margin-top: 1px; }
+.ec-val  { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--green); }
+.grand-total {
+  background: linear-gradient(135deg, rgba(0,180,166,0.12), rgba(244,163,0,0.08));
+  border: 1.5px solid rgba(0,180,166,0.35);
+  border-radius: 11px; padding: 11px 13px;
+  margin-top: 3px;
+  opacity: 0; transform: translateY(7px) scale(0.97);
+  transition: all 0.5s cubic-bezier(.34,1.2,.64,1);
+}
+.grand-total.show { opacity: 1; transform: translateY(0) scale(1); }
+.gt-label { font-size: 8.5px; font-weight: 700; color: var(--teal); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.4px; }
+.gt-val   { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; color: var(--gold); }
+
+/* ── SCENE 6: EXPORT ── */
+.export-wrap {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  padding: 56px 13px 16px; gap: 9px;
+}
+.export-title { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+.export-sub   { font-size: 8.5px; color: var(--muted); line-height: 1.5; margin-bottom: 4px; }
+.export-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.13);
+  border-radius: 9px; padding: 10px 13px;
+  display: flex; align-items: center; gap: 9px;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.5s ease 0.3s, transform 0.2s ease;
-  z-index: 200;
-  letter-spacing: 0.5px;
-  margin: 4px auto 0;
-  display: block;
-  pointer-events: none;
-  box-shadow: 0 4px 20px rgba(244,163,0,0.35);
-  text-decoration: none;
-  text-align: center;
+  opacity: 0; transform: translateX(-5px);
+  transition: all 0.35s ease;
+}
+.export-btn.show { opacity: 1; transform: translateX(0); }
+.export-btn.pressed { transform: scale(0.97); background: rgba(0,180,166,0.1); }
+.eb-icon  { font-size: 17px; }
+.eb-label { font-size: 10.5px; font-weight: 700; color: var(--white); }
+.eb-sub   { font-size: 7.5px; color: var(--muted); margin-top: 1px; }
+.toast {
+  position: absolute; bottom: 62px; left: 13px; right: 13px;
+  background: var(--green); color: #fff;
+  border-radius: 9px; padding: 9px 13px;
+  font-size: 10.5px; font-weight: 700; text-align: center;
+  opacity: 0; transform: translateY(7px);
+  transition: all 0.35s ease; z-index: 20;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ── SCENE 7: NAME ── */
+.custom-screen {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 16px; gap: 12px;
+}
+.custom-label {
+  font-size: 8.5px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--teal);
+  opacity: 0; transition: opacity 0.4s ease;
+}
+.custom-label.show { opacity: 1; }
+.custom-app-hdr {
+  background: #0A1525; border-radius: 7px;
+  padding: 7px 11px;
+  font-family: 'Playfair Display', serif;
+  font-size: 13px; font-weight: 700;
+  color: var(--white); width: 100%; text-align: center;
+  border: 1px solid rgba(255,255,255,0.07);
+  transition: all 0.3s ease;
+}
+.name-display {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px; font-weight: 900; color: var(--white);
+  text-align: center; min-height: 36px;
+  transition: color 0.3s ease;
+}
+.name-display.highlight { color: var(--gold); }
+.name-chips {
+  display: flex; gap: 5px; flex-wrap: wrap; justify-content: center;
+  opacity: 0; transform: translateY(7px);
+  transition: all 0.4s ease;
+}
+.name-chips.show { opacity: 1; transform: translateY(0); }
+.name-chip {
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 20px; padding: 4px 10px;
+  font-size: 9.5px; font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  transition: all 0.25s ease;
+}
+.name-chip.active {
+  background: rgba(244,163,0,0.1);
+  border-color: var(--gold); color: var(--gold);
+}
+
+/* ── SCENE 8: ICON & COLORS ── */
+.look-screen {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 16px; gap: 11px;
+}
+.icon-preview {
+  width: 60px; height: 60px; border-radius: 15px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  opacity: 0; transform: scale(0.8);
+  transition: all 0.4s cubic-bezier(.34,1.5,.64,1);
+}
+.icon-preview.show { opacity: 1; transform: scale(1); }
+.color-swatches {
+  display: flex; gap: 9px;
+  opacity: 0; transform: translateY(5px);
+  transition: all 0.4s ease;
+}
+.color-swatches.show { opacity: 1; transform: translateY(0); }
+.swatch {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid transparent; cursor: pointer;
+  transition: all 0.25s ease;
+}
+.swatch.active { transform: scale(1.3); border-color: rgba(255,255,255,0.5); }
+.theme-preview {
+  width: 100%; max-width: 170px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 9px; padding: 9px;
+  opacity: 0; transform: translateY(5px);
+  transition: all 0.4s ease;
+}
+.theme-preview.show { opacity: 1; transform: translateY(0); }
+.t-row  { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+.t-dot  { width: 9px; height: 9px; border-radius: 50%; transition: background 0.3s ease; }
+.t-dot2 { width: 7px; height: 7px; border-radius: 50%; transition: background 0.3s ease; }
+.t-bar1 { height: 5px; border-radius: 3px; margin-bottom: 4px; transition: background 0.3s ease; }
+.t-bar2 { height: 5px; border-radius: 3px; width: 68%; transition: background 0.3s ease; }
+
+/* ── SCENE 9: HOME SCREEN ── */
+#scene-homescreen {
+  background: linear-gradient(155deg, #0D1B2A 0%, #0F2940 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  padding-top: 32px;
+}
+.hs-status {
+  display: flex; justify-content: space-between;
+  width: 100%; padding: 0 13px 7px;
+  font-size: 7.5px; color: rgba(255,255,255,0.45); font-weight: 600;
+}
+.hs-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 9px; padding: 0 13px; width: 100%;
+}
+.hs-icon {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 3px;
+  opacity: 0; transform: scale(0.82);
+  transition: all 0.4s cubic-bezier(.34,1.3,.64,1);
+}
+.hs-icon.show { opacity: 1; transform: scale(1); }
+.hs-icon.highlight .hs-app-icon {
+  box-shadow: 0 0 0 2.5px var(--teal), 0 0 18px rgba(0,180,166,0.55);
+  transform: scale(1.1);
+}
+.hs-icon.highlight .hs-app-label { color: var(--teal); font-weight: 700; }
+.hs-app-icon {
+  width: 42px; height: 42px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px;
+  transition: all 0.4s cubic-bezier(.34,1.4,.64,1);
+}
+.hs-app-label {
+  font-size: 6.5px; color: rgba(255,255,255,0.7);
+  text-align: center; font-weight: 500;
+  transition: all 0.3s ease;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 46px;
+}
+.hs-dock {
+  position: absolute; bottom: 12px; left: 11px; right: 11px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 16px; padding: 7px 10px;
+  display: flex; justify-content: space-around;
+  border: 1px solid rgba(255,255,255,0.09);
+  opacity: 0; transform: translateY(9px);
+  transition: all 0.4s ease;
+}
+.hs-dock.show { opacity: 1; transform: translateY(0); }
+
+/* ── SCENE 10: FINALE ── */
+.finale-screen {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 18px; gap: 9px;
+}
+.finale-icon {
+  width: 60px; height: 60px; border-radius: 15px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  opacity: 0; transform: scale(0.8);
+  transition: all 0.5s cubic-bezier(.34,1.5,.64,1);
+}
+.finale-icon.show { opacity: 1; transform: scale(1); }
+.finale-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 900; text-align: center;
+  opacity: 0; transform: translateY(9px);
+  transition: all 0.5s ease 0.25s;
+}
+.finale-name.show { opacity: 1; transform: translateY(0); }
+.finale-tag {
+  font-size: 8.5px; letter-spacing: 1.4px;
+  text-transform: uppercase; text-align: center;
+  opacity: 0; transition: all 0.5s ease 0.4s;
+}
+.finale-tag.show { opacity: 1; }
+.finale-div {
+  width: 36px; height: 2px; border-radius: 99px;
+  opacity: 0; transition: all 0.4s ease 0.55s;
+}
+.finale-div.show { opacity: 1; }
+.finale-tagline {
+  font-size: 12px; font-weight: 700;
+  text-align: center; line-height: 1.5;
+  color: var(--white);
+  opacity: 0; transform: translateY(5px);
+  transition: all 0.5s ease 0.7s;
+  padding: 0 8px;
+}
+.finale-tagline.show { opacity: 1; transform: translateY(0); }
+.finale-sub {
+  font-size: 8.5px; text-align: center;
+  color: rgba(255,255,255,0.45);
+  opacity: 0; transition: all 0.4s ease 0.9s;
+  padding: 0 14px; line-height: 1.5;
+}
+.finale-sub.show { opacity: 1; }
+
+/* ── CTA BUTTONS ── */
+#btn-zone {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+  padding: 10px 0 6px;
   flex-shrink: 0;
+  width: 100%;
+}
+#cta-btn {
+  background: var(--gold); color: var(--navy);
+  border: none; border-radius: 99px;
+  padding: 11px 28px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.4px;
+  box-shadow: 0 4px 18px rgba(244,163,0,0.35);
+  text-decoration: none; text-align: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.2s ease;
 }
 #cta-btn.show { opacity: 1; pointer-events: auto; }
-#cta-btn:hover { transform: scale(1.05); }
+#cta-btn:hover { transform: scale(1.04); }
+#replay-btn {
+  background: var(--teal); color: var(--white);
+  border: none; border-radius: 99px;
+  padding: 11px 28px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.4px;
+  box-shadow: 0 4px 18px rgba(0,180,166,0.35);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.5s ease 0.2s, transform 0.2s ease;
+}
+#replay-btn.show { opacity: 1; pointer-events: auto; }
+#replay-btn:hover { transform: scale(1.04); }
 
+/* ── PROGRESS BAR ── */
+#progress-bar {
+  position: fixed; bottom: 0; left: 0;
+  height: 3px; width: 0%;
+  background: linear-gradient(90deg, var(--teal), var(--gold));
+  z-index: 999;
+  box-shadow: 0 0 7px var(--teal);
+  transition: width 0.1s linear;
+}
+</style>
 </head>
 <body>
 <div id="stage">
 
-  <!-- Ambient orbs -->
-  <div class="orb orb1"></div>
-  <div class="orb orb2"></div>
-  <div class="orb orb3"></div>
-
-  <!-- ══ FULLSCREEN TITLE CARD (pre-phone) ══ -->
-  <div id="title-card">
-    <div class="tc-line tc-line-1" id="tc1">Every receipt.</div>
-    <div class="tc-line tc-line-1" id="tc2">Every gig.</div>
-    <div class="tc-line tc-line-1" id="tc2b">Every deduction.</div>
-    <div class="tc-divider" id="tc-div1"></div>
-    <div class="tc-line tc-line-3" id="tc3">OwnIt tracks it all — <span style="color:var(--teal);">so your Schedule C fills itself.</span></div>
+  <!-- ══ PHASE A: TITLE CARD ══ -->
+  <div id="phase-title">
+    <div class="tc-line tc-l1" id="tc1">Every receipt.</div>
+    <div class="tc-line tc-l1" id="tc2">Every gig.</div>
+    <div class="tc-line tc-l1" id="tc2b">Every deduction.</div>
+    <div class="tc-divider" id="tc-div"></div>
+    <div class="tc-line tc-l2" id="tc3">OwnIt tracks it all —<br><span>so your Schedule C fills itself.</span></div>
   </div>
 
-  <!-- Scene label -->
-  <div id="scene-label">INTRO</div>
+  <!-- ══ PHASE B: DEMO ══ -->
+  <div id="phase-demo">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
 
-  <!-- ══ CALLOUT LABELS — above phone ══ -->
-  <div id="callout-zone">
-    <div class="callout" id="co-tabs">
-      <div class="callout-title">All Your Businesses, One App</div>
-      <div class="callout-body">Separate tabs for each business — income, expenses, and profit tracked independently. Switch between them instantly.</div>
+    <div id="scene-label">INTRO</div>
+
+    <!-- Callout zone -->
+    <div id="callout-zone">
+      <div class="callout" id="co-tabs">
+        <div class="co-title">All Your Businesses, One App</div>
+        <div class="co-body">Separate tabs for each business — income, expenses, and profit tracked independently. Switch between them instantly.</div>
+      </div>
+      <div class="callout" id="co-expense">
+        <div class="co-title">Log Expenses in Seconds</div>
+        <div class="co-body">Capture the date, vendor, category, amount, and payment method. Every entry is automatically mapped to the right IRS Schedule C line.</div>
+      </div>
+      <div class="callout" id="co-income">
+        <div class="co-title">Track Income for Each Business</div>
+        <div class="co-body">Income logs are customized specifically to your business. Whether it's ticket sales, product sales, or an hourly rate, see your profit at a glance.</div>
+      </div>
+      <div class="callout" id="co-earnings">
+        <div class="co-title">See the Full Picture</div>
+        <div class="co-body">Income, expenses, and net profit across every business — at a glance. Know exactly where you stand before April comes around.</div>
+      </div>
+      <div class="callout" id="co-export">
+        <div class="co-title">Export When You're Ready</div>
+        <div class="co-body">One tap exports your data as a CSV — or generates a Schedule C summary with IRS line numbers, ready for your accountant.</div>
+      </div>
+      <div class="callout" id="co-name">
+        <div class="co-title">Your Name on the Home Screen</div>
+        <div class="co-body">Your app shows up on your phone with your business name — not "OwnIt." You literally own the name.</div>
+      </div>
+      <div class="callout" id="co-look">
+        <div class="co-title">Branded to Match Your Business</div>
+        <div class="co-body">Custom icon and color palette built around your brand. Every client gets something completely unique.</div>
+      </div>
+      <div class="callout" id="co-hs">
+        <div class="co-title">Lives Right on Your Home Screen</div>
+        <div class="co-body">No App Store. No subscription. It installs like a native app — tap it anytime to log, review, and export.</div>
+      </div>
     </div>
 
-    <div class="callout" id="co-expense">
-      <div class="callout-title">Log Expenses in Seconds</div>
-      <div class="callout-body">Capture the date, vendor, category, amount, and payment method. Every entry is automatically mapped to the right IRS Schedule C line.</div>
-    </div>
+    <!-- Phone -->
+    <div id="phone-wrap">
+      <div class="phone-shell">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
 
-    <div class="callout" id="co-events">
-      <div class="callout-title">Track Income for Each Business</div>
-      <div class="callout-body">Income logs are customized specifically to your business. Whether it's ticket sales, product sales, or an hourly rate, see your profit at a glance.</div>
-    </div>
-
-    <div class="callout" id="co-earnings">
-      <div class="callout-title">See the Full Picture</div>
-      <div class="callout-body">Income, expenses, and net profit across every business — at a glance. Know exactly where you stand before April comes around.</div>
-    </div>
-
-    <div class="callout" id="co-export">
-      <div class="callout-title">Export When You're Ready</div>
-      <div class="callout-body">One tap exports your data as a CSV — or generates a Schedule C summary with IRS line numbers, ready for your accountant.</div>
-    </div>
-
-    <div class="callout" id="co-customname">
-      <div class="callout-title">Your Name on the Home Screen</div>
-      <div class="callout-body">Your app shows up on your phone with your business name — not "OwnIt." You literally own the name.</div>
-    </div>
-
-    <div class="callout" id="co-customlook">
-      <div class="callout-title">Branded to Match Your Business</div>
-      <div class="callout-body">Custom icon and color palette built around your brand. Every client gets something completely unique.</div>
-    </div>
-
-    <div class="callout" id="co-homescreen">
-      <div class="callout-title">Lives Right on Your Home Screen</div>
-      <div class="callout-body">No App Store. No subscription. It installs like a native app — tap it anytime to log, review, and export.</div>
-    </div>
-  </div>
-
-  <!-- ══ PHONE ══ -->
-  <div id="phone-wrap">
-    <div class="phone-shell">
-      <div class="phone-notch"></div>
-      <div class="phone-screen">
-
-        <!-- ── SCENE 1: INTRO ── -->
-        <div class="scene active" id="scene-intro">
-          <div class="intro-icon" style="background:none;box-shadow:none;padding:0;">
-            <svg width="72" height="72" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="194" height="194" rx="42" fill="#0F2940" stroke="#00B4A6" stroke-width="6"/>
-            <polygon points="92,146 30,146 55,76" fill="#F4A300"/>
-            <polygon points="108,146 168,146 142,96" fill="#F4A300"/>
-            <polygon points="100,50 124,106 124,160 76,160 76,106" fill="#00B4A6"/>
-            <rect x="28" y="141" width="144" height="22" rx="6" fill="#F4A300"/>
-            <circle cx="55" cy="76" r="9" fill="#FFFFFF"/>
-            <circle cx="100" cy="50" r="10" fill="#FFFFFF"/>
-            <circle cx="142" cy="96" r="8" fill="#FFFFFF"/>
-            <circle cx="100" cy="50" r="16" fill="none" stroke="#00B4A6" stroke-width="3" stroke-dasharray="4 3"/></svg>
-          </div>
-          <div class="intro-appname">OwnIt</div>
-          <div class="intro-tagline">Custom Business Tracker</div>
-          <div class="intro-badges">
-            <span class="badge">📱 Home Screen App</span>
-            <span class="badge gold">💼 Multi-Business</span>
-            <span class="badge pink">📊 Tax-Ready</span>
-          </div>
-        </div>
-
-        <!-- ── SCENE 2: BUSINESS TABS ── -->
-        <div class="scene" id="scene-tabs">
-          <div class="app-header">
-            <span class="app-title">Dog Walking</span>
-            <span class="sync-dot"></span>
-          </div>
-          <div class="biz-tabs" id="biz-tabs-row">
-            <div class="biz-tab active-tab" id="tab-rover">🐾 Dog Walking</div>
-            <div class="biz-tab" id="tab-wyzant">📚 Tutoring</div>
-            <div class="biz-tab" id="tab-itt">💃 Dance Class</div>
-          </div>
-          <div class="scroll-area" id="tabs-scroll" style="top:116px">
-            <div class="overview-card" id="ov-income">
-              <div class="ov-label">Income YTD</div>
-              <div class="ov-val income" id="ov-income-val">$3,240.00</div>
+          <!-- SCENE 1: INTRO -->
+          <div class="scene active" id="scene-intro">
+            <div class="intro-icon">
+              <svg width="68" height="68" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="3" width="194" height="194" rx="42" fill="#0F2940" stroke="#00B4A6" stroke-width="6"/>
+                <polygon points="92,146 30,146 55,76" fill="#F4A300"/>
+                <polygon points="108,146 168,146 142,96" fill="#F4A300"/>
+                <polygon points="100,50 124,106 124,160 76,160 76,106" fill="#00B4A6"/>
+                <rect x="28" y="141" width="144" height="22" rx="6" fill="#F4A300"/>
+                <circle cx="55" cy="76" r="9" fill="#FFFFFF"/>
+                <circle cx="100" cy="50" r="10" fill="#FFFFFF"/>
+                <circle cx="142" cy="96" r="8" fill="#FFFFFF"/>
+                <circle cx="100" cy="50" r="16" fill="none" stroke="#00B4A6" stroke-width="3" stroke-dasharray="4 3"/>
+              </svg>
             </div>
-            <div class="overview-card" id="ov-expense">
-              <div class="ov-label">Expenses YTD</div>
-              <div class="ov-val expense" id="ov-expense-val">$842.16</div>
-            </div>
-            <div class="overview-card" id="ov-profit">
-              <div class="ov-label">Net Profit YTD</div>
-              <div class="ov-val profit" id="ov-profit-val">$2,397.84</div>
+            <div class="intro-appname">OwnIt</div>
+            <div class="intro-tagline">Custom Business Tracker</div>
+            <div class="intro-badges">
+              <span class="badge">📱 Home Screen App</span>
+              <span class="badge gold">💼 Multi-Business</span>
+              <span class="badge pink">📊 Tax-Ready</span>
             </div>
           </div>
-          <div class="bottom-nav">
-            <div class="nav-item active"><span class="nav-icon">🏠</span>Overview</div>
-            <div class="nav-item"><span class="nav-icon">➕</span>Add</div>
-            <div class="nav-item"><span class="nav-icon">📋</span>Log</div>
-            <div class="nav-item"><span class="nav-icon">💰</span>Earnings</div>
-            <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
-          </div>
-        </div>
 
-        <!-- ── SCENE 3: EXPENSE LOGGING ── -->
-        <div class="scene" id="scene-expense">
-          <div class="app-header">
-            <span class="app-title">Add Expense</span>
-            <span class="sync-dot"></span>
-          </div>
-          <div class="scroll-area" style="top:68px">
-            <div class="form-field" id="ff-date">
-              <div class="ff-label">Date</div>
-              <div class="ff-val" id="ff-date-val"></div>
+          <!-- SCENE 2: BUSINESS TABS -->
+          <div class="scene" id="scene-tabs">
+            <div class="app-header">
+              <span class="app-title" id="tabs-title">Dog Walking</span>
+              <span class="sync-dot"></span>
             </div>
-            <div class="form-field" id="ff-vendor">
-              <div class="ff-label">Vendor</div>
-              <div class="ff-val" id="ff-vendor-val"></div>
+            <div class="biz-tabs">
+              <div class="biz-tab active-tab" id="tab-dw">🐾 Dog Walking</div>
+              <div class="biz-tab" id="tab-tu">📚 Tutoring</div>
+              <div class="biz-tab" id="tab-dc">💃 Dance Class</div>
             </div>
-            <div class="form-field" id="ff-cat">
-              <div class="ff-label">Category</div>
-              <div class="ff-val" id="ff-cat-val"></div>
-            </div>
-            <div class="form-field" id="ff-amt">
-              <div class="ff-label">Amount</div>
-              <div class="ff-val" id="ff-amt-val"></div>
-            </div>
-            <div class="form-field" id="ff-pay">
-              <div class="ff-label">Payment Method</div>
-              <div class="ff-val" id="ff-pay-val"></div>
-            </div>
-            <button class="add-btn-app" id="add-expense-btn">+ Add Expense</button>
-          </div>
-        </div>
-
-        <!-- ── SCENE 4: EVENT TRACKING ── -->
-        <div class="scene" id="scene-events">
-          <div class="app-header">
-            <span class="app-title">Dance Class</span>
-            <span class="sync-dot"></span>
-          </div>
-          <div class="scroll-area" style="top:68px">
-            <div class="event-row" id="ev-row1">
-              <div class="ev-title">Spring Showcase — May 3</div>
-              <div class="ev-sub">Dance Class · Venue: Studio A</div>
-              <div class="ev-stats">
-                <div class="ev-stat">
-                  <div class="ev-stat-val" id="single-count">0</div>
-                  <div class="ev-stat-lbl">Singles</div>
-                </div>
-                <div class="ev-stat">
-                  <div class="ev-stat-val" id="couple-count">0</div>
-                  <div class="ev-stat-lbl">Couples</div>
-                </div>
-                <div class="ev-stat">
-                  <div class="ev-stat-val" id="revenue-count">$0</div>
-                  <div class="ev-stat-lbl">Revenue</div>
-                </div>
+            <div class="scroll-area" style="top:110px">
+              <div class="overview-card" id="ov-income">
+                <div class="ov-label">Income YTD</div>
+                <div class="ov-val income" id="ov-income-val">$3,240.00</div>
+              </div>
+              <div class="overview-card" id="ov-expense">
+                <div class="ov-label">Expenses YTD</div>
+                <div class="ov-val expense" id="ov-expense-val">$842.16</div>
+              </div>
+              <div class="overview-card" id="ov-profit">
+                <div class="ov-label">Net Profit YTD</div>
+                <div class="ov-val profit" id="ov-profit-val">$2,397.84</div>
               </div>
             </div>
-            <button class="ticket-log-btn" id="ticket-log-btn">🎟 Log Ticket Sales</button>
+            <div class="bottom-nav">
+              <div class="nav-item active"><span class="nav-icon">🏠</span>Overview</div>
+              <div class="nav-item"><span class="nav-icon">➕</span>Add</div>
+              <div class="nav-item"><span class="nav-icon">📋</span>Log</div>
+              <div class="nav-item"><span class="nav-icon">💰</span>Earnings</div>
+              <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
+            </div>
           </div>
-          <div class="bottom-nav">
-            <div class="nav-item"><span class="nav-icon">🏠</span>Overview</div>
-            <div class="nav-item active"><span class="nav-icon">📋</span>Log</div>
-            <div class="nav-item"><span class="nav-icon">💰</span>Earnings</div>
-            <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
-          </div>
-        </div>
 
-        <!-- ── SCENE 5: TOTAL EARNINGS ── -->
-        <div class="scene" id="scene-earnings">
-          <div class="earnings-header">
-            <div class="earnings-title">Total Earnings</div>
-            <div class="earnings-sub">All businesses · YTD</div>
-          </div>
-          <div class="scroll-area" style="top:68px">
-            <div class="earnings-card" id="ec1">
-              <div><div class="ec-name">🐾 Dog Walking</div><div class="ec-sub">Net profit</div></div>
-              <div class="ec-val">$2,397</div>
+          <!-- SCENE 3: EXPENSE LOGGING -->
+          <div class="scene" id="scene-expense">
+            <div class="app-header">
+              <span class="app-title">Add Expense</span>
+              <span class="sync-dot"></span>
             </div>
-            <div class="earnings-card" id="ec2">
-              <div><div class="ec-name">📚 Tutoring</div><div class="ec-sub">Net profit</div></div>
-              <div class="ec-val">$1,639</div>
-            </div>
-            <div class="earnings-card" id="ec3">
-              <div><div class="ec-name">💃 Dance Class</div><div class="ec-sub">Net profit</div></div>
-              <div class="ec-val">$2,180</div>
-            </div>
-            <div class="grand-total" id="grand-total-card">
-              <div class="gt-label">✦ Combined Grand Total</div>
-              <div class="gt-val">$6,216</div>
+            <div class="scroll-area" style="top:64px;bottom:8px">
+              <div class="form-field" id="ff-date"><div class="ff-label">Date</div><div class="ff-val" id="ff-date-v"></div></div>
+              <div class="form-field" id="ff-vendor"><div class="ff-label">Vendor</div><div class="ff-val" id="ff-vendor-v"></div></div>
+              <div class="form-field" id="ff-cat"><div class="ff-label">Category</div><div class="ff-val" id="ff-cat-v"></div></div>
+              <div class="form-field" id="ff-amt"><div class="ff-label">Amount</div><div class="ff-val" id="ff-amt-v"></div></div>
+              <div class="form-field" id="ff-pay"><div class="ff-label">Payment Method</div><div class="ff-val" id="ff-pay-v"></div></div>
+              <button class="add-btn-app" id="add-btn">+ Add Expense</button>
             </div>
           </div>
-        </div>
 
-        <!-- ── SCENE 6: EXPORT ── -->
-        <div class="scene" id="scene-export">
-          <div class="export-section">
-            <div>
-              <div class="export-title">Export Your Data</div>
-              <div class="export-sub">Tax season ready — export your records in one tap.</div>
+          <!-- SCENE 4: INCOME TRACKING -->
+          <div class="scene" id="scene-income">
+            <div class="app-header">
+              <span class="app-title">Dance Class</span>
+              <span class="sync-dot"></span>
             </div>
-            <div class="export-btn" id="csv-btn">
-              <span class="eb-icon">📊</span>
+            <div class="scroll-area" style="top:64px">
+              <div class="event-row" id="ev-row">
+                <div class="ev-title">Spring Showcase — May 3</div>
+                <div class="ev-sub">Dance Class · Venue: Studio A</div>
+                <div class="ev-stats">
+                  <div class="ev-stat"><div class="ev-stat-val" id="s-singles">0</div><div class="ev-stat-lbl">Singles</div></div>
+                  <div class="ev-stat"><div class="ev-stat-val" id="s-couples">0</div><div class="ev-stat-lbl">Couples</div></div>
+                  <div class="ev-stat"><div class="ev-stat-val" id="s-revenue">$0</div><div class="ev-stat-lbl">Revenue</div></div>
+                </div>
+              </div>
+              <button class="ticket-btn" id="ticket-btn">🎟 Log Ticket Sales</button>
+            </div>
+            <div class="bottom-nav">
+              <div class="nav-item"><span class="nav-icon">🏠</span>Overview</div>
+              <div class="nav-item active"><span class="nav-icon">📋</span>Log</div>
+              <div class="nav-item"><span class="nav-icon">💰</span>Earnings</div>
+              <div class="nav-item"><span class="nav-icon">📄</span>1099</div>
+            </div>
+          </div>
+
+          <!-- SCENE 5: TOTAL EARNINGS -->
+          <div class="scene" id="scene-earnings">
+            <div class="earnings-hdr">
+              <div class="earnings-hdr-title">Total Earnings</div>
+              <div class="earnings-hdr-sub">All businesses · YTD</div>
+            </div>
+            <div class="scroll-area" style="top:64px">
+              <div class="earnings-card" id="ec1"><div><div class="ec-name">🐾 Dog Walking</div><div class="ec-sub">Net profit</div></div><div class="ec-val">$2,397</div></div>
+              <div class="earnings-card" id="ec2"><div><div class="ec-name">📚 Tutoring</div><div class="ec-sub">Net profit</div></div><div class="ec-val">$1,639</div></div>
+              <div class="earnings-card" id="ec3"><div><div class="ec-name">💃 Dance Class</div><div class="ec-sub">Net profit</div></div><div class="ec-val">$2,180</div></div>
+              <div class="grand-total" id="grand-total">
+                <div class="gt-label">✦ Combined Grand Total</div>
+                <div class="gt-val">$6,216</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SCENE 6: EXPORT -->
+          <div class="scene" id="scene-export">
+            <div class="export-wrap">
               <div>
-                <div class="eb-label">Export as CSV</div>
-                <div class="eb-sub">All transactions, all businesses</div>
+                <div class="export-title">Export Your Data</div>
+                <div class="export-sub">Tax season ready — export your records in one tap.</div>
+              </div>
+              <div class="export-btn" id="csv-btn">
+                <span class="eb-icon">📊</span>
+                <div><div class="eb-label">Export as CSV</div><div class="eb-sub">All transactions, all businesses</div></div>
+              </div>
+              <div class="export-btn" id="schedC-btn">
+                <span class="eb-icon">📋</span>
+                <div><div class="eb-label">Schedule C Summary</div><div class="eb-sub">IRS line numbers included</div></div>
+              </div>
+              <div class="toast" id="export-toast">✓ Downloaded! Check your files.</div>
+            </div>
+          </div>
+
+          <!-- SCENE 7: NAME CUSTOMIZATION -->
+          <div class="scene" id="scene-name">
+            <div class="custom-screen">
+              <div class="custom-label" id="cn-label">YOUR APP NAME</div>
+              <div class="custom-app-hdr" id="custom-hdr">OwnIt</div>
+              <div class="name-display" id="name-display">OwnIt</div>
+              <div class="name-chips" id="name-chips">
+                <div class="name-chip" id="chip-glam">Glam by Kia</div>
+                <div class="name-chip" id="chip-hustle">The Hustle Hub</div>
+                <div class="name-chip" id="chip-empire">My Empire</div>
               </div>
             </div>
-            <div class="export-btn" id="schedC-btn">
-              <span class="eb-icon">📋</span>
-              <div>
-                <div class="eb-label">Schedule C Summary</div>
-                <div class="eb-sub">IRS line numbers included</div>
+          </div>
+
+          <!-- SCENE 8: ICON & COLORS -->
+          <div class="scene" id="scene-look">
+            <div class="look-screen">
+              <div class="custom-label show" style="opacity:1;">YOUR ICON &amp; COLORS</div>
+              <div class="icon-preview" id="icon-preview">💄</div>
+              <div class="color-swatches" id="color-swatches">
+                <div class="swatch" id="sw1" style="background:#C2185B;"></div>
+                <div class="swatch" id="sw2" style="background:#6C2FAF;"></div>
+                <div class="swatch" id="sw3" style="background:#00B4A6;"></div>
+                <div class="swatch" id="sw4" style="background:#F4A300;"></div>
+              </div>
+              <div class="theme-preview" id="theme-prev">
+                <div class="t-row"><div class="t-dot" id="t-dot"></div><div class="t-dot2" id="t-dot2"></div></div>
+                <div class="t-bar1" id="t-bar1"></div>
+                <div class="t-bar2" id="t-bar2"></div>
               </div>
             </div>
-            <div class="toast" id="export-toast">✓ Downloaded! Check your files.</div>
           </div>
-        </div>
 
-        <!-- ── SCENE 7: NAME CUSTOMIZATION ── -->
-        <div class="scene" id="scene-custom-name">
-          <div class="custom-screen">
-            <div class="custom-label" id="cn-label">YOUR APP NAME</div>
-            <div class="custom-app-header" id="custom-app-title">OwnIt</div>
-            <div class="name-display" id="name-display">OwnIt</div>
-            <div class="name-row" id="name-chips">
-              <div class="name-chip" id="chip-glam">Glam by Kia</div>
-              <div class="name-chip" id="chip-hustle">The Hustle Hub</div>
-              <div class="name-chip" id="chip-empire">My Empire</div>
+          <!-- SCENE 9: HOME SCREEN -->
+          <div class="scene" id="scene-homescreen">
+            <div class="hs-status"><span>9:41</span><span>📶 🔋</span></div>
+            <div class="hs-grid">
+              <div class="hs-icon" id="hs-msg"><div class="hs-app-icon" style="background:linear-gradient(135deg,#34C759,#1A7A35);">💬</div><div class="hs-app-label">Messages</div></div>
+              <div class="hs-icon" id="hs-ph"><div class="hs-app-icon" style="background:linear-gradient(135deg,#FF9F0A,#FF375F);">📷</div><div class="hs-app-label">Photos</div></div>
+              <div class="hs-icon" id="hs-map"><div class="hs-app-icon" style="background:linear-gradient(135deg,#30B0C7,#1A6B80);">🗺️</div><div class="hs-app-label">Maps</div></div>
+              <div class="hs-icon" id="hs-cal"><div class="hs-app-icon" style="background:linear-gradient(135deg,#FF3B30,#C0392B);">📅</div><div class="hs-app-label">Calendar</div></div>
+              <div class="hs-icon" id="hs-nt"><div class="hs-app-icon" style="background:linear-gradient(135deg,#FFD60A,#B8960A);">📝</div><div class="hs-app-label">Notes</div></div>
+              <div class="hs-icon" id="hs-mu"><div class="hs-app-icon" style="background:linear-gradient(135deg,#FF375F,#8B0000);">🎵</div><div class="hs-app-label">Music</div></div>
+              <div class="hs-icon" id="hs-own"><div class="hs-app-icon" id="hs-own-icon" style="background:linear-gradient(135deg,#C2185B,#880E4F);">💄</div><div class="hs-app-label" id="hs-own-label">Glam by Kia</div></div>
+              <div class="hs-icon" id="hs-set"><div class="hs-app-icon" style="background:linear-gradient(135deg,#8E8E93,#48484A);">⚙️</div><div class="hs-app-label">Settings</div></div>
+            </div>
+            <div class="hs-dock" id="hs-dock">
+              <div class="hs-app-icon" style="background:linear-gradient(135deg,#0A84FF,#0040C1);width:42px;height:42px;border-radius:11px;font-size:19px;display:flex;align-items:center;justify-content:center;">📞</div>
+              <div class="hs-app-icon" style="background:linear-gradient(135deg,#34C759,#1A7A35);width:42px;height:42px;border-radius:11px;font-size:19px;display:flex;align-items:center;justify-content:center;">💬</div>
+              <div class="hs-app-icon" style="background:linear-gradient(135deg,#0A84FF,#005BB5);width:42px;height:42px;border-radius:11px;font-size:19px;display:flex;align-items:center;justify-content:center;">🌐</div>
             </div>
           </div>
-        </div>
 
-        <!-- ── SCENE 8: ICON & COLORS ── -->
-        <div class="scene" id="scene-custom-look">
-          <div class="custom-look-screen">
-            <div class="custom-label show" style="opacity:1;">YOUR ICON &amp; COLORS</div>
-            <div class="icon-preview" id="icon-preview">💄</div>
-            <div class="color-swatches" id="color-swatches">
-              <div class="swatch" id="sw1" style="background:#C2185B;"></div>
-              <div class="swatch" id="sw2" style="background:#6C2FAF;"></div>
-              <div class="swatch" id="sw3" style="background:#00B4A6;"></div>
-              <div class="swatch" id="sw4" style="background:#F4A300;"></div>
-            </div>
-            <div class="theme-preview" id="theme-preview">
-              <div class="theme-dot-row">
-                <div class="theme-dot" id="theme-dot"></div>
-                <div class="theme-dot2" id="theme-dot2"></div>
-              </div>
-              <div class="theme-bar1" id="theme-bar1"></div>
-              <div class="theme-bar2" id="theme-bar2"></div>
+          <!-- SCENE 10: FINALE -->
+          <div class="scene" id="scene-finale">
+            <div class="finale-screen">
+              <div class="finale-icon" id="finale-icon" style="background:linear-gradient(135deg,#C2185B,#880E4F);">💄</div>
+              <div class="finale-name" id="finale-name" style="color:#C2185B;">Glam by Kia</div>
+              <div class="finale-tag" id="finale-tag" style="color:rgba(194,24,91,0.65);">Custom Business Tracker</div>
+              <div class="finale-div" id="finale-div" style="background:#C2185B;"></div>
+              <div class="finale-tagline" id="finale-tagline">Your name. Your icon.<br>Your App.</div>
+              <div class="finale-sub" id="finale-sub">Every client gets a fully branded app — you even own the name.</div>
             </div>
           </div>
-        </div>
 
-        <!-- ── SCENE 9: HOME SCREEN ── -->
-        <div class="scene" id="scene-homescreen">
-          <div class="hs-status">
-            <span>9:41</span>
-            <span>📶 🔋</span>
-          </div>
-          <div class="hs-grid">
-            <div class="hs-icon" id="hs-messages">
-              <div class="hs-app-icon" style="background:linear-gradient(135deg,#34C759,#1A7A35);">💬</div>
-              <div class="hs-app-label">Messages</div>
-            </div>
-            <div class="hs-icon" id="hs-photos">
-              <div class="hs-app-icon" style="background:linear-gradient(135deg,#FF9F0A,#FF375F);">📷</div>
-              <div class="hs-app-label">Photos</div>
-            </div>
-            <div class="hs-icon" id="hs-maps">
-              <div class="hs-app-icon" style="background:linear-gradient(135deg,#30B0C7,#1A6B80);">🗺️</div>
-              <div class="hs-app-label">Maps</div>
-            </div>
-            <div class="hs-icon" id="hs-calendar">
-              <div class="hs-app-icon" style="background:linear-gradient(135deg,#FF3B30,#C0392B);">📅</div>
-              <div class="hs-app-label">Calendar</div>
-            </div>
-            <div class="hs-icon" id="hs-notes">
-              <div class="hs-app-icon" style="background:linear-gradient(135deg,#FFD60A,#B8960A);">📝</div>
-              <div class="hs-app-label">Notes</div>
-            </div>
-            <div class="hs-icon" id="hs-music">
-              <div class="hs-app-icon" style="background:linear-gradient(135deg,#FF375F,#8B0000);">🎵</div>
-              <div class="hs-app-label">Music</div>
-            </div>
-            <div class="hs-icon" id="hs-ownitapp">
-              <div class="hs-app-icon" id="hs-ownitapp-icon" style="background:linear-gradient(135deg,#C2185B,#880E4F);">💄</div>
-              <div class="hs-app-label" id="hs-ownitapp-label">Glam by Kia</div>
-            </div>
-            <div class="hs-icon" id="hs-settings">
-              <div class="hs-app-icon" style="background:linear-gradient(135deg,#8E8E93,#48484A);">⚙️</div>
-              <div class="hs-app-label">Settings</div>
-            </div>
-          </div>
-          <div class="hs-dock" id="hs-dock">
-            <div class="hs-app-icon" style="background:linear-gradient(135deg,#0A84FF,#0040C1);width:44px;height:44px;border-radius:12px;font-size:20px;display:flex;align-items:center;justify-content:center;">📞</div>
-            <div class="hs-app-icon" style="background:linear-gradient(135deg,#34C759,#1A7A35);width:44px;height:44px;border-radius:12px;font-size:20px;display:flex;align-items:center;justify-content:center;">💬</div>
-            <div class="hs-app-icon" style="background:linear-gradient(135deg,#0A84FF,#005BB5);width:44px;height:44px;border-radius:12px;font-size:20px;display:flex;align-items:center;justify-content:center;">🌐</div>
-          </div>
-        </div>
+        </div><!-- /phone-screen -->
+      </div><!-- /phone-shell -->
+    </div><!-- /phone-wrap -->
 
-        <!-- ── SCENE 10: FINALE ── -->
-        <div class="scene" id="scene-finale">
-          <div class="finale-screen">
-            <div class="finale-icon" id="finale-icon" style="background:linear-gradient(135deg,#C2185B,#880E4F);">💄</div>
-            <div class="finale-name" id="finale-name" style="color:#C2185B;">Glam by Kia</div>
-            <div class="finale-tag" id="finale-tag" style="color:rgba(194,24,91,0.7);">Custom Business Tracker</div>
-            <div class="finale-divider" id="finale-divider" style="background:#C2185B;"></div>
-            <div class="finale-tagline" id="finale-tagline" style="color:#FFFFFF;">Your name. Your icon.<br>Your App.</div>
-            <div class="finale-sub" id="finale-sub" style="color:rgba(255,255,255,0.5);">Every client gets a fully branded app — you even own the name.</div>
-          </div>
-        </div>
+    <!-- CTA buttons -->
+    <div id="btn-zone">
+      <a id="cta-btn" href="https://ownitapp.info" target="_blank">Get More Info →</a>
+      <button id="replay-btn" onclick="startShow()">↺ Watch Again</button>
+    </div>
 
-      </div><!-- /phone-screen -->
-    </div><!-- /phone-shell -->
-  </div><!-- /phone-wrap -->
+  </div><!-- /phase-demo -->
 
-  <!-- Progress bar -->
   <div id="progress-bar"></div>
-
-  <!-- CTA & Replay -->
-  <a id="cta-btn" href="https://ownitapp.info" target="_blank">Get More Info →</a>
-  <button id="replay-btn" onclick="startShow()">↺ Watch Again</button>
-
 </div><!-- /stage -->
 
 <script>
-/* ═══════════════════════════════════════════
-   UTILITY HELPERS
-═══════════════════════════════════════════ */
 const $ = id => document.getElementById(id);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-async function moveCursor() {}
-async function clickAt() { await sleep(250); }
-function showCursor() {}
-function hideCursor() {}
-
+/* ── helpers ── */
 function showScene(id) {
   document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
   $(id).classList.add('active');
 }
-
-function showCallout(id) { $(id).classList.add('show'); }
-function hideAllCallouts() { document.querySelectorAll('.callout').forEach(c => c.classList.remove('show')); }
-
-let totalDuration = 85000;
-let startTime = null;
-let animRunning = false;
-
-function updateProgress() {
-  if (!animRunning) return;
-  const elapsed = Date.now() - startTime;
-  const pct = Math.min(100, (elapsed / totalDuration) * 100);
-  $('progress-bar').style.width = pct + '%';
-  if (pct < 100) requestAnimationFrame(updateProgress);
+function showCo(id) {
+  document.querySelectorAll('.callout').forEach(c => c.classList.remove('show'));
+  $(id).classList.add('show');
 }
-
-function setLabel(text) {
-  $('scene-label').textContent = text;
+function hideCo() {
+  document.querySelectorAll('.callout').forEach(c => c.classList.remove('show'));
 }
+function setLabel(t) { $('scene-label').textContent = t; }
 
-// Typewriter effect
-async function typeInto(elId, text, speed = 60) {
+async function typeInto(elId, text, speed) {
   const el = $(elId);
   el.textContent = '';
-  $(elId.replace('-val', '')).classList.add('typing');
-  for (const ch of text) {
-    el.textContent += ch;
-    await sleep(speed);
-  }
-  $(elId.replace('-val', '')).classList.remove('typing');
+  const ff = el.closest('.form-field');
+  if (ff) ff.classList.add('typing');
+  for (const ch of text) { el.textContent += ch; await sleep(speed); }
+  if (ff) ff.classList.remove('typing');
 }
-
-// Count up number
-async function countUp(elId, target, prefix='', suffix='', steps=20, duration=800) {
+async function countUp(elId, target, prefix, steps, dur) {
   const el = $(elId);
-  const stepTime = duration / steps;
+  const t = dur / steps;
   for (let i = 1; i <= steps; i++) {
-    const val = Math.round((target / steps) * i);
-    el.textContent = prefix + val + suffix;
-    await sleep(stepTime);
+    el.textContent = prefix + Math.round((target / steps) * i);
+    await sleep(t);
   }
 }
 
-/* ═══════════════════════════════════════════
-   TITLE CARD ANIMATION
-═══════════════════════════════════════════ */
-async function runTitleCard() {
-  $('tc1').classList.add('show');
-  await sleep(900);
-  $('tc2').classList.add('show');
-  await sleep(900);
-  $('tc2b').classList.add('show');
-  await sleep(900);
-
-  $('tc-div1').classList.add('show');
-  await sleep(500);
-
-  // Full combined line appears at once
-  $('tc3').classList.add('show');
-  await sleep(3000);
-
-  $('title-card').classList.add('hidden');
-  await sleep(900);
-  $('title-card').classList.add('gone');
+/* ── progress ── */
+let startTime, totalDur = 92000, animOn = false;
+function tickProgress() {
+  if (!animOn) return;
+  const p = Math.min(100, ((Date.now() - startTime) / totalDur) * 100);
+  $('progress-bar').style.width = p + '%';
+  if (p < 100) requestAnimationFrame(tickProgress);
 }
 
-/* ═══════════════════════════════════════════
-   MAIN SHOW SEQUENCER
-═══════════════════════════════════════════ */
-async function startShow() {
-  animRunning = true;
-  $('replay-btn').classList.remove('show');
-  $('cta-btn').classList.remove('show');
-  hideAllCallouts();
-  hideCursor();
-  $('progress-bar').style.width = '0%';
+/* ── TITLE CARD ── */
+async function runTitleCard() {
+  $('tc1').classList.add('show'); await sleep(900);
+  $('tc2').classList.add('show'); await sleep(900);
+  $('tc2b').classList.add('show'); await sleep(900);
+  $('tc-div').classList.add('show'); await sleep(500);
+  $('tc3').classList.add('show'); await sleep(3000);
+  // fade out title card, reveal demo phase
+  $('phase-title').classList.add('fadeout');
+  $('phase-demo').classList.add('active');
+  await sleep(800);
+  $('phase-title').style.display = 'none';
+}
 
-  $('phone-wrap').classList.remove('finale-mode');
-
-  // Reset title card
-  $('title-card').classList.remove('hidden');
-  $('title-card').classList.remove('gone');
-  $('title-card').style.opacity = '1';
-  $('title-card').style.pointerEvents = 'auto';
-  ['tc1','tc2','tc2b','tc3','tc-div1'].forEach(id => $(id).classList.remove('show'));
-
-  // Reset all animated states
-  document.querySelectorAll('.overview-card').forEach(e => e.classList.remove('show'));
-  document.querySelectorAll('.expense-row').forEach(e => e.classList.remove('show'));
-  document.querySelectorAll('.form-field').forEach(e => { e.classList.remove('show'); e.classList.remove('typing'); });
-  document.querySelectorAll('.add-btn-app').forEach(e => { e.classList.remove('show','pressed'); });
-  document.querySelectorAll('.earnings-card,.grand-total').forEach(e => e.classList.remove('show'));
-  document.querySelectorAll('.export-btn').forEach(e => e.classList.remove('show','pressed'));
-  ['cn-label','name-chips'].forEach(id => $(id) && $(id).classList.remove('show'));
+/* ── RESET ── */
+function resetAll() {
+  // title card
+  $('phase-title').style.display = '';
+  $('phase-title').classList.remove('fadeout');
+  $('phase-demo').classList.remove('active');
+  ['tc1','tc2','tc2b','tc-div','tc3'].forEach(id => $(id).classList.remove('show'));
+  // scenes
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  $('scene-intro').classList.add('active');
+  // callouts
+  hideCo();
+  setLabel('');
+  // overview cards
+  ['ov-income','ov-expense','ov-profit'].forEach(id => $(id).classList.remove('show'));
+  // form fields
+  document.querySelectorAll('.form-field').forEach(f => { f.classList.remove('show','typing'); });
+  ['ff-date-v','ff-vendor-v','ff-cat-v','ff-amt-v','ff-pay-v'].forEach(id => $(id).textContent = '');
+  $('add-btn').classList.remove('show','pressed');
+  // income
+  $('ev-row').classList.remove('show');
+  $('ticket-btn').classList.remove('show','pressed');
+  $('s-singles').textContent = '0';
+  $('s-couples').textContent = '0';
+  $('s-revenue').textContent = '$0';
+  // earnings
+  ['ec1','ec2','ec3','grand-total'].forEach(id => $(id).classList.remove('show'));
+  // export
+  ['csv-btn','schedC-btn'].forEach(id => $(id).classList.remove('show','pressed'));
+  $('export-toast').classList.remove('show');
+  // name
+  $('cn-label').classList.remove('show');
+  $('name-chips').classList.remove('show');
   document.querySelectorAll('.name-chip').forEach(c => c.classList.remove('active'));
   $('name-display').textContent = 'OwnIt';
   $('name-display').classList.remove('highlight');
-  $('custom-app-title').textContent = 'OwnIt';
+  $('custom-hdr').textContent = 'OwnIt';
+  // look
   $('icon-preview').classList.remove('show');
   $('color-swatches').classList.remove('show');
-  $('theme-preview').classList.remove('show');
+  $('theme-prev').classList.remove('show');
   document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
-  ['finale-icon','finale-name','finale-tag','finale-divider','finale-tagline','finale-sub'].forEach(id => $(id).classList.remove('show'));
-  document.querySelectorAll('.toast').forEach(e => e.classList.remove('show'));
-  $('ticket-log-btn').classList.remove('show','pressed');
-  $('single-count').textContent = '0';
-  $('couple-count').textContent = '0';
-  $('revenue-count').textContent = '$0';
-  ['ff-date-val','ff-vendor-val','ff-cat-val','ff-amt-val','ff-pay-val'].forEach(id => $(id).textContent = '');
-  // Reset home screen
-  document.querySelectorAll('.hs-icon').forEach(e => e.classList.remove('show','highlight'));
+  // home screen
+  document.querySelectorAll('.hs-icon').forEach(i => i.classList.remove('show','highlight'));
   $('hs-dock').classList.remove('show');
+  $('hs-own-icon').style.transform = '';
+  // finale
+  ['finale-icon','finale-name','finale-tag','finale-div','finale-tagline','finale-sub'].forEach(id => $(id).classList.remove('show'));
+  $('phone-wrap').classList.remove('finale-mode');
+  // buttons
+  $('cta-btn').classList.remove('show');
+  $('replay-btn').classList.remove('show');
+  $('progress-bar').style.width = '0%';
+}
 
+/* ── MAIN SHOW ── */
+async function startShow() {
+  animOn = true;
+  resetAll();
+  await sleep(50);
   startTime = Date.now();
-  requestAnimationFrame(updateProgress);
+  requestAnimationFrame(tickProgress);
 
-  /* ─────────────────────────────────────────
-     TITLE CARD (~7s)
-  ───────────────────────────────────────── */
+  /* TITLE CARD ~8s */
   await runTitleCard();
 
-  /* ─────────────────────────────────────────
-     SCENE 1 — INTRO (7–13s)
-  ───────────────────────────────────────── */
+  /* SCENE 1 — INTRO ~1.5s */
   setLabel('INTRO');
   showScene('scene-intro');
   await sleep(1500);
 
-  /* ─────────────────────────────────────────
-     SCENE 2 — BUSINESS TABS (13–24s)
-  ───────────────────────────────────────── */
+  /* SCENE 2 — BUSINESS TABS ~11s */
   setLabel('BUSINESS TABS');
   showScene('scene-tabs');
-
+  showCo('co-tabs');
   const tabData = {
-    rover:  { income: '$3,240.00', expense: '$842.16',  profit: '$2,397.84', title: 'Dog Walking' },
-    wyzant: { income: '$1,850.00', expense: '$210.50',  profit: '$1,639.50', title: 'Tutoring' },
-    itt:    { income: '$2,760.00', expense: '$580.00',  profit: '$2,180.00', title: 'Dance Class' },
+    dw: { income:'$3,240.00', expense:'$842.16',  profit:'$2,397.84', title:'Dog Walking' },
+    tu: { income:'$1,850.00', expense:'$210.50',  profit:'$1,639.50', title:'Tutoring' },
+    dc: { income:'$2,760.00', expense:'$580.00',  profit:'$2,180.00', title:'Dance Class' },
   };
-
-  function switchTab(tabId) {
-    document.querySelectorAll('.biz-tab').forEach(t => t.classList.remove('active-tab'));
-    $('tab-' + tabId).classList.add('active-tab');
-    const d = tabData[tabId];
-    document.querySelector('.app-title') && (document.querySelector('#scene-tabs .app-title').textContent = d.title);
-    ['ov-income', 'ov-expense', 'ov-profit'].forEach(id => {
-      $(id).style.opacity = '0.3';
-      $(id).style.transform = 'translateY(4px)';
-      $(id).style.transition = 'all 0.15s ease';
-    });
+  function switchTab(key) {
+    ['dw','tu','dc'].forEach(k => $('tab-'+k).classList.remove('active-tab'));
+    $('tab-'+key).classList.add('active-tab');
+    const d = tabData[key];
+    $('tabs-title').textContent = d.title;
+    ['ov-income','ov-expense','ov-profit'].forEach(id => { $(id).style.opacity='0.3'; $(id).style.transform='translateY(4px)'; });
     setTimeout(() => {
       $('ov-income-val').textContent  = d.income;
       $('ov-expense-val').textContent = d.expense;
       $('ov-profit-val').textContent  = d.profit;
-      ['ov-income', 'ov-expense', 'ov-profit'].forEach(id => {
-        $(id).style.opacity = '1';
-        $(id).style.transform = 'translateY(0)';
-      });
+      ['ov-income','ov-expense','ov-profit'].forEach(id => { $(id).style.opacity='1'; $(id).style.transform='translateY(0)'; });
     }, 160);
   }
-
-  await sleep(500);
-  showCallout('co-tabs');
-
-  switchTab('rover');
   await sleep(400);
-  $('ov-income').classList.add('show');
-  await sleep(250);
-  $('ov-expense').classList.add('show');
-  await sleep(250);
-  $('ov-profit').classList.add('show');
-  await sleep(2200);
+  switchTab('dw');
+  $('ov-income').classList.add('show'); await sleep(200);
+  $('ov-expense').classList.add('show'); await sleep(200);
+  $('ov-profit').classList.add('show'); await sleep(2000);
+  switchTab('tu'); await sleep(2200);
+  switchTab('dc'); await sleep(2200);
 
-  // Switch to Tutoring
-  switchTab('wyzant');
-  await sleep(2200);
-
-  // Switch to Dance Class
-  switchTab('itt');
-  await sleep(2200);
-
-  /* ─────────────────────────────────────────
-     SCENE 3 — EXPENSE LOGGING (24–38s)
-  ───────────────────────────────────────── */
+  /* SCENE 3 — EXPENSE LOGGING ~14s */
   setLabel('EXPENSE LOGGING');
-  hideAllCallouts();
   showScene('scene-expense');
+  showCo('co-expense');
   await sleep(400);
-  showCallout('co-expense');
-
-  $('ff-date').classList.add('show');
-  await sleep(300);
-  await typeInto('ff-date-val', 'Apr 23, 2025', 55);
-  await sleep(300);
-
-  $('ff-vendor').classList.add('show');
+  $('ff-date').classList.add('show'); await sleep(250); await typeInto('ff-date-v','Apr 23, 2025',55);
   await sleep(250);
-  await typeInto('ff-vendor-val', 'PetSmart', 65);
-  await sleep(300);
-
-  $('ff-cat').classList.add('show');
+  $('ff-vendor').classList.add('show'); await sleep(200); await typeInto('ff-vendor-v','PetSmart',65);
   await sleep(250);
-  await typeInto('ff-cat-val', 'Supplies → Sch C Line 22', 55);
-  await sleep(300);
-
-  $('ff-amt').classList.add('show');
+  $('ff-cat').classList.add('show'); await sleep(200); await typeInto('ff-cat-v','Supplies → Sch C Line 22',48);
   await sleep(250);
-  await typeInto('ff-amt-val', '$34.99', 70);
-  await sleep(300);
-
-  $('ff-pay').classList.add('show');
+  $('ff-amt').classList.add('show'); await sleep(200); await typeInto('ff-amt-v','$34.99',70);
   await sleep(250);
-  await typeInto('ff-pay-val', 'Business Card', 55);
-  await sleep(600);
+  $('ff-pay').classList.add('show'); await sleep(200); await typeInto('ff-pay-v','Business Card',55);
+  await sleep(500);
+  $('add-btn').classList.add('show'); await sleep(700);
+  $('add-btn').classList.add('pressed'); await sleep(350); $('add-btn').classList.remove('pressed');
+  await sleep(1800);
 
-  $('add-expense-btn').classList.add('show');
-  await sleep(700);
-
-  await clickAt(140, 430, 350);
-  $('add-expense-btn').classList.add('pressed');
+  /* SCENE 4 — INCOME TRACKING ~10s */
+  setLabel('INCOME TRACKING');
+  showScene('scene-income');
+  showCo('co-income');
   await sleep(400);
-  $('add-expense-btn').classList.remove('pressed');
-  await sleep(1500);
-
-  /* ─────────────────────────────────────────
-     SCENE 4 — EVENT TRACKING (38–50s)
-  ───────────────────────────────────────── */
-  setLabel('EVENT TRACKING');
-  hideAllCallouts();
-  showScene('scene-events');
-  await sleep(400);
-  showCallout('co-events');
-  $('ev-row1').classList.add('show');
-  await sleep(800);
-  $('ticket-log-btn').classList.add('show');
-  await sleep(900);
-
-  await clickAt(140, 315, 400);
-  $('ticket-log-btn').classList.add('pressed');
-  await sleep(350);
-  $('ticket-log-btn').classList.remove('pressed');
+  $('ev-row').classList.add('show'); await sleep(800);
+  $('ticket-btn').classList.add('show'); await sleep(900);
+  $('ticket-btn').classList.add('pressed'); await sleep(350); $('ticket-btn').classList.remove('pressed');
   await sleep(300);
-
-  countUp('single-count', 8, '', '', 15, 900);
+  countUp('s-singles', 8, '', 15, 900);
   await sleep(200);
-  countUp('couple-count', 5, '', '', 15, 900);
+  countUp('s-couples', 5, '', 15, 900);
   await sleep(200);
-  countUp('revenue-count', 1095, '$', '', 15, 1000);
-  await sleep(2500);
+  countUp('s-revenue', 1095, '$', 15, 1000);
+  await sleep(3200);
 
-  /* ─────────────────────────────────────────
-     SCENE 5 — TOTAL EARNINGS (50–62s)
-  ───────────────────────────────────────── */
+  /* SCENE 5 — TOTAL EARNINGS ~9s */
   setLabel('TOTAL EARNINGS');
-  hideAllCallouts();
   showScene('scene-earnings');
+  showCo('co-earnings');
   await sleep(400);
-  showCallout('co-earnings');
-  hideCursor();
+  $('ec1').classList.add('show'); await sleep(350);
+  $('ec2').classList.add('show'); await sleep(350);
+  $('ec3').classList.add('show'); await sleep(500);
+  $('grand-total').classList.add('show'); await sleep(5000);
 
-  $('ec1').classList.add('show');
-  await sleep(400);
-  $('ec2').classList.add('show');
-  await sleep(400);
-  $('ec3').classList.add('show');
-  await sleep(600);
-  $('grand-total-card').classList.add('show');
-  await sleep(5000);
-
-  /* ─────────────────────────────────────────
-     SCENE 6 — EXPORT (62–72s)
-  ───────────────────────────────────────── */
+  /* SCENE 6 — EXPORT ~9s */
   setLabel('EXPORT');
-  hideAllCallouts();
   showScene('scene-export');
-  showCursor();
+  showCo('co-export');
   await sleep(400);
-  showCallout('co-export');
-
-  $('csv-btn').classList.add('show');
-  await sleep(350);
-  $('schedC-btn').classList.add('show');
-  await sleep(900);
-
-  await clickAt(140, 200, 450);
-  $('csv-btn').classList.add('pressed');
-  await sleep(400);
-  $('csv-btn').classList.remove('pressed');
+  $('csv-btn').classList.add('show'); await sleep(300);
+  $('schedC-btn').classList.add('show'); await sleep(900);
+  $('csv-btn').classList.add('pressed'); await sleep(350); $('csv-btn').classList.remove('pressed');
   await sleep(300);
-  $('export-toast').classList.add('show');
-  await sleep(3500);
+  $('export-toast').classList.add('show'); await sleep(4000);
 
-  /* ─────────────────────────────────────────
-     SCENE 7 — NAME CUSTOMIZATION (72–78s)
-  ───────────────────────────────────────── */
+  /* SCENE 7 — APP NAME ~9s */
   setLabel('YOUR APP NAME');
-  hideAllCallouts();
-  showScene('scene-custom-name');
+  showScene('scene-name');
+  showCo('co-name');
   await sleep(400);
-  showCallout('co-customname');
-  $('cn-label').classList.add('show');
-  await sleep(600);
-
-  $('name-chips').classList.add('show');
-  await sleep(800);
-
+  $('cn-label').classList.add('show'); await sleep(600);
+  $('name-chips').classList.add('show'); await sleep(800);
   const names = [
-    { id: 'chip-glam',   name: 'Glam by Kia',   emoji: '💄' },
-    { id: 'chip-hustle', name: 'The Hustle Hub', emoji: '💼' },
-    { id: 'chip-empire', name: 'My Empire',      emoji: '👑' },
+    { id:'chip-glam',   name:'Glam by Kia',   },
+    { id:'chip-hustle', name:'The Hustle Hub', },
+    { id:'chip-empire', name:'My Empire',      },
   ];
   for (const n of names) {
     document.querySelectorAll('.name-chip').forEach(c => c.classList.remove('active'));
     $(n.id).classList.add('active');
     $('name-display').classList.add('highlight');
     $('name-display').textContent = n.name;
-    $('custom-app-title').textContent = n.name;
-    await sleep(1000);
+    $('custom-hdr').textContent = n.name;
+    await sleep(950);
     $('name-display').classList.remove('highlight');
     await sleep(200);
   }
-  await sleep(600);
+  await sleep(800);
 
-  /* ─────────────────────────────────────────
-     SCENE 8 — ICON & COLORS (78–84s)
-  ───────────────────────────────────────── */
+  /* SCENE 8 — ICON & COLORS ~9s */
   setLabel('ICON & COLORS');
-  hideAllCallouts();
-  showScene('scene-custom-look');
-  await sleep(400);
-  showCallout('co-customlook');
-
-  $('icon-preview').classList.add('show');
-  await sleep(400);
-  $('color-swatches').classList.add('show');
-  await sleep(400);
-  $('theme-preview').classList.add('show');
-  await sleep(400);
-
+  showScene('scene-look');
+  showCo('co-look');
+  $('icon-preview').classList.add('show'); await sleep(350);
+  $('color-swatches').classList.add('show'); await sleep(350);
+  $('theme-prev').classList.add('show'); await sleep(350);
   const themes = [
-    { sw: 'sw1', color: '#C2185B', icon: '💄', grad: 'linear-gradient(135deg,#C2185B,#880E4F)' },
-    { sw: 'sw2', color: '#6C2FAF', icon: '🔮', grad: 'linear-gradient(135deg,#6C2FAF,#3B1F6A)' },
-    { sw: 'sw3', color: '#00B4A6', icon: '🌊', grad: 'linear-gradient(135deg,#00B4A6,#006D66)' },
-    { sw: 'sw4', color: '#F4A300', icon: '⭐', grad: 'linear-gradient(135deg,#F4A300,#B07800)' },
+    { sw:'sw1', color:'#C2185B', icon:'💄', grad:'linear-gradient(135deg,#C2185B,#880E4F)' },
+    { sw:'sw2', color:'#6C2FAF', icon:'🔮', grad:'linear-gradient(135deg,#6C2FAF,#3B1F6A)' },
+    { sw:'sw3', color:'#00B4A6', icon:'🌊', grad:'linear-gradient(135deg,#00B4A6,#006D66)' },
+    { sw:'sw4', color:'#F4A300', icon:'⭐', grad:'linear-gradient(135deg,#F4A300,#B07800)' },
   ];
   for (const t of themes) {
     document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
     $(t.sw).classList.add('active');
     $('icon-preview').style.background = t.grad;
     $('icon-preview').textContent = t.icon;
-    $('theme-dot').style.background = t.color;
-    $('theme-dot2').style.background = t.color + '99';
-    $('theme-bar1').style.background = t.color + '66';
-    $('theme-bar2').style.background = t.color + '33';
-    await sleep(900);
+    $('t-dot').style.background  = t.color;
+    $('t-dot2').style.background = t.color + '99';
+    $('t-bar1').style.background = t.color + '66';
+    $('t-bar2').style.background = t.color + '33';
+    await sleep(950);
   }
-  await sleep(500);
+  await sleep(700);
 
-  /* ─────────────────────────────────────────
-     SCENE 9 — HOME SCREEN (84–91s)
-  ───────────────────────────────────────── */
+  /* SCENE 9 — HOME SCREEN ~9s */
   setLabel('HOME SCREEN');
-  hideAllCallouts();
   showScene('scene-homescreen');
-  await sleep(400);
-  showCallout('co-homescreen');
-
-  // All icons appear at once
-  const allIcons = ['hs-messages','hs-photos','hs-maps','hs-calendar','hs-notes','hs-music','hs-ownitapp','hs-settings'];
-  allIcons.forEach(id => $(id).classList.add('show'));
+  showCo('co-hs');
+  await sleep(300);
+  ['hs-msg','hs-ph','hs-map','hs-cal','hs-nt','hs-mu','hs-own','hs-set'].forEach(id => $(id).classList.add('show'));
   await sleep(600);
   $('hs-dock').classList.add('show');
   await sleep(1400);
-
-  // Highlight the OwnIt app
-  $('hs-ownitapp').classList.add('highlight');
+  $('hs-own').classList.add('highlight');
   await sleep(1800);
-
-  // Simulate tap — scale down then up like a real press
-  const appIcon = $('hs-ownitapp-icon');
-  appIcon.style.transition = 'transform 0.12s ease';
-  appIcon.style.transform = 'scale(0.82)';
+  // tap animation
+  const ownIcon = $('hs-own-icon');
+  ownIcon.style.transition = 'transform 0.12s ease';
+  ownIcon.style.transform = 'scale(0.82)';
   await sleep(140);
-  appIcon.style.transform = 'scale(1.08)';
+  ownIcon.style.transform = 'scale(1.08)';
   await sleep(120);
-  appIcon.style.transform = 'scale(1)';
+  ownIcon.style.transform = 'scale(1)';
   await sleep(600);
 
-  /* ─────────────────────────────────────────
-     SCENE 10 — FINALE (91–95s)
-  ───────────────────────────────────────── */
+  /* SCENE 10 — FINALE ~7s */
   setLabel('');
-  hideAllCallouts();
+  hideCo();
   $('phone-wrap').classList.add('finale-mode');
   showScene('scene-finale');
   await sleep(200);
-  $('finale-icon').classList.add('show');
-  await sleep(250);
-  $('finale-name').classList.add('show');
-  await sleep(200);
-  $('finale-tag').classList.add('show');
-  await sleep(200);
-  $('finale-divider').classList.add('show');
-  await sleep(200);
-  $('finale-tagline').classList.add('show');
-  await sleep(250);
-  $('finale-sub').classList.add('show');
-  await sleep(2000);
+  $('finale-icon').classList.add('show'); await sleep(220);
+  $('finale-name').classList.add('show'); await sleep(180);
+  $('finale-tag').classList.add('show'); await sleep(180);
+  $('finale-div').classList.add('show'); await sleep(180);
+  $('finale-tagline').classList.add('show'); await sleep(220);
+  $('finale-sub').classList.add('show'); await sleep(2200);
 
-  /* ─────────────────────────────────────────
-     DONE
-  ───────────────────────────────────────── */
-  animRunning = false;
-  hideCursor();
-  hideAllCallouts();
+  /* END */
+  animOn = false;
   $('progress-bar').style.width = '100%';
   $('cta-btn').classList.add('show');
   $('replay-btn').classList.add('show');
   setLabel('');
 }
 
-// Kick off on load
-window.addEventListener('load', () => {
-  setTimeout(startShow, 600);
-});
+window.addEventListener('load', () => setTimeout(startShow, 400));
 </script>
 </body>
 </html>
-
-   
