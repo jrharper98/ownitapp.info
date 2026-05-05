@@ -80,7 +80,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 #title-card.hidden {
   opacity: 0;
   pointer-events: none;
-  visibility: hidden;
+}
+#title-card.gone {
+  display: none;
 }
 
 .tc-line {
@@ -944,6 +946,13 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 /* ═══════════════════════════════════════════
    REPLAY / CTA BUTTONS
 ═══════════════════════════════════════════ */
+
+/* When finale is active, shrink phone to make room for buttons */
+#phone-wrap.finale-mode {
+  height: min(400px, 108vw);
+  margin-top: 4px;
+}
+
 #replay-btn {
   background: var(--teal);
   color: var(--white);
@@ -959,7 +968,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
   z-index: 200;
   letter-spacing: 0.5px;
   box-shadow: 0 4px 20px rgba(0,180,166,0.4);
-  margin: 8px auto 4px;
+  margin: 6px auto 4px;
   display: block;
   pointer-events: none;
   flex-shrink: 0;
@@ -992,7 +1001,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 #cta-btn.show { opacity: 1; pointer-events: auto; }
 #cta-btn:hover { transform: scale(1.05); }
 
-</style>
 </head>
 <body>
 <div id="stage">
@@ -1008,8 +1016,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
     <div class="tc-line tc-line-1" id="tc2">Every gig.</div>
     <div class="tc-line tc-line-1" id="tc2b">Every deduction.</div>
     <div class="tc-divider" id="tc-div1"></div>
-    <div class="tc-line tc-line-3" id="tc3">OwnIt tracks it all —</div>
-    <div class="tc-line tc-line-4" id="tc4">so your Schedule C fills itself.</div>
+    <div class="tc-line tc-line-3" id="tc3">OwnIt tracks it all — <span style="color:var(--teal);">so your Schedule C fills itself.</span></div>
   </div>
 
   <!-- Scene label -->
@@ -1028,8 +1035,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
     </div>
 
     <div class="callout" id="co-events">
-      <div class="callout-title">Track Ticket Sales & Events</div>
-      <div class="callout-body">Log singles, couples, and revenue for each event. See your net profit per show — no spreadsheet required.</div>
+      <div class="callout-title">Track Income for Each Business</div>
+      <div class="callout-body">Income logs are customized specifically to your business. Whether it's ticket sales, product sales, or an hourly rate, see your profit at a glance.</div>
     </div>
 
     <div class="callout" id="co-earnings">
@@ -1408,7 +1415,6 @@ async function countUp(elId, target, prefix='', suffix='', steps=20, duration=80
    TITLE CARD ANIMATION
 ═══════════════════════════════════════════ */
 async function runTitleCard() {
-  // Line 1: "Every receipt." — pause — "Every gig." — pause — "Every deduction."
   $('tc1').classList.add('show');
   await sleep(900);
   $('tc2').classList.add('show');
@@ -1416,21 +1422,16 @@ async function runTitleCard() {
   $('tc2b').classList.add('show');
   await sleep(900);
 
-  // Divider
   $('tc-div1').classList.add('show');
   await sleep(500);
 
-  // "OwnIt tracks it all —"
+  // Full combined line appears at once
   $('tc3').classList.add('show');
-  await sleep(1600);
+  await sleep(3000);
 
-  // Pause — then the payoff
-  $('tc4').classList.add('show');
-  await sleep(2800);
-
-  // Fade out title card
   $('title-card').classList.add('hidden');
   await sleep(900);
+  $('title-card').classList.add('gone');
 }
 
 /* ═══════════════════════════════════════════
@@ -1444,11 +1445,14 @@ async function startShow() {
   hideCursor();
   $('progress-bar').style.width = '0%';
 
+  $('phone-wrap').classList.remove('finale-mode');
+
   // Reset title card
   $('title-card').classList.remove('hidden');
+  $('title-card').classList.remove('gone');
   $('title-card').style.opacity = '1';
   $('title-card').style.pointerEvents = 'auto';
-  ['tc1','tc2','tc2b','tc3','tc4','tc-div1'].forEach(id => $(id).classList.remove('show'));
+  ['tc1','tc2','tc2b','tc3','tc-div1'].forEach(id => $(id).classList.remove('show'));
 
   // Reset all animated states
   document.querySelectorAll('.overview-card').forEach(e => e.classList.remove('show'));
@@ -1490,7 +1494,7 @@ async function startShow() {
   ───────────────────────────────────────── */
   setLabel('INTRO');
   showScene('scene-intro');
-  await sleep(4500);
+  await sleep(1500);
 
   /* ─────────────────────────────────────────
      SCENE 2 — BUSINESS TABS (13–24s)
@@ -1731,25 +1735,33 @@ async function startShow() {
   await sleep(400);
   showCallout('co-homescreen');
 
-  // Stagger all icons in
+  // All icons appear at once
   const allIcons = ['hs-messages','hs-photos','hs-maps','hs-calendar','hs-notes','hs-music','hs-ownitapp','hs-settings'];
-  for (const id of allIcons) {
-    $(id).classList.add('show');
-    await sleep(120);
-  }
-  await sleep(500);
+  allIcons.forEach(id => $(id).classList.add('show'));
+  await sleep(600);
   $('hs-dock').classList.add('show');
-  await sleep(1200);
+  await sleep(1400);
 
   // Highlight the OwnIt app
   $('hs-ownitapp').classList.add('highlight');
-  await sleep(3500);
+  await sleep(1800);
+
+  // Simulate tap — scale down then up like a real press
+  const appIcon = $('hs-ownitapp-icon');
+  appIcon.style.transition = 'transform 0.12s ease';
+  appIcon.style.transform = 'scale(0.82)';
+  await sleep(140);
+  appIcon.style.transform = 'scale(1.08)';
+  await sleep(120);
+  appIcon.style.transform = 'scale(1)';
+  await sleep(600);
 
   /* ─────────────────────────────────────────
      SCENE 10 — FINALE (91–95s)
   ───────────────────────────────────────── */
   setLabel('');
   hideAllCallouts();
+  $('phone-wrap').classList.add('finale-mode');
   showScene('scene-finale');
   await sleep(200);
   $('finale-icon').classList.add('show');
