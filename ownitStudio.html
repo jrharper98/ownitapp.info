@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OwnIt — Client Template Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0D1B2A;
+  --deep-navy:#0F2940;
+  --teal:#00B4A6;
+  --light-teal:#A8DCDA;
+  --pale-teal:#EFF8F8;
+  --gold:#F4A300;
+  --gold-light:#FFF3D6;
+  --white:#FFFFFF;
+  --text:#0D1B2A;
+  --muted:#5A7A8A;
+  --border:#C8E0DF;
+  --bg:#F4FAFA;
+  --card:#FFFFFF;
+  --error:#E05A5A;
+  --success:#2CB67D;
+  --radius:10px;
+  --radius-lg:16px;
+}
+html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px;line-height:1.6}
+
+/* ── HEADER ── */
+.site-header{background:var(--navy);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(13,27,42,0.18)}
+.header-left{display:flex;align-items:center;gap:12px}
+.logo-svg{width:34px;height:34px;flex-shrink:0}
+.logo-text{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--white);letter-spacing:-0.02em}
+.logo-text span{color:var(--gold)}
+.header-right{display:flex;align-items:center;gap:10px}
+.btn-header{background:none;border:1.5px solid rgba(255,255,255,0.25);border-radius:8px;padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:rgba(255,255,255,0.85);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px}
+.btn-header:hover{border-color:var(--teal);color:var(--white)}
+.btn-header svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn-header.gold-btn{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+.btn-header.gold-btn:hover{background:#d99200;border-color:#d99200}
+
+/* ── LAYOUT ── */
+.app-layout{display:flex;height:calc(100vh - 57px)}
+.sidebar{width:260px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.main-area{flex:1;overflow-y:auto}
+
+/* ── SIDEBAR ── */
+.sidebar-header{padding:18px 18px 12px;border-bottom:1px solid var(--border)}
+.sidebar-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:10px}
+.search-wrap{position:relative}
+.search-wrap input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px 8px 32px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--bg);outline:none;transition:border-color 0.15s}
+.search-wrap input:focus{border-color:var(--teal)}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.btn-new-client{width:100%;background:var(--teal);border:none;border-radius:8px;padding:9px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;transition:background 0.15s}
+.btn-new-client:hover{background:#009e92}
+.btn-new-client svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round}
+
+.client-list{flex:1;overflow-y:auto;padding:8px}
+.client-item{padding:10px 12px;border-radius:8px;cursor:pointer;transition:background 0.12s;border:1.5px solid transparent;margin-bottom:4px}
+.client-item:hover{background:var(--pale-teal)}
+.client-item.active{background:var(--pale-teal);border-color:var(--teal)}
+.client-item-name{font-size:13.5px;font-weight:600;color:var(--navy)}
+.client-item-sub{font-size:11.5px;color:var(--muted);margin-top:1px}
+.client-item-badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;margin-top:4px}
+.badge-active{background:#E6F9F7;color:var(--teal)}
+.badge-delivered{background:#E8F5E9;color:#2CB67D}
+.badge-paused{background:#FFF3D6;color:#C48600}
+.no-clients{text-align:center;padding:30px 16px;color:var(--muted);font-size:13px}
+.no-clients svg{width:32px;height:32px;stroke:var(--border);fill:none;stroke-width:1.5;stroke-linecap:round;margin-bottom:8px}
+
+.sidebar-footer{padding:12px 18px;border-top:1px solid var(--border)}
+.sync-status{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted)}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.sync-dot.synced{background:var(--success)}
+.sync-dot.syncing{background:var(--gold);animation:pulse 1s infinite}
+.sync-dot.error{background:var(--error)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* ── WELCOME SCREEN ── */
+.welcome-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:40px;text-align:center;color:var(--muted)}
+.welcome-screen svg{width:56px;height:56px;stroke:var(--border);fill:none;stroke-width:1.5;stroke-linecap:round;margin-bottom:20px}
+.welcome-screen h2{font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);margin-bottom:8px}
+.welcome-screen p{font-size:14px;max-width:340px;line-height:1.7}
+
+/* ── CLIENT WORKSPACE ── */
+.workspace{padding:28px 32px;max-width:860px}
+.workspace-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap}
+.workspace-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--navy);line-height:1.2}
+.workspace-sub{font-size:13px;color:var(--muted);margin-top:3px}
+.workspace-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-action{background:none;border:1.5px solid var(--border);border-radius:8px;padding:8px 14px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.15s}
+.btn-action:hover{border-color:var(--navy);color:var(--navy)}
+.btn-action.teal{border-color:var(--teal);color:var(--teal)}
+.btn-action.teal:hover{background:rgba(0,180,166,0.07)}
+.btn-action.gold{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+.btn-action.gold:hover{background:#d99200}
+.btn-action svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{background:none;border:none;border-bottom:2.5px solid transparent;padding:10px 16px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px;transition:color 0.15s,border-color 0.15s;margin-bottom:-1px}
+.tab svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:600}
+.tab:hover:not(.active){color:var(--navy)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── SECTION CARDS ── */
+.section-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px 28px;margin-bottom:16px}
+.section-card-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold);margin-bottom:4px;letter-spacing:-0.01em}
+.section-card-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.info-grid{grid-template-columns:1fr}}
+.info-item label{display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:4px}
+.info-item .val{font-size:14px;color:var(--navy);font-weight:500;min-height:20px}
+.info-item .val.empty{color:var(--border);font-style:italic;font-weight:400;font-size:13px}
+.info-item.full{grid-column:1/-1}
+.tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.tag{display:inline-block;background:var(--pale-teal);border:1px solid var(--border);border-radius:20px;font-size:12px;font-weight:500;color:var(--navy);padding:3px 10px}
+.tag.gold-tag{background:var(--gold-light);border-color:#F0DC6A;color:#7A5C00}
+
+/* ── FORM FIELDS ── */
+.field{margin-bottom:18px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--navy);margin-bottom:6px}
+.field label .hint{display:block;font-size:11px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);margin-top:1px}
+.field input[type=text],.field input[type=email],.field input[type=tel],.field input[type=url],.field textarea,.field select{width:100%;border:1.5px solid var(--border);border-radius:var(--radius);padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;transition:border-color 0.15s,box-shadow 0.15s;appearance:none;-webkit-appearance:none}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,180,166,0.10)}
+.field textarea{resize:vertical;min-height:80px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.field-row{grid-template-columns:1fr}}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235A7A8A' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+
+/* ── PILL GROUPS (read-only display) ── */
+.pill-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.pill-group input[type=checkbox],.pill-group input[type=radio]{display:none}
+.pill-group label{cursor:pointer;font-size:12.5px;font-weight:500;color:var(--navy);background:var(--bg);border:1.5px solid var(--border);border-radius:999px;padding:5px 13px;transition:all 0.13s;user-select:none}
+.pill-group input:checked+label{background:var(--teal);border-color:var(--teal);color:var(--white)}
+
+/* ── FEATURE CHECKLIST ── */
+.feature-group{margin-bottom:20px}
+.feature-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.feature-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid rgba(200,224,223,0.5)}
+.feature-item:last-child{border-bottom:none}
+.feature-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--teal);cursor:pointer;flex-shrink:0;margin-top:2px}
+.feature-item-info{flex:1}
+.feature-item-label{font-size:13.5px;font-weight:500;color:var(--navy)}
+.feature-item-desc{font-size:11.5px;color:var(--muted);margin-top:1px}
+.feature-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:6px;vertical-align:middle}
+.badge-auto{background:#E6F9F7;color:var(--teal)}
+.badge-optional{background:var(--gold-light);color:#7A5C00}
+
+/* ── DEV CHECKLIST ── */
+.checklist-group{margin-bottom:20px}
+.checklist-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.checklist-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(200,224,223,0.4)}
+.checklist-item:last-child{border-bottom:none}
+.checklist-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--teal);cursor:pointer;flex-shrink:0;margin-top:2px}
+.checklist-item.checked .check-label{text-decoration:line-through;color:var(--muted)}
+.check-label{font-size:13.5px;color:var(--navy);flex:1}
+.checklist-progress{display:flex;align-items:center;gap:10px;margin-bottom:16px;background:var(--pale-teal);border-radius:8px;padding:12px 16px}
+.progress-bar-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.progress-bar{height:100%;background:var(--teal);border-radius:3px;transition:width 0.3s}
+.progress-label{font-size:12px;font-weight:600;color:var(--teal);white-space:nowrap}
+
+/* ── DISCOVERY CALL ── */
+.call-question{padding:14px 0;border-bottom:1px solid rgba(200,224,223,0.5)}
+.call-question:last-child{border-bottom:none}
+.call-q-num{font-size:10.5px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px}
+.call-q-text{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.call-q-why{font-size:12px;color:var(--muted);font-style:italic}
+.call-notes-input{width:100%;margin-top:8px;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--bg);outline:none;resize:vertical;min-height:56px;transition:border-color 0.15s}
+.call-notes-input:focus{border-color:var(--teal)}
+
+/* ── SUPABASE SETUP ── */
+.setup-row{display:grid;grid-template-columns:160px 1fr;gap:0;align-items:stretch;border-bottom:1px solid rgba(200,224,223,0.5)}
+.setup-row:last-child{border-bottom:none}
+.setup-key{font-size:12px;font-weight:600;color:var(--muted);padding:10px 0;text-transform:uppercase;letter-spacing:0.06em}
+.setup-val{padding:8px 0 8px 14px}
+.setup-val input{width:100%;border:1.5px solid var(--border);border-radius:6px;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:13px;font-family:monospace;color:var(--text);background:var(--bg);outline:none;transition:border-color 0.15s}
+.setup-val input:focus{border-color:var(--teal)}
+
+/* ── NOTES AREA ── */
+.notes-area{width:100%;min-height:160px;border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;resize:vertical;transition:border-color 0.15s;line-height:1.7}
+.notes-area:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,180,166,0.10)}
+
+/* ── UPLOAD ZONE ── */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius-lg);padding:32px 24px;text-align:center;cursor:pointer;transition:all 0.15s;background:var(--pale-teal)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--teal);background:rgba(0,180,166,0.05)}
+.upload-zone svg{width:32px;height:32px;stroke:var(--teal);fill:none;stroke-width:1.5;stroke-linecap:round;margin-bottom:10px}
+.upload-zone h3{font-size:15px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.upload-zone p{font-size:13px;color:var(--muted)}
+.upload-zone input{display:none}
+.upload-success{background:#E8F5E9;border:1.5px solid #2CB67D;border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.upload-success svg{width:18px;height:18px;stroke:#2CB67D;fill:none;stroke-width:2.2;stroke-linecap:round;flex-shrink:0}
+.upload-success span{font-size:13.5px;font-weight:500;color:#1a6b46}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:var(--white);border-radius:10px;padding:12px 18px;font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(13,27,42,0.28);transform:translateY(80px);opacity:0;transition:all 0.3s;z-index:9999;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast svg{width:16px;height:16px;stroke:var(--teal);fill:none;stroke-width:2.2;stroke-linecap:round;flex-shrink:0}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,27,42,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--white);border-radius:var(--radius-lg);padding:28px;width:90%;max-width:480px;box-shadow:0 20px 60px rgba(13,27,42,0.2);transform:translateY(20px);transition:transform 0.2s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.btn-modal{padding:9px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.btn-cancel{background:none;border:1.5px solid var(--border);color:var(--muted)}
+.btn-cancel:hover{border-color:var(--navy);color:var(--navy)}
+.btn-confirm{background:var(--teal);border:1.5px solid var(--teal);color:var(--white)}
+.btn-confirm:hover{background:#009e92}
+.btn-danger{background:var(--error);border:1.5px solid var(--error);color:var(--white)}
+.btn-danger:hover{background:#c04040}
+
+/* ── GOOGLE SCRIPT SETUP ── */
+.script-box{background:#1e293b;border-radius:var(--radius);padding:16px 18px;font-family:monospace;font-size:12px;color:#a8dcda;line-height:1.8;white-space:pre-wrap;overflow-x:auto;margin:10px 0;position:relative}
+.copy-btn{position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:4px 10px;font-size:11px;color:rgba(255,255,255,0.7);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s}
+.copy-btn:hover{background:rgba(255,255,255,0.2)}
+.step-list{counter-reset:steps;list-style:none;margin:0;padding:0}
+.step-list li{counter-increment:steps;display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);font-size:13.5px;line-height:1.6}
+.step-list li:last-child{border-bottom:none}
+.step-list li::before{content:counter(steps);display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--teal);color:var(--white);font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-left">
+    <svg class="logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="3" width="194" height="194" rx="42" fill="#0F2940" stroke="#00B4A6" stroke-width="6"/>
+      <polygon points="92,146 30,146 55,76" fill="#F4A300"/>
+      <polygon points="108,146 168,146 142,96" fill="#F4A300"/>
+      <polygon points="100,50 124,106 124,160 76,160 76,106" fill="#00B4A6"/>
+      <rect x="28" y="141" width="144" height="22" rx="6" fill="#F4A300"/>
+      <circle cx="55" cy="76" r="9" fill="#FFFFFF"/>
+      <circle cx="100" cy="50" r="10" fill="#FFFFFF"/>
+      <circle cx="142" cy="96" r="8" fill="#FFFFFF"/>
+      <circle cx="100" cy="50" r="16" fill="none" stroke="#00B4A6" stroke-width="3" stroke-dasharray="4 3"/>
+    </svg>
+    <div class="logo-text">Own<span>It</span> Studio</div>
+  </div>
+  <div class="header-right">
+    <button class="btn-header" onclick="openSupabaseModal()">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      Supabase Config
+    </button>
+    <button class="btn-header" onclick="openGSheetModal()">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+      Google Sheet Setup
+    </button>
+    <button class="btn-header gold-btn" onclick="exportAllClients()">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export All
+    </button>
+  </div>
+</header>
+
+<!-- APP LAYOUT -->
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Client Profiles</div>
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="clientSearch" placeholder="Search clients…" oninput="filterClients()" />
+      </div>
+      <button class="btn-new-client" onclick="newClient()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Client
+      </button>
+    </div>
+    <div class="client-list" id="clientList"></div>
+    <div class="sidebar-footer">
+      <div class="sync-status">
+        <div class="sync-dot" id="syncDot"></div>
+        <span id="syncLabel">Not connected</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <main class="main-area" id="mainArea">
+    <div class="welcome-screen" id="welcomeScreen">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <h2>Select or create a client</h2>
+      <p>Choose a client from the sidebar or create a new profile to get started.</p>
+    </div>
+    <div class="workspace" id="workspace" style="display:none">
+      <!-- injected by JS -->
+    </div>
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toastMsg">Saved</span>
+</div>
+
+<!-- SUPABASE CONFIG MODAL -->
+<div class="modal-overlay" id="supabaseModal">
+  <div class="modal">
+    <div class="modal-title">Supabase Configuration</div>
+    <div class="modal-sub">Connect to your Supabase project to sync client profiles across devices.</div>
+    <div class="field">
+      <label>Supabase URL</label>
+      <input type="url" id="sb-url" placeholder="https://xxxx.supabase.co" />
+    </div>
+    <div class="field">
+      <label>Anon (Public) API Key</label>
+      <input type="text" id="sb-key" placeholder="eyJhbGciOiJI…" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal btn-cancel" onclick="closeModal('supabaseModal')">Cancel</button>
+      <button class="btn-modal btn-confirm" onclick="saveSupabaseConfig()">Save & Connect</button>
+    </div>
+  </div>
+</div>
+
+<!-- GOOGLE SHEET MODAL -->
+<div class="modal-overlay" id="gsheetModal">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-title">Google Sheet Intake Setup</div>
+    <div class="modal-sub">Replace Formspree with a free Google Apps Script endpoint — your form design stays exactly the same.</div>
+    <ol class="step-list">
+      <li>Create a new <strong>Google Sheet</strong>. Name it "OwnIt Intake Submissions".</li>
+      <li>Click <strong>Extensions → Apps Script</strong>. Delete any existing code and paste this:</li>
+    </ol>
+    <div class="script-box" id="appsScriptCode">function doPost(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const data  = JSON.parse(e.postData.contents);
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(Object.keys(data));
+  }
+  sheet.appendRow(Object.values(data));
+  return ContentService
+    .createTextOutput(JSON.stringify({status:'ok'}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+<button class="copy-btn" onclick="copyScript()">Copy</button></div>
+    <ol class="step-list" style="margin-top:10px">
+      <li>Click <strong>Deploy → New Deployment</strong>. Type: <em>Web app</em>. Execute as: <em>Me</em>. Access: <em>Anyone</em>. Click Deploy and copy the URL.</li>
+      <li>Paste that URL below and click Save — it will replace the Formspree endpoint in your intake form instructions.</li>
+      <li>In your intake form HTML, replace the Formspree action URL with this new URL. You can then cancel Formspree.</li>
+    </ol>
+    <div class="field" style="margin-top:14px">
+      <label>Your Apps Script Web App URL</label>
+      <input type="url" id="gs-url" placeholder="https://script.google.com/macros/s/…/exec" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal btn-cancel" onclick="closeModal('gsheetModal')">Close</button>
+      <button class="btn-modal btn-confirm" onclick="saveGSheetUrl()">Save URL</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CLIENT MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div class="modal-title">Delete Client Profile?</div>
+    <div class="modal-sub" id="deleteModalSub">This will permanently remove this client and all their data from Supabase. This cannot be undone.</div>
+    <div class="modal-actions">
+      <button class="btn-modal btn-cancel" onclick="closeModal('deleteModal')">Cancel</button>
+      <button class="btn-modal btn-danger" onclick="confirmDelete()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══ STATE ═══
+let clients = [];
+let activeClientId = null;
+let deleteTargetId = null;
+let sbConfig = { url:'', key:'' };
+let gsheetUrl = '';
+
+const FEATURE_DEFS = [
+  { group:'Core App', auto:true,  id:'dual_nav',      label:'Dual Navigation',         desc:'Top nav + bottom tab bar for mobile-friendly access'},
+  { group:'Core App', auto:true,  id:'income_tracking',label:'Income Tracking',         desc:'Log income by business with date, amount, category'},
+  { group:'Core App', auto:true,  id:'expense_tracking',label:'Expense Tracking',       desc:'Add/edit/delete/duplicate expenses with SC_MAP'},
+  { group:'Core App', auto:true,  id:'dashboard',     label:'Dashboard / YTD Summary',  desc:'Live totals, net income, profit margin'},
+  { group:'Core App', auto:true,  id:'filters',       label:'Dynamic Period Filters',   desc:'Filter by month, quarter, year, custom range'},
+  { group:'Core App', auto:true,  id:'sync_status',   label:'Supabase Sync Status Dot', desc:'Live indicator showing save/sync state'},
+  { group:'Expenses', auto:true,  id:'repeat_expenses',label:'Repeat / Scheduled Expenses', desc:'Set expenses to recur monthly with auto-log'},
+  { group:'Expenses', auto:true,  id:'receipt_upload', label:'Receipt Upload & Preview', desc:'Attach photo/file receipts to any expense'},
+  { group:'Expenses', auto:false, id:'flag_banners',  label:'Unassigned Expense Flags', desc:'Banner warnings for expenses without a category'},
+  { group:'Tax',      auto:true,  id:'schedule_c',    label:'Schedule C Mapping',       desc:'Map expense categories to IRS Schedule C lines'},
+  { group:'Tax',      auto:true,  id:'schedule_c_preview',label:'Schedule C Export Preview', desc:'Live preview of Schedule C before PDF export'},
+  { group:'Tax',      auto:false, id:'form_1099',     label:'1099 Upload & Year Tagging',desc:'Upload 1099-NEC / 1099-K with tax year tags'},
+  { group:'Tax',      auto:false, id:'schedule_e',    label:'Schedule E (Rental Income)',desc:'For clients with rental property income'},
+  { group:'Tax',      auto:false, id:'schedule_f',    label:'Schedule F (Farm Income)',  desc:'For agricultural / farming businesses'},
+  { group:'Tax',      auto:false, id:'w2_tracking',   label:'W-2 / 1040 Tracking',      desc:'Track W-2 income alongside self-employment'},
+  { group:'Export',   auto:false, id:'google_sheets', label:'Google Sheets Export',      desc:'One-click export to accountant-ready Google Sheet'},
+  { group:'Export',   auto:false, id:'quickbooks',    label:'QuickBooks CSV Export',     desc:'Formatted CSV import for QuickBooks'},
+  { group:'Branding', auto:true,  id:'custom_branding',label:'Custom Branding',         desc:'Client colors, fonts, logo / app icon'},
+  { group:'Branding', auto:false, id:'pwa',           label:'PWA / Home Screen Install', desc:'Add to Home Screen as a native-like app'},
+];
+
+const CHECKLIST_DEFS = [
+  { group:'Functionality', items:[
+    'All income entries: add, edit, delete confirmed working',
+    'All expense entries: add, edit, delete, duplicate confirmed working',
+    'Repeat/scheduled expenses auto-log correctly',
+    'Filters (month, quarter, year) return correct data',
+    'Dashboard totals match manual calculation',
+    'Receipt upload and preview working',
+    'Supabase sync confirmed — data persists on reload',
+  ]},
+  { group:'Tax & Export', items:[
+    'Schedule C mapping correct for this client\'s business type',
+    'Schedule C export preview renders correctly',
+    '1099 upload working (if enabled for this client)',
+    'Additional tax forms verified (Schedule E/F/W-2 if applicable)',
+    'Google Sheets / QuickBooks export working (if enabled)',
+  ]},
+  { group:'Branding & Design', items:[
+    'Client brand colors applied correctly throughout',
+    'Correct fonts loaded and rendering',
+    'Logo / app icon rendering correctly',
+    'PWA manifest correct (if enabled)',
+    'App name displays correctly (Safari font-size:0 trick applied if needed)',
+  ]},
+  { group:'Technical', items:[
+    'node --check passed on all JS files before final push',
+    'No console errors on load',
+    'Mobile responsiveness confirmed on iPhone and Android',
+    'Safari-specific checks: favicon, text rendering, touch targets',
+    'Correct Supabase project URL and anon key configured',
+    'RLS policies set correctly — client data isolated',
+    'All hidden/test data removed, only real structure',
+    'Correct GitHub repo name and final live URL confirmed',
+  ]},
+  { group:'Delivery', items:[
+    'Final URL resolves correctly in browser',
+    'Hosting option confirmed with client (own domain / your domain / own GitHub)',
+    'Client has login or access instructions',
+    'Demo walkthrough completed with client',
+  ]},
+];
+
+const DISCOVERY_QUESTIONS = [
+  { num:'01', q:'Tell me about your business(es). What do you do and how do you make money?', why:'Opens the conversation naturally; confirms intake data is accurate' },
+  { num:'02', q:'How are you currently tracking your income and expenses — spreadsheet, pen and paper, not at all?', why:'Establishes baseline and urgency for the app' },
+  { num:'03', q:'What\'s your biggest pain point around money tracking right now?', why:'Surfaces the emotional need behind the feature request' },
+  { num:'04', q:'How many income streams do you have? Do they all need to be tracked separately?', why:'Determines number of business tabs / Supabase tables needed' },
+  { num:'05', q:'Do you have any recurring expenses — monthly subscriptions, rent, supplies?', why:'Determines if repeat/scheduled expenses feature is needed' },
+  { num:'06', q:'Do you attach receipts or photos to your expenses, or would you like to?', why:'Confirms receipt upload feature scope' },
+  { num:'07', q:'At tax time, who does your taxes — you, an accountant, or a tax service?', why:'Determines export format needs (Google Sheets, QuickBooks, PDF)' },
+  { num:'08', q:'Do you file a Schedule C? Are you a sole proprietor or single-member LLC?', why:'Confirms Schedule C mapping is needed vs other tax form' },
+  { num:'09', q:'Do you receive any 1099-NEC or 1099-K forms from platforms like PayPal, Venmo, or clients?', why:'Determines if 1099 upload feature is needed' },
+  { num:'10', q:'Do you have any rental income, farm income, or other income streams that don\'t fall under Schedule C?', why:'Flags need for Schedule E, F, or other additional tax forms' },
+  { num:'11', q:'Do you also have a W-2 job? Do you want to track that income alongside your business?', why:'Determines W-2 / 1040 tracking scope' },
+  { num:'12', q:'How many devices do you plan to use the app on — just your phone, or also a laptop or tablet?', why:'Determines Supabase sync requirement (+$50 pricing flag)' },
+  { num:'13', q:'For hosting your app, I offer three options — which feels right for you?\n  A) You buy your own domain and host it there (you own the URL)\n  B) I host it on my domain at ownitapp.com/yourname (easiest for you)\n  C) You create a free GitHub account and I set it up there (your URL, I manage it)', why:'Sets hosting expectations and pricing/setup implications' },
+  { num:'14', q:'Do you have brand colors and a logo you want used, or should I create something for you?', why:'Scopes branding work and asset delivery timeline' },
+  { num:'15', q:'What do you want your app to be called? This will show on your Home Screen.', why:'Confirms app name — watch for Safari rendering issues with spaces' },
+  { num:'16', q:'What\'s your ideal timeline? And is there a specific event — tax season, workshop, launch — you\'re building toward?', why:'Sets delivery expectations and prioritizes scope' },
+  { num:'17', q:'Is there anything you\'d love to have in the app that we haven\'t talked about?', why:'Surfaces dream features and future scope opportunities' },
+];
+
+// ═══ INIT ═══
+window.addEventListener('DOMContentLoaded', () => {
+  loadConfig();
+  loadClientsFromStorage();
+  renderClientList();
+});
+
+// ═══ CONFIG ═══
+function loadConfig() {
+  try {
+    const cfg = JSON.parse(localStorage.getItem('ownitStudio_config') || '{}');
+    sbConfig = cfg.supabase || { url:'', key:'' };
+    gsheetUrl = cfg.gsheetUrl || '';
+    if (document.getElementById('sb-url')) document.getElementById('sb-url').value = sbConfig.url;
+    if (document.getElementById('sb-key')) document.getElementById('sb-key').value = sbConfig.key;
+    if (document.getElementById('gs-url')) document.getElementById('gs-url').value = gsheetUrl;
+    updateSyncStatus(sbConfig.url ? 'synced' : 'off');
+  } catch(e) {}
+}
+
+function saveConfig() {
+  localStorage.setItem('ownitStudio_config', JSON.stringify({ supabase: sbConfig, gsheetUrl }));
+}
+
+function saveSupabaseConfig() {
+  sbConfig.url = document.getElementById('sb-url').value.trim();
+  sbConfig.key = document.getElementById('sb-key').value.trim();
+  saveConfig();
+  closeModal('supabaseModal');
+  updateSyncStatus(sbConfig.url ? 'synced' : 'off');
+  showToast('Supabase config saved');
+  syncToSupabase();
+}
+
+function saveGSheetUrl() {
+  gsheetUrl = document.getElementById('gs-url').value.trim();
+  saveConfig();
+  closeModal('gsheetModal');
+  showToast('Google Sheet URL saved');
+}
+
+function updateSyncStatus(state) {
+  const dot = document.getElementById('syncDot');
+  const label = document.getElementById('syncLabel');
+  dot.className = 'sync-dot';
+  if (state === 'synced') { dot.classList.add('synced'); label.textContent = 'Supabase connected'; }
+  else if (state === 'syncing') { dot.classList.add('syncing'); label.textContent = 'Syncing…'; }
+  else if (state === 'error') { dot.classList.add('error'); label.textContent = 'Sync error'; }
+  else { label.textContent = 'Not connected'; }
+}
+
+// ═══ CLIENT CRUD ═══
+function newClientObj() {
+  return {
+    id: 'client_' + Date.now(),
+    status: 'active',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    // Profile
+    firstName:'', lastName:'', email:'', phone:'',
+    businesses:[],
+    paymentMethods:[],
+    expenseCategories:'',
+    recurringExp:'', receipts:'',
+    scheduleC:'', form1099:'', googleSheets:'', quickbooks:'', w2job:'',
+    deviceCount:'', platform:'',
+    appName:'', hasBrand:'', brandColors:'', hasLogo:'', visualNotes:'',
+    hearAbout:'', dreamFeatures:'', timeline:'',
+    // Internal
+    hostingOption:'',
+    supabaseUrl:'', supabaseKey:'', supabaseProjectNote:'',
+    tableNames:'', storageBucket:'', rlsNotes:'',
+    repoName:'', liveUrl:'', deploymentNotes:'',
+    features: Object.fromEntries(FEATURE_DEFS.map(f => [f.id, f.auto])),
+    checklist: Object.fromEntries(CHECKLIST_DEFS.flatMap(g => g.items.map(item => [slugify(item), false]))),
+    discoveryNotes: Object.fromEntries(DISCOVERY_QUESTIONS.map(q => [q.num, ''])),
+    notes:'',
+  };
+}
+
+function slugify(str) {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, '_').slice(0,60);
+}
+
+function newClient() {
+  const c = newClientObj();
+  clients.push(c);
+  saveClientsLocal();
+  selectClient(c.id);
+  renderClientList();
+}
+
+function selectClient(id) {
+  activeClientId = id;
+  renderClientList();
+  renderWorkspace();
+}
+
+function getActive() {
+  return clients.find(c => c.id === activeClientId);
+}
+
+function saveActive() {
+  const c = getActive();
+  if (!c) return;
+  c.updatedAt = new Date().toISOString();
+  saveClientsLocal();
+  updateClientListItem(c);
+  syncToSupabase();
+}
+
+function saveClientsLocal() {
+  try { localStorage.setItem('ownitStudio_clients', JSON.stringify(clients)); } catch(e) {}
+}
+
+function loadClientsFromStorage() {
+  try {
+    const raw = localStorage.getItem('ownitStudio_clients');
+    if (raw) clients = JSON.parse(raw);
+  } catch(e) { clients = []; }
+}
+
+// ═══ SUPABASE SYNC (placeholder — real integration after user sets up table) ═══
+async function syncToSupabase() {
+  if (!sbConfig.url || !sbConfig.key) return;
+  updateSyncStatus('syncing');
+  try {
+    const res = await fetch(`${sbConfig.url}/rest/v1/ownitStudio_clients`, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey': sbConfig.key,
+        'Authorization': `Bearer ${sbConfig.key}`,
+        'Prefer': 'resolution=merge-duplicates',
+      },
+      body: JSON.stringify(clients),
+    });
+    if (res.ok) updateSyncStatus('synced');
+    else throw new Error();
+  } catch(e) {
+    updateSyncStatus('error');
+  }
+}
+
+async function loadFromSupabase() {
+  if (!sbConfig.url || !sbConfig.key) return;
+  try {
+    const res = await fetch(`${sbConfig.url}/rest/v1/ownitStudio_clients?select=*`, {
+      headers:{ 'apikey': sbConfig.key, 'Authorization': `Bearer ${sbConfig.key}` }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.length) { clients = data; saveClientsLocal(); renderClientList(); }
+    }
+  } catch(e) {}
+}
+
+// ═══ AUTO-POPULATE FROM INTAKE JSON ═══
+function populateFromIntake(data) {
+  const c = getActive();
+  if (!c) return;
+  const map = (key) => data[key] || '';
+  c.firstName = map('firstName'); c.lastName = map('lastName');
+  c.email = map('email'); c.phone = map('phone');
+  c.paymentMethods = Array.isArray(data.paymentMethods) ? data.paymentMethods : (data.paymentMethods||'').split(',').map(s=>s.trim()).filter(Boolean);
+  c.expenseCategories = map('expenseCategories');
+  c.recurringExp = map('recurringExp'); c.receipts = map('receipts');
+  c.scheduleC = map('scheduleC'); c.form1099 = map('form1099');
+  c.googleSheets = map('googleSheets'); c.quickbooks = map('quickbooks');
+  c.w2job = map('w2job'); c.deviceCount = map('deviceCount'); c.platform = map('platform');
+  c.appName = map('appName'); c.hasBrand = map('hasBrand'); c.brandColors = map('brandColors');
+  c.hasLogo = map('hasLogo'); c.visualNotes = map('visualNotes');
+  c.hearAbout = map('hearAbout'); c.dreamFeatures = map('dreamFeatures'); c.timeline = map('timeline');
+  // Parse businesses
+  try {
+    if (typeof data.businesses === 'string') c.businesses = JSON.parse(data.businesses);
+    else if (Array.isArray(data.businesses)) c.businesses = data.businesses;
+  } catch(e) {}
+  // Auto-suggest features based on answers
+  if (c.form1099 === 'Yes') c.features.form_1099 = true;
+  if (c.googleSheets === 'Yes please') c.features.google_sheets = true;
+  if (c.quickbooks === 'Yes') c.features.quickbooks = true;
+  if (c.deviceCount === '2 or more devices') {}  // Supabase already required
+  saveActive();
+  renderWorkspace();
+  showToast('Profile auto-populated from intake form ✓');
+}
+
+// ═══ DELETE ═══
+function openDeleteModal(id) {
+  deleteTargetId = id;
+  const c = clients.find(x => x.id === id);
+  document.getElementById('deleteModalSub').textContent =
+    `This will permanently remove ${c ? (c.firstName||'this client') : 'this client'}'s profile. Cannot be undone.`;
+  openModal('deleteModal');
+}
+
+function confirmDelete() {
+  clients = clients.filter(c => c.id !== deleteTargetId);
+  if (activeClientId === deleteTargetId) {
+    activeClientId = null;
+    document.getElementById('workspace').style.display = 'none';
+    document.getElementById('welcomeScreen').style.display = 'flex';
+  }
+  saveClientsLocal();
+  renderClientList();
+  closeModal('deleteModal');
+  showToast('Client deleted');
+}
+
+// ═══ EXPORT ═══
+function exportAllClients() {
+  const blob = new Blob([JSON.stringify(clients, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `ownitStudio_clients_${new Date().toISOString().slice(0,10)}.json`;
+  a.click(); showToast('Exported all clients');
+}
+
+function exportClient(id) {
+  const c = clients.find(x => x.id === id);
+  if (!c) return;
+  const blob = new Blob([JSON.stringify(c, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `ownitStudio_${(c.firstName||'client').toLowerCase()}_${new Date().toISOString().slice(0,10)}.json`;
+  a.click(); showToast('Client profile exported');
+}
+
+function importClients() {
+  const input = document.createElement('input'); input.type='file'; input.accept='.json';
+  input.onchange = e => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        const arr = Array.isArray(data) ? data : [data];
+        arr.forEach(newC => {
+          const existing = clients.findIndex(c => c.id === newC.id);
+          if (existing >= 0) clients[existing] = newC;
+          else clients.push(newC);
+        });
+        saveClientsLocal(); renderClientList();
+        showToast(`Imported ${arr.length} client(s)`);
+      } catch(e) { showToast('Import failed — invalid file'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// ═══ RENDER CLIENT LIST ═══
+function renderClientList() {
+  const list = document.getElementById('clientList');
+  const search = (document.getElementById('clientSearch').value || '').toLowerCase();
+  const filtered = clients.filter(c => {
+    const name = `${c.firstName} ${c.lastName} ${c.appName} ${c.email}`.toLowerCase();
+    return name.includes(search);
+  });
+  if (!filtered.length) {
+    list.innerHTML = `<div class="no-clients"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><div>${clients.length ? 'No results' : 'No clients yet'}</div></div>`;
+    return;
+  }
+  list.innerHTML = filtered.map(c => {
+    const name = (c.firstName && c.lastName) ? `${c.firstName} ${c.lastName}` : (c.firstName || c.appName || 'Unnamed Client');
+    const sub = c.appName || c.email || '—';
+    const badgeClass = c.status === 'delivered' ? 'badge-delivered' : c.status === 'paused' ? 'badge-paused' : 'badge-active';
+    const badgeLabel = c.status || 'active';
+    return `<div class="client-item ${c.id === activeClientId ? 'active':''}" onclick="selectClient('${c.id}')">
+      <div class="client-item-name">${name}</div>
+      <div class="client-item-sub">${sub}</div>
+      <span class="client-item-badge ${badgeClass}">${badgeLabel}</span>
+    </div>`;
+  }).join('');
+}
+
+function updateClientListItem(c) { renderClientList(); }
+function filterClients() { renderClientList(); }
+
+// ═══ RENDER WORKSPACE ═══
+function renderWorkspace() {
+  const c = getActive();
+  document.getElementById('welcomeScreen').style.display = c ? 'none' : 'flex';
+  document.getElementById('workspace').style.display = c ? 'block' : 'none';
+  if (!c) return;
+  const name = (c.firstName && c.lastName) ? `${c.firstName} ${c.lastName}` : (c.firstName || 'New Client');
+  document.getElementById('workspace').innerHTML = `
+    <div class="workspace-header">
+      <div>
+        <div class="workspace-title">${name}</div>
+        <div class="workspace-sub">${c.appName ? '📱 ' + c.appName : 'App name not set'} &nbsp;·&nbsp; ${c.email || 'No email'}</div>
+      </div>
+      <div class="workspace-actions">
+        <select style="border:1.5px solid var(--border);border-radius:8px;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--muted);background:var(--bg);outline:none;cursor:pointer" onchange="changeStatus(this.value)">
+          <option value="active" ${c.status==='active'?'selected':''}>Active</option>
+          <option value="delivered" ${c.status==='delivered'?'selected':''}>Delivered</option>
+          <option value="paused" ${c.status==='paused'?'selected':''}>Paused</option>
+        </select>
+        <button class="btn-action teal" onclick="openUploadModal()">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Import Intake
+        </button>
+        <button class="btn-action" onclick="exportClient('${c.id}')">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+        <button class="btn-action" onclick="openDeleteModal('${c.id}')" style="color:var(--error);border-color:var(--error)">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          Delete
+        </button>
+      </div>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab active" onclick="switchTab('profile',this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Client Profile
+      </button>
+      <button class="tab" onclick="switchTab('discovery',this)">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Discovery Call
+      </button>
+      <button class="tab" onclick="switchTab('features',this)">
+        <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Features
+      </button>
+      <button class="tab" onclick="switchTab('branding',this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>Branding
+      </button>
+      <button class="tab" onclick="switchTab('supabase',this)">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Supabase
+      </button>
+      <button class="tab" onclick="switchTab('deploy',this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Deployment
+      </button>
+      <button class="tab" onclick="switchTab('checklist',this)">
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Dev Checklist
+      </button>
+      <button class="tab" onclick="switchTab('notes',this)">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Notes
+      </button>
+    </div>
+
+    ${renderProfileTab(c)}
+    ${renderDiscoveryTab(c)}
+    ${renderFeaturesTab(c)}
+    ${renderBrandingTab(c)}
+    ${renderSupabaseTab(c)}
+    ${renderDeployTab(c)}
+    ${renderChecklistTab(c)}
+    ${renderNotesTab(c)}
+
+    <!-- Upload Modal (inline) -->
+    <div class="modal-overlay" id="uploadModal">
+      <div class="modal">
+        <div class="modal-title">Import Intake Submission</div>
+        <div class="modal-sub">Upload the JSON exported from your Google Sheet row, or paste the submission data below.</div>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <h3>Drop JSON file here</h3>
+          <p>or click to browse</p>
+          <input type="file" id="fileInput" accept=".json,.csv" onchange="handleFileUpload(event)" />
+        </div>
+        <div style="margin:12px 0;text-align:center;font-size:12px;color:var(--muted)">— or paste JSON directly —</div>
+        <textarea id="jsonPaste" style="width:100%;min-height:90px;border:1.5px solid var(--border);border-radius:8px;padding:10px;font-family:monospace;font-size:12px;outline:none;resize:vertical" placeholder='{"firstName":"Jane","lastName":"Smith",...}'></textarea>
+        <div class="modal-actions">
+          <button class="btn-modal btn-cancel" onclick="closeModal('uploadModal')">Cancel</button>
+          <button class="btn-modal btn-confirm" onclick="parseAndPopulate()">Populate Profile</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ═══ TAB RENDERS ═══
+function renderProfileTab(c) {
+  const bizList = (c.businesses||[]).map((b,i) => `
+    <div style="background:var(--pale-teal);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px">Business ${i+1}</div>
+      <div class="info-grid">
+        <div class="info-item"><label>Name</label><div class="val ${!b.name?'empty':''}">${b.name||'—'}</div></div>
+        <div class="info-item"><label>Type</label><div class="val ${!b.type?'empty':''}">${b.type||'—'}</div></div>
+        <div class="info-item"><label>Revenue</label><div class="val ${!b.revenue?'empty':''}">${b.revenue||'—'}</div></div>
+        <div class="info-item"><label>Payment Methods</label><div class="val">${(b.pays||[]).join(', ')||'—'}</div></div>
+      </div>
+    </div>`).join('') || '<div style="color:var(--muted);font-size:13px;font-style:italic">No businesses added yet</div>';
+
+  return `<div class="tab-panel active" id="tab-profile">
+    <div class="section-card">
+      <div class="section-card-title">Contact Information</div>
+      <div class="section-card-sub">Auto-populated from intake form submission</div>
+      <div class="info-grid">
+        <div class="info-item"><label>First Name</label><div class="val ${!c.firstName?'empty':''}">${c.firstName||'Not set'}</div></div>
+        <div class="info-item"><label>Last Name</label><div class="val ${!c.lastName?'empty':''}">${c.lastName||'Not set'}</div></div>
+        <div class="info-item"><label>Email</label><div class="val ${!c.email?'empty':''}">${c.email||'Not set'}</div></div>
+        <div class="info-item"><label>Phone</label><div class="val ${!c.phone?'empty':''}">${c.phone||'Not set'}</div></div>
+        <div class="info-item"><label>Timeline</label><div class="val ${!c.timeline?'empty':''}">${c.timeline||'Not set'}</div></div>
+        <div class="info-item"><label>How They Found OwnIt</label><div class="val ${!c.hearAbout?'empty':''}">${c.hearAbout||'Not set'}</div></div>
+        <div class="info-item full"><label>Dream Features</label><div class="val ${!c.dreamFeatures?'empty':''}">${c.dreamFeatures||'None listed'}</div></div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-card-title">Businesses & Income Streams</div>
+      <div class="section-card-sub">From intake form — Business section</div>
+      ${bizList}
+    </div>
+    <div class="section-card">
+      <div class="section-card-title">Expenses & Tax</div>
+      <div class="section-card-sub">From intake form — Expenses & Income sections</div>
+      <div class="info-grid">
+        <div class="info-item"><label>Recurring Expenses</label><div class="val ${!c.recurringExp?'empty':''}">${c.recurringExp||'—'}</div></div>
+        <div class="info-item"><label>Attaches Receipts</label><div class="val ${!c.receipts?'empty':''}">${c.receipts||'—'}</div></div>
+        <div class="info-item"><label>Files Schedule C</label><div class="val ${!c.scheduleC?'empty':''}">${c.scheduleC||'—'}</div></div>
+        <div class="info-item"><label>Receives 1099s</label><div class="val ${!c.form1099?'empty':''}">${c.form1099||'—'}</div></div>
+        <div class="info-item"><label>Google Sheets Export</label><div class="val ${!c.googleSheets?'empty':''}">${c.googleSheets||'—'}</div></div>
+        <div class="info-item"><label>QuickBooks Export</label><div class="val ${!c.quickbooks?'empty':''}">${c.quickbooks||'—'}</div></div>
+        <div class="info-item"><label>Has W-2 Job</label><div class="val ${!c.w2job?'empty':''}">${c.w2job||'—'}</div></div>
+        <div class="info-item full"><label>Expense Categories</label><div class="val ${!c.expenseCategories?'empty':''}">${c.expenseCategories||'Not listed'}</div></div>
+        <div class="info-item full"><label>Payment Methods (Expenses)</label>
+          <div class="tag-list">${(c.paymentMethods||[]).map(p=>`<span class="tag">${p}</span>`).join('')||'<span style="color:var(--muted);font-size:13px">None selected</span>'}</div>
+        </div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-card-title">Setup & Devices</div>
+      <div class="info-grid">
+        <div class="info-item"><label>Device Count</label><div class="val ${!c.deviceCount?'empty':''}">${c.deviceCount||'—'}</div></div>
+        <div class="info-item"><label>Platform</label><div class="val ${!c.platform?'empty':''}">${c.platform||'—'}</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderDiscoveryTab(c) {
+  const qs = DISCOVERY_QUESTIONS.map(q => `
+    <div class="call-question">
+      <div class="call-q-num">Question ${q.num}</div>
+      <div class="call-q-text">${q.q.replace(/\n/g,'<br/>')}</div>
+      <div class="call-q-why">Why ask: ${q.why}</div>
+      <textarea class="call-notes-input" placeholder="Notes from call…" oninput="updateDiscoveryNote('${q.num}',this.value)">${c.discoveryNotes?.[q.num]||''}</textarea>
+    </div>`).join('');
+  return `<div class="tab-panel" id="tab-discovery">
+    <div class="section-card">
+      <div class="section-card-title">Discovery Call Guide</div>
+      <div class="section-card-sub">Run through these questions on the call. Notes save automatically.</div>
+      ${qs}
+    </div>
+  </div>`;
+}
+
+function renderFeaturesTab(c) {
+  const groups = [...new Set(FEATURE_DEFS.map(f => f.group))];
+  const html = groups.map(g => `
+    <div class="feature-group">
+      <div class="feature-group-title">${g}</div>
+      ${FEATURE_DEFS.filter(f => f.group===g).map(f => `
+        <div class="feature-item">
+          <input type="checkbox" id="feat-${f.id}" ${c.features?.[f.id]?'checked':''} onchange="toggleFeature('${f.id}',this.checked)" ${f.auto?'':''}/>
+          <div class="feature-item-info">
+            <div class="feature-item-label">${f.label}
+              <span class="feature-badge ${f.auto?'badge-auto':'badge-optional'}">${f.auto?'Auto':'Optional'}</span>
+            </div>
+            <div class="feature-item-desc">${f.desc}</div>
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+  return `<div class="tab-panel" id="tab-features">
+    <div class="section-card">
+      <div class="section-card-title">Feature Selection</div>
+      <div class="section-card-sub"><span style="color:var(--teal);font-weight:600">Auto</span> features are included in every build. <span style="color:#7A5C00;font-weight:600">Optional</span> features are toggled per client.</div>
+      ${html}
+    </div>
+  </div>`;
+}
+
+function renderBrandingTab(c) {
+  return `<div class="tab-panel" id="tab-branding">
+    <div class="section-card">
+      <div class="section-card-title">Branding Inputs</div>
+      <div class="section-card-sub">From intake form + discovery call. Edit freely.</div>
+      <div class="info-grid" style="margin-bottom:18px">
+        <div class="info-item"><label>App Name</label><div class="val ${!c.appName?'empty':''}">${c.appName||'Not set'}</div></div>
+        <div class="info-item"><label>Has Brand Colors/Logo</label><div class="val ${!c.hasBrand?'empty':''}">${c.hasBrand||'—'}</div></div>
+        <div class="info-item"><label>Has Logo for App Icon</label><div class="val ${!c.hasLogo?'empty':''}">${c.hasLogo||'—'}</div></div>
+        <div class="info-item full"><label>Brand Colors (from intake)</label><div class="val ${!c.brandColors?'empty':''}">${c.brandColors||'Not provided'}</div></div>
+        <div class="info-item full"><label>Visual Notes (from intake)</label><div class="val ${!c.visualNotes?'empty':''}">${c.visualNotes||'Not provided'}</div></div>
+      </div>
+      <div class="field"><label>Confirmed Hex Colors<span class="hint">Fill in after discovery call</span></label>
+        <input type="text" value="${c.brandColorsConfirmed||''}" oninput="updateField('brandColorsConfirmed',this.value)" placeholder="#FF5733, #1A1A2E…"/></div>
+      <div class="field"><label>Logo File Name / Path</label>
+        <input type="text" value="${c.logoFile||''}" oninput="updateField('logoFile',this.value)" placeholder="client_logo.svg"/></div>
+      <div class="field"><label>Font Choices</label>
+        <input type="text" value="${c.fonts||''}" oninput="updateField('fonts',this.value)" placeholder="Playfair Display + DM Sans…"/></div>
+      <div class="field"><label>Additional Branding Notes</label>
+        <textarea oninput="updateField('brandingNotes',this.value)" placeholder="Mood board links, style references…">${c.brandingNotes||''}</textarea></div>
+    </div>
+  </div>`;
+}
+
+function renderSupabaseTab(c) {
+  return `<div class="tab-panel" id="tab-supabase">
+    <div class="section-card">
+      <div class="section-card-title">Supabase Setup (Internal Reference)</div>
+      <div class="section-card-sub">This section is for you only — clients never see this. Document everything here so you can quickly pick up any revision.</div>
+      <div class="field"><label>Supabase Project URL</label>
+        <input type="url" value="${c.supabaseUrl||''}" oninput="updateField('supabaseUrl',this.value)" placeholder="https://xxxx.supabase.co"/></div>
+      <div class="field"><label>Anon API Key</label>
+        <input type="text" value="${c.supabaseKey||''}" oninput="updateField('supabaseKey',this.value)" placeholder="eyJhbGciOiJI…"/></div>
+      <div class="field"><label>Table Names</label>
+        <input type="text" value="${c.tableNames||''}" oninput="updateField('tableNames',this.value)" placeholder="income, expenses, repeat_expenses, docs…"/></div>
+      <div class="field"><label>Storage Bucket</label>
+        <input type="text" value="${c.storageBucket||''}" oninput="updateField('storageBucket',this.value)" placeholder="receipts"/></div>
+      <div class="field"><label>RLS Policy Notes</label>
+        <textarea oninput="updateField('rlsNotes',this.value)" placeholder="e.g. Row-level security enabled, user_id column used…">${c.rlsNotes||''}</textarea></div>
+      <div class="field"><label>Other Notes</label>
+        <textarea oninput="updateField('supabaseProjectNote',this.value)" placeholder="Edge functions, triggers, any gotchas…">${c.supabaseProjectNote||''}</textarea></div>
+    </div>
+  </div>`;
+}
+
+function renderDeployTab(c) {
+  return `<div class="tab-panel" id="tab-deploy">
+    <div class="section-card">
+      <div class="section-card-title">GitHub & Deployment</div>
+      <div class="section-card-sub">Track where the app lives and how to access it for revisions.</div>
+      <div class="field">
+        <label>Hosting Option Chosen</label>
+        <select onchange="updateField('hostingOption',this.value)">
+          <option value="" ${!c.hostingOption?'selected':''}>— Select —</option>
+          <option value="client_domain" ${c.hostingOption==='client_domain'?'selected':''}>A) Client's own domain</option>
+          <option value="your_domain" ${c.hostingOption==='your_domain'?'selected':''}>B) Your domain (ownitapp.com/clientname)</option>
+          <option value="client_github" ${c.hostingOption==='client_github'?'selected':''}>C) Client's own GitHub account</option>
+        </select>
+      </div>
+      <div class="field"><label>GitHub Repo Name</label>
+        <input type="text" value="${c.repoName||''}" oninput="updateField('repoName',this.value)" placeholder="client-app-name"/></div>
+      <div class="field"><label>Live URL</label>
+        <input type="url" value="${c.liveUrl||''}" oninput="updateField('liveUrl',this.value)" placeholder="https://…"/></div>
+      <div class="field"><label>Deployment Notes</label>
+        <textarea oninput="updateField('deploymentNotes',this.value)" placeholder="Domain registrar, DNS settings, deploy process…">${c.deploymentNotes||''}</textarea></div>
+    </div>
+  </div>`;
+}
+
+function renderChecklistTab(c) {
+  let total = 0, done = 0;
+  const groups = CHECKLIST_DEFS.map(g => {
+    const items = g.items.map(item => {
+      const key = slugify(item);
+      const checked = c.checklist?.[key] || false;
+      total++; if (checked) done++;
+      return `<div class="checklist-item ${checked?'checked':''}">
+        <input type="checkbox" id="chk-${key}" ${checked?'checked':''} onchange="toggleChecklist('${key}',this.checked)"/>
+        <label class="check-label" for="chk-${key}">${item}</label>
+      </div>`;
+    }).join('');
+    return `<div class="checklist-group"><div class="checklist-group-title">${g.group}</div>${items}</div>`;
+  }).join('');
+  const pct = total ? Math.round((done/total)*100) : 0;
+  return `<div class="tab-panel" id="tab-checklist">
+    <div class="section-card">
+      <div class="section-card-title">Pre-Delivery Dev Checklist</div>
+      <div class="section-card-sub">Complete every item before handing off to the client.</div>
+      <div class="checklist-progress">
+        <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:${pct}%"></div></div>
+        <div class="progress-label" id="progressLabel">${done}/${total} complete</div>
+      </div>
+      ${groups}
+    </div>
+  </div>`;
+}
+
+function renderNotesTab(c) {
+  return `<div class="tab-panel" id="tab-notes">
+    <div class="section-card">
+      <div class="section-card-title">Client Notes</div>
+      <div class="section-card-sub">Freeform notes — revision history, call summaries, anything goes.</div>
+      <textarea class="notes-area" oninput="updateField('notes',this.value)" placeholder="Add notes here…">${c.notes||''}</textarea>
+    </div>
+  </div>`;
+}
+
+// ═══ TAB SWITCHING ═══
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const panel = document.getElementById('tab-'+name);
+  if (panel) panel.classList.add('active');
+}
+
+// ═══ FIELD UPDATES ═══
+function updateField(key, val) {
+  const c = getActive(); if (!c) return;
+  c[key] = val; saveActive();
+}
+
+function toggleFeature(id, checked) {
+  const c = getActive(); if (!c) return;
+  if (!c.features) c.features = {};
+  c.features[id] = checked; saveActive();
+}
+
+function toggleChecklist(key, checked) {
+  const c = getActive(); if (!c) return;
+  if (!c.checklist) c.checklist = {};
+  c.checklist[key] = checked; saveActive();
+  // Update progress bar
+  const total = CHECKLIST_DEFS.reduce((a,g) => a+g.items.length, 0);
+  const done = Object.values(c.checklist).filter(Boolean).length;
+  const pct = total ? Math.round((done/total)*100) : 0;
+  const bar = document.getElementById('progressBar');
+  const lbl = document.getElementById('progressLabel');
+  if (bar) bar.style.width = pct+'%';
+  if (lbl) lbl.textContent = `${done}/${total} complete`;
+  const item = document.querySelector(`#chk-${key}`)?.closest('.checklist-item');
+  if (item) item.classList.toggle('checked', checked);
+}
+
+function updateDiscoveryNote(num, val) {
+  const c = getActive(); if (!c) return;
+  if (!c.discoveryNotes) c.discoveryNotes = {};
+  c.discoveryNotes[num] = val; saveActive();
+}
+
+function changeStatus(val) {
+  const c = getActive(); if (!c) return;
+  c.status = val; saveActive(); renderClientList();
+}
+
+// ═══ INTAKE UPLOAD ═══
+function openUploadModal() { openModal('uploadModal'); }
+
+function handleFileUpload(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      populateFromIntake(data);
+      closeModal('uploadModal');
+    } catch(err) {
+      showToast('Could not parse file — check format');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag');
+  const file = e.dataTransfer.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try { populateFromIntake(JSON.parse(ev.target.result)); closeModal('uploadModal'); }
+    catch(err) { showToast('Could not parse file'); }
+  };
+  reader.readAsText(file);
+}
+
+function parseAndPopulate() {
+  const raw = document.getElementById('jsonPaste').value.trim();
+  if (!raw) { showToast('Paste JSON first'); return; }
+  try { populateFromIntake(JSON.parse(raw)); closeModal('uploadModal'); }
+  catch(e) { showToast('Invalid JSON — check format'); }
+}
+
+// ═══ UTILS ═══
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function copyScript() {
+  const code = document.getElementById('appsScriptCode').innerText.replace('Copy','').trim();
+  navigator.clipboard.writeText(code).then(() => showToast('Script copied to clipboard'));
+}
+
+function openSupabaseModal() {
+  document.getElementById('sb-url').value = sbConfig.url;
+  document.getElementById('sb-key').value = sbConfig.key;
+  openModal('supabaseModal');
+}
+
+function openGSheetModal() {
+  document.getElementById('gs-url').value = gsheetUrl;
+  openModal('gsheetModal');
+}
+</script>
+</body>
+</html>
