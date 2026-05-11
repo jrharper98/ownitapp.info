@@ -381,7 +381,10 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;
 let clients = [];
 let activeClientId = null;
 let deleteTargetId = null;
-let sbConfig = { url:'', key:'' };
+let sbConfig = {
+  url: 'https://fmcsorwwpjujbpvzgscc.supabase.co',
+  key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtY3Nvcnd3cGp1amJwdnpnc2NjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NjcyMTUsImV4cCI6MjA5MzM0MzIxNX0.mPcng0oBO9TJzrGWZJOCLBAaz7oAaRjedVlnI5AjHEg'
+};
 let gsheetUrl = '';
 
 const FEATURE_DEFS = [
@@ -473,17 +476,15 @@ window.addEventListener('DOMContentLoaded', () => {
   loadConfig();
   loadClientsFromStorage();
   renderClientList();
+  loadFromSupabase(); // pull latest from Supabase on every load
 });
 
 // ═══ CONFIG ═══
 function loadConfig() {
   try {
     const cfg = JSON.parse(localStorage.getItem('ownitStudio_config') || '{}');
-    sbConfig = cfg.supabase || { url:'', key:'' };
-    gsheetUrl = cfg.gsheetUrl || '';
-    if (document.getElementById('sb-url')) document.getElementById('sb-url').value = sbConfig.url;
-    if (document.getElementById('sb-key')) document.getElementById('sb-key').value = sbConfig.key;
-    if (document.getElementById('gs-url')) document.getElementById('gs-url').value = gsheetUrl;
+    if (cfg.supabase?.url) sbConfig = cfg.supabase;
+    if (cfg.gsheetUrl) gsheetUrl = cfg.gsheetUrl;
     updateSyncStatus(sbConfig.url ? 'synced' : 'off');
   } catch(e) {}
 }
@@ -590,23 +591,25 @@ function loadClientsFromStorage() {
   } catch(e) { clients = []; }
 }
 
-// ═══ SUPABASE SYNC (placeholder — real integration after user sets up table) ═══
+// ═══ SUPABASE SYNC ═══
 async function syncToSupabase() {
   if (!sbConfig.url || !sbConfig.key) return;
   updateSyncStatus('syncing');
   try {
+    // Upsert all clients as {id, data} rows
+    const rows = clients.map(c => ({ id: c.id, data: c }));
     const res = await fetch(`${sbConfig.url}/rest/v1/ownitStudio_clients`, {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
         'apikey': sbConfig.key,
         'Authorization': `Bearer ${sbConfig.key}`,
         'Prefer': 'resolution=merge-duplicates',
       },
-      body: JSON.stringify(clients),
+      body: JSON.stringify(rows),
     });
     if (res.ok) updateSyncStatus('synced');
-    else throw new Error();
+    else { console.error('Supabase sync error', await res.text()); throw new Error(); }
   } catch(e) {
     updateSyncStatus('error');
   }
@@ -614,14 +617,38 @@ async function syncToSupabase() {
 
 async function loadFromSupabase() {
   if (!sbConfig.url || !sbConfig.key) return;
+  updateSyncStatus('syncing');
   try {
-    const res = await fetch(`${sbConfig.url}/rest/v1/ownitStudio_clients?select=*`, {
-      headers:{ 'apikey': sbConfig.key, 'Authorization': `Bearer ${sbConfig.key}` }
+    const res = await fetch(`${sbConfig.url}/rest/v1/ownitStudio_clients?select=id,data&order=created_at.asc`, {
+      headers: {
+        'apikey': sbConfig.key,
+        'Authorization': `Bearer ${sbConfig.key}`,
+      }
     });
     if (res.ok) {
-      const data = await res.json();
-      if (data.length) { clients = data; saveClientsLocal(); renderClientList(); }
-    }
+      const rows = await res.json();
+      if (rows.length) {
+        clients = rows.map(r => r.data);
+        saveClientsLocal();
+        renderClientList();
+      }
+      updateSyncStatus('synced');
+    } else throw new Error();
+  } catch(e) {
+    updateSyncStatus('error');
+  }
+}
+
+async function deleteFromSupabase(id) {
+  if (!sbConfig.url || !sbConfig.key) return;
+  try {
+    await fetch(`${sbConfig.url}/rest/v1/ownitStudio_clients?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: {
+        'apikey': sbConfig.key,
+        'Authorization': `Bearer ${sbConfig.key}`,
+      }
+    });
   } catch(e) {}
 }
 
@@ -667,6 +694,7 @@ function openDeleteModal(id) {
 
 function confirmDelete() {
   clients = clients.filter(c => c.id !== deleteTargetId);
+  deleteFromSupabase(deleteTargetId);
   if (activeClientId === deleteTargetId) {
     activeClientId = null;
     document.getElementById('workspace').style.display = 'none';
