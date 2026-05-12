@@ -656,28 +656,51 @@ async function deleteFromSupabase(id) {
 function populateFromIntake(data) {
   const c = getActive();
   if (!c) return;
-  const map = (key) => data[key] || '';
+
+  // Fix UTF-8 encoding issues from Formspree PDF export
+  const fix = (str) => (str||'')
+    .replace(/â€"/g, '—')
+    .replace(/Ã©/g, 'é')
+    .replace(/â€œ/g, '"')
+    .replace(/â€/g, '"')
+    .replace(/â€™/g, "'");
+
+  const map = (key) => fix(data[key] || '');
+
   c.firstName = map('firstName'); c.lastName = map('lastName');
   c.email = map('email'); c.phone = map('phone');
   c.paymentMethods = Array.isArray(data.paymentMethods) ? data.paymentMethods : (data.paymentMethods||'').split(',').map(s=>s.trim()).filter(Boolean);
   c.expenseCategories = map('expenseCategories');
-  c.recurringExp = map('recurringExp'); c.receipts = map('receipts');
+  // Handle both recurringExp (old) and recurringExpenses (Formspree export)
+  c.recurringExp = map('recurringExp') || map('recurringExpenses');
+  c.receipts = map('receipts');
   c.scheduleC = map('scheduleC'); c.form1099 = map('form1099');
   c.googleSheets = map('googleSheets'); c.quickbooks = map('quickbooks');
-  c.w2job = map('w2job'); c.deviceCount = map('deviceCount'); c.platform = map('platform');
+  c.w2job = map('w2job');
+  c.otherTaxForms = map('otherTaxForms');
+  c.salesTax = map('salesTax');
+  c.deviceCount = map('deviceCount'); c.platform = map('platform');
   c.appName = map('appName'); c.hasBrand = map('hasBrand'); c.brandColors = map('brandColors');
   c.hasLogo = map('hasLogo'); c.visualNotes = map('visualNotes');
   c.hearAbout = map('hearAbout'); c.dreamFeatures = map('dreamFeatures'); c.timeline = map('timeline');
-  // Parse businesses
+  // Parse businesses — also handle Formspree JSON string
   try {
     if (typeof data.businesses === 'string') c.businesses = JSON.parse(data.businesses);
     else if (Array.isArray(data.businesses)) c.businesses = data.businesses;
+    // Fix encoding in business fields
+    if (c.businesses) c.businesses = c.businesses.map(b => ({
+      ...b,
+      name: fix(b.name), type: fix(b.type), notes: fix(b.notes||''),
+      expenseNotes: fix(b.expenseNotes||'')
+    }));
   } catch(e) {}
   // Auto-suggest features based on answers
   if (c.form1099 === 'Yes') c.features.form_1099 = true;
   if (c.googleSheets === 'Yes please') c.features.google_sheets = true;
   if (c.quickbooks === 'Yes') c.features.quickbooks = true;
-  if (c.deviceCount === '2 or more devices') {}  // Supabase already required
+  if (c.otherTaxForms && c.otherTaxForms.includes('Schedule E')) c.features.schedule_e = true;
+  if (c.otherTaxForms && c.otherTaxForms.includes('Schedule F')) c.features.schedule_f = true;
+  if (c.w2job && c.w2job.startsWith('Yes')) c.features.w2_tracking = true;
   saveActive();
   renderWorkspace();
   showToast('Profile auto-populated from intake form ✓');
@@ -1130,7 +1153,9 @@ function handleFileUpload(e) {
   const reader = new FileReader();
   reader.onload = ev => {
     try {
-      const data = JSON.parse(ev.target.result);
+      let data = JSON.parse(ev.target.result);
+      // Handle Formspree export format: {submissions: [...]}
+      if (data.submissions && Array.isArray(data.submissions)) data = data.submissions[0];
       populateFromIntake(data);
       closeModal('uploadModal');
     } catch(err) {
@@ -1155,8 +1180,13 @@ function handleDrop(e) {
 function parseAndPopulate() {
   const raw = document.getElementById('jsonPaste').value.trim();
   if (!raw) { showToast('Paste JSON first'); return; }
-  try { populateFromIntake(JSON.parse(raw)); closeModal('uploadModal'); }
-  catch(e) { showToast('Invalid JSON — check format'); }
+  try {
+    let data = JSON.parse(raw);
+    // Handle Formspree export format: {submissions: [...]}
+    if (data.submissions && Array.isArray(data.submissions)) data = data.submissions[0];
+    populateFromIntake(data);
+    closeModal('uploadModal');
+  } catch(e) { showToast('Invalid JSON — check format'); }
 }
 
 // ═══ UTILS ═══
