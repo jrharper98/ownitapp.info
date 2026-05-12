@@ -1151,11 +1151,11 @@
       [...document.querySelectorAll('#ownit-form input[type=hidden]')]
         .map(i => [i.name, i.value])
     );
-    // Apps Script requires text/plain to avoid CORS preflight failure
+    // Use no-cors to bypass CORS entirely — response is opaque but request fires
     fetch(form.action, {
       method: 'POST',
       body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'text/plain' },
+      mode: 'no-cors',
     })
     .then(() => {
       try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
