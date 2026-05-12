@@ -1148,11 +1148,13 @@
     document.getElementById('h-timeline').value        = data.timeline;
 
     const form = document.getElementById('ownit-form');
-    // Submit via hidden iframe — bypasses CORS entirely, no preflight needed
-    form.target = 'submit-iframe';
-    form.method = 'POST';
-    form.enctype = 'application/x-www-form-urlencoded';
-    form.submit();
+    const params = new URLSearchParams(
+      [...document.querySelectorAll('#ownit-form input[type=hidden]')]
+        .map(i => [i.name, i.value])
+    ).toString();
+    const url = form.action + '?' + params;
+    const img = new Image();
+    img.src = url;
     try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
     showPage(7);
   }
