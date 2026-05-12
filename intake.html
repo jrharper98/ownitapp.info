@@ -1151,18 +1151,15 @@
       [...document.querySelectorAll('#ownit-form input[type=hidden]')]
         .map(i => [i.name, i.value])
     );
+    // Apps Script requires text/plain to avoid CORS preflight failure
     fetch(form.action, {
       method: 'POST',
       body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain' },
     })
-    .then(res => {
-      if (res.ok) {
-        try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
-        showPage(7);
-      } else {
-        alert('Submission failed. Please try again or email us directly.');
-      }
+    .then(() => {
+      try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+      showPage(7);
     })
     .catch(() => showPage(7));
   }
