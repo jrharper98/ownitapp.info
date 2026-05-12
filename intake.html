@@ -630,8 +630,8 @@
         </div>
       </div>
       <div class="field">
-        <label>List Your Main Expense Categories <span class="hint">e.g. Transportation, Supplies, Subscriptions, Marketing</span></label>
-        <textarea id="expenseCategories" placeholder="Transportation, Supplies, Marketing..."></textarea>
+        <label>List Your Main Expense Categories <span class="hint">Think global expenses that span all businesses — e.g. Mileage, Home Office, Phone Bill, Health Insurance, Professional Development</span></label>
+        <textarea id="expenseCategories" placeholder="Mileage, Home Office, Phone Bill, Subscriptions..."></textarea>
       </div>
       <div class="field">
         <label>Do You Have Recurring Expenses You'd Want to Duplicate Quickly?</label>
@@ -706,6 +706,25 @@
           <input type="radio" name="w2job" id="w2-ft" value="Yes — full-time" /><label for="w2-ft">Yes — full-time</label>
           <input type="radio" name="w2job" id="w2-pt" value="Yes — part-time" /><label for="w2-pt">Yes — part-time</label>
           <input type="radio" name="w2job" id="w2-no" value="No" /><label for="w2-no">No</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Do You Have Other Tax Forms You Need to Fill Out? <span class="hint">e.g. Schedule E (rental), Schedule F (farm), 1065 (partnership)</span></label>
+        <div class="pill-group" id="taxForms">
+          <input type="checkbox" id="tf-sche" value="Schedule E" /><label for="tf-sche">Schedule E (Rental)</label>
+          <input type="checkbox" id="tf-schf" value="Schedule F" /><label for="tf-schf">Schedule F (Farm)</label>
+          <input type="checkbox" id="tf-1065" value="1065 Partnership" /><label for="tf-1065">1065 (Partnership)</label>
+          <input type="checkbox" id="tf-1120s" value="1120-S S-Corp" /><label for="tf-1120s">1120-S (S-Corp)</label>
+          <input type="checkbox" id="tf-other" value="Other" /><label for="tf-other">Other</label>
+          <input type="checkbox" id="tf-none" value="None" /><label for="tf-none">None / Not sure</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Are There Sales and Use Taxes You Are Responsible For? <span class="hint">Check the CDTFA website if your business operates in California</span></label>
+        <div class="pill-group">
+          <input type="radio" name="salesTax" id="st-yes" value="Yes" /><label for="st-yes">Yes</label>
+          <input type="radio" name="salesTax" id="st-no" value="No" /><label for="st-no">No</label>
+          <input type="radio" name="salesTax" id="st-notsure" value="Not sure" /><label for="st-notsure">Not sure</label>
         </div>
       </div>
     </div>
@@ -837,8 +856,8 @@
       </div>
     </div>
 
-    <!-- HIDDEN FORM for Google Apps Script -->
-    <form id="ownit-form" action="https://script.google.com/macros/s/AKfycbxpyGOwZVzZwjNmOORRnn5ssWtNdgPANHWH97L7WUTrarsGdIXFJA3F7UaK5Q4Wj75O/exec" method="POST" style="display:none">
+    <!-- HIDDEN FORM for Formspree -->
+    <form id="ownit-form" action="https://formspree.io/f/mlgazvra" method="POST" style="display:none">
       <input type="hidden" name="firstName" id="h-firstName" />
       <input type="hidden" name="lastName" id="h-lastName" />
       <input type="hidden" name="email" id="h-email" />
@@ -853,6 +872,8 @@
       <input type="hidden" name="googleSheets" id="h-googleSheets" />
       <input type="hidden" name="quickbooks" id="h-quickbooks" />
       <input type="hidden" name="w2job" id="h-w2job" />
+      <input type="hidden" name="otherTaxForms" id="h-otherTaxForms" />
+      <input type="hidden" name="salesTax" id="h-salesTax" />
       <input type="hidden" name="deviceCount" id="h-deviceCount" />
       <input type="hidden" name="platform" id="h-platform" />
       <input type="hidden" name="appName" id="h-appName" />
@@ -864,7 +885,6 @@
       <input type="hidden" name="dreamFeatures" id="h-dreamFeatures" />
       <input type="hidden" name="timeline" id="h-timeline" />
     </form>
-    <iframe id="submit-iframe" name="submit-iframe" style="display:none"></iframe>
 
     <div class="form-nav">
       <button class="btn-back" onclick="prevPage(6)"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back</button>
@@ -995,6 +1015,10 @@
           <input type="text" id="biz-type-${idx}" placeholder="e.g. Services, Products, Rental income" />
         </div>
         <div class="field">
+          <label>Give us details! <span class="hint">What different services/products do you sell? How do people book you? Where do you sell?</span></label>
+          <textarea id="biz-notes-${idx}" placeholder="e.g. I offer 1:1 sessions, group classes, and digital downloads. Clients book via my website. I also sell on Etsy."></textarea>
+        </div>
+        <div class="field">
           <label>How Do Clients Pay You?</label>
           <div class="pill-group">
             <input type="checkbox" id="biz-pay-cash-${idx}" /><label for="biz-pay-cash-${idx}">Cash</label>
@@ -1006,8 +1030,63 @@
           </div>
         </div>
         <div class="field">
-          <label>Approx Monthly Revenue</label>
-          <input type="text" id="biz-revenue-${idx}" placeholder="e.g. $2,000 – $5,000" />
+          <label>What Expenses Do You Accrue for This Business? <span class="hint">Select all that apply</span></label>
+          <div class="pill-group">
+            <input type="checkbox" id="biz-exp-supplies-${idx}" /><label for="biz-exp-supplies-${idx}">Supplies</label>
+            <input type="checkbox" id="biz-exp-transport-${idx}" /><label for="biz-exp-transport-${idx}">Transportation</label>
+            <input type="checkbox" id="biz-exp-marketing-${idx}" /><label for="biz-exp-marketing-${idx}">Marketing</label>
+            <input type="checkbox" id="biz-exp-software-${idx}" /><label for="biz-exp-software-${idx}">Software / Subscriptions</label>
+            <input type="checkbox" id="biz-exp-equipment-${idx}" /><label for="biz-exp-equipment-${idx}">Equipment</label>
+            <input type="checkbox" id="biz-exp-contractors-${idx}" /><label for="biz-exp-contractors-${idx}">Contractors / Freelancers</label>
+            <input type="checkbox" id="biz-exp-inventory-${idx}" /><label for="biz-exp-inventory-${idx}">Inventory / COGS</label>
+            <input type="checkbox" id="biz-exp-fees-${idx}" /><label for="biz-exp-fees-${idx}">Platform / Transaction Fees</label>
+            <input type="checkbox" id="biz-exp-other-${idx}" /><label for="biz-exp-other-${idx}">Other</label>
+          </div>
+          <textarea id="biz-exp-notes-${idx}" placeholder="Anything specific we should know about your expenses..." style="margin-top:10px"></textarea>
+        </div>
+        <div class="field">
+          <label>What Platforms Are You Currently Using for This Business? <span class="hint">Select all that apply</span></label>
+          <div class="pill-group">
+            <input type="checkbox" id="biz-plat-stripe-${idx}" /><label for="biz-plat-stripe-${idx}">Stripe</label>
+            <input type="checkbox" id="biz-plat-paypal-${idx}" /><label for="biz-plat-paypal-${idx}">PayPal</label>
+            <input type="checkbox" id="biz-plat-etsy-${idx}" /><label for="biz-plat-etsy-${idx}">Etsy</label>
+            <input type="checkbox" id="biz-plat-freshbooks-${idx}" /><label for="biz-plat-freshbooks-${idx}">FreshBooks</label>
+            <input type="checkbox" id="biz-plat-expensify-${idx}" /><label for="biz-plat-expensify-${idx}">Expensify</label>
+            <input type="checkbox" id="biz-plat-square-${idx}" /><label for="biz-plat-square-${idx}">Square</label>
+            <input type="checkbox" id="biz-plat-shopify-${idx}" /><label for="biz-plat-shopify-${idx}">Shopify</label>
+            <input type="checkbox" id="biz-plat-none-${idx}" /><label for="biz-plat-none-${idx}">None</label>
+            <input type="checkbox" id="biz-plat-other-${idx}" /><label for="biz-plat-other-${idx}">Other</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Do You Have Employees or Contractors You Pay? <span class="hint">Helps us flag 1099-NEC filing requirements</span></label>
+          <div class="pill-group">
+            <input type="radio" name="biz-contractors-${idx}" id="biz-con-yes-${idx}" value="Yes" /><label for="biz-con-yes-${idx}">Yes</label>
+            <input type="radio" name="biz-contractors-${idx}" id="biz-con-no-${idx}" value="No" /><label for="biz-con-no-${idx}">No</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Do You Operate This Business in California?</label>
+          <div class="pill-group">
+            <input type="radio" name="biz-california-${idx}" id="biz-ca-yes-${idx}" value="Yes" /><label for="biz-ca-yes-${idx}">Yes</label>
+            <input type="radio" name="biz-california-${idx}" id="biz-ca-no-${idx}" value="No" /><label for="biz-ca-no-${idx}">No</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Do You Have a Separate Business Bank Account?</label>
+          <div class="pill-group">
+            <input type="radio" name="biz-bankaccount-${idx}" id="biz-ba-yes-${idx}" value="Yes" /><label for="biz-ba-yes-${idx}">Yes</label>
+            <input type="radio" name="biz-bankaccount-${idx}" id="biz-ba-no-${idx}" value="No" /><label for="biz-ba-no-${idx}">No</label>
+            <input type="radio" name="biz-bankaccount-${idx}" id="biz-ba-plan-${idx}" value="Planning to" /><label for="biz-ba-plan-${idx}">Planning to</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Do You Make Estimated Quarterly Tax Payments?</label>
+          <div class="pill-group">
+            <input type="radio" name="biz-quarterly-${idx}" id="biz-qt-yes-${idx}" value="Yes" /><label for="biz-qt-yes-${idx}">Yes</label>
+            <input type="radio" name="biz-quarterly-${idx}" id="biz-qt-no-${idx}" value="No" /><label for="biz-qt-no-${idx}">No</label>
+            <input type="radio" name="biz-quarterly-${idx}" id="biz-qt-notsure-${idx}" value="Not sure" /><label for="biz-qt-notsure-${idx}">Not sure</label>
+          </div>
         </div>
       </div>
     `;
@@ -1030,15 +1109,31 @@
       ['cash','card','zelle','venmo','invoice','other'].forEach(p => {
         if (document.getElementById(`biz-pay-${p}-${id}`)?.checked) pays.push(p);
       });
+      const expenses = [];
+      ['supplies','transport','marketing','software','equipment','contractors','inventory','fees','other'].forEach(e => {
+        if (document.getElementById(`biz-exp-${e}-${id}`)?.checked) expenses.push(e);
+      });
+      const platforms = [];
+      ['stripe','paypal','etsy','freshbooks','expensify','square','shopify','none','other'].forEach(p => {
+        if (document.getElementById(`biz-plat-${p}-${id}`)?.checked) platforms.push(p);
+      });
       bizEntries.push({
-        name:    val(`biz-name-${id}`),
-        type:    val(`biz-type-${id}`),
+        name:        val(`biz-name-${id}`),
+        type:        val(`biz-type-${id}`),
+        notes:       val(`biz-notes-${id}`),
         pays,
-        revenue: val(`biz-revenue-${id}`),
+        expenses,
+        expenseNotes: val(`biz-exp-notes-${id}`),
+        platforms,
+        contractors: radio(`biz-contractors-${id}`),
+        california:  radio(`biz-california-${id}`),
+        bankAccount: radio(`biz-bankaccount-${id}`),
+        quarterly:   radio(`biz-quarterly-${id}`),
       });
     });
 
     const pmChecked = [...document.querySelectorAll('#paymentMethods input:checked')].map(i => i.value);
+    const taxForms = [...document.querySelectorAll('#taxForms input:checked')].map(i => i.value);
 
     return {
       firstName: val('firstName'), lastName: val('lastName'),
@@ -1049,7 +1144,10 @@
       recurringExp: radio('recurringExp'), receipts: radio('receipts'),
       scheduleC: radio('scheduleC'), form1099: radio('form1099'),
       googleSheets: radio('googleSheets'), quickbooks: radio('quickbooks'),
-      w2job: radio('w2job'), deviceCount: radio('deviceCount'),
+      w2job: radio('w2job'),
+      otherTaxForms: taxForms.join(', '),
+      salesTax: radio('salesTax'),
+      deviceCount: radio('deviceCount'),
       platform: radio('platform'), appName: val('appName'),
       hasBrand: radio('hasBrand'), brandColors: val('brandColors'),
       hasLogo: radio('hasLogo'), visualNotes: val('visualNotes'),
@@ -1089,7 +1187,7 @@
     }
 
     ['recurringExp','receipts','scheduleC','form1099','googleSheets',
-     'quickbooks','w2job','deviceCount','platform','hasBrand','hasLogo','timeline'].forEach(name => {
+     'quickbooks','w2job','salesTax','deviceCount','platform','hasBrand','hasLogo','timeline'].forEach(name => {
       const v = data[name];
       if (v) {
         const el = document.querySelector(`input[name="${name}"][value="${CSS.escape(v)}"]`);
@@ -1104,13 +1202,34 @@
         const id = businessCount - 1;
         setVal(`biz-name-${id}`, biz.name);
         setVal(`biz-type-${id}`, biz.type);
-        setVal(`biz-revenue-${id}`, biz.revenue);
+        setVal(`biz-notes-${id}`, biz.notes);
+        setVal(`biz-exp-notes-${id}`, biz.expenseNotes);
         if (biz.pays) {
           biz.pays.forEach(p => {
             const cb = document.getElementById(`biz-pay-${p}-${id}`);
             if (cb) cb.checked = true;
           });
         }
+        if (biz.expenses) {
+          biz.expenses.forEach(e => {
+            const cb = document.getElementById(`biz-exp-${e}-${id}`);
+            if (cb) cb.checked = true;
+          });
+        }
+        if (biz.platforms) {
+          biz.platforms.forEach(p => {
+            const cb = document.getElementById(`biz-plat-${p}-${id}`);
+            if (cb) cb.checked = true;
+          });
+        }
+        ['contractors','california','bankaccount','quarterly'].forEach(field => {
+          const key = field === 'bankaccount' ? 'bankAccount' : field;
+          const v = biz[key] || biz[field];
+          if (v) {
+            const el = document.querySelector(`input[name="biz-${field}-${id}"][value="${CSS.escape(v)}"]`);
+            if (el) el.checked = true;
+          }
+        });
       });
     }
   }
@@ -1136,6 +1255,8 @@
     document.getElementById('h-googleSheets').value    = data.googleSheets;
     document.getElementById('h-quickbooks').value      = data.quickbooks;
     document.getElementById('h-w2job').value           = data.w2job;
+    document.getElementById('h-otherTaxForms').value   = data.otherTaxForms;
+    document.getElementById('h-salesTax').value        = data.salesTax;
     document.getElementById('h-deviceCount').value     = data.deviceCount;
     document.getElementById('h-platform').value        = data.platform;
     document.getElementById('h-appName').value         = data.appName;
@@ -1148,15 +1269,20 @@
     document.getElementById('h-timeline').value        = data.timeline;
 
     const form = document.getElementById('ownit-form');
-    const params = new URLSearchParams(
-      [...document.querySelectorAll('#ownit-form input[type=hidden]')]
-        .map(i => [i.name, i.value])
-    ).toString();
-    const url = form.action + '?' + params;
-    const img = new Image();
-    img.src = url;
-    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
-    showPage(7);
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' },
+    })
+    .then(res => {
+      if (res.ok) {
+        try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+        showPage(7);
+      } else {
+        alert('Submission failed. Please try again or email us directly.');
+      }
+    })
+    .catch(() => showPage(7));
   }
 </script>
 </body>
