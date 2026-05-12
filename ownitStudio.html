@@ -252,10 +252,6 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;
       <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       Supabase Config
     </button>
-    <button class="btn-header" onclick="openGSheetModal()">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
-      Google Sheet Setup
-    </button>
     <button class="btn-header gold-btn" onclick="exportAllClients()">
       <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Export All
@@ -701,6 +697,14 @@ function populateFromIntake(data) {
   if (c.otherTaxForms && c.otherTaxForms.includes('Schedule E')) c.features.schedule_e = true;
   if (c.otherTaxForms && c.otherTaxForms.includes('Schedule F')) c.features.schedule_f = true;
   if (c.w2job && c.w2job.startsWith('Yes')) c.features.w2_tracking = true;
+  // Auto-populate Discovery Call Q01 from business "Give us details!" notes
+  if (c.businesses && c.businesses.length) {
+    const bizNotes = c.businesses
+      .filter(b => b.notes && b.notes.trim())
+      .map((b, i) => `${b.name || 'Business ' + (i+1)}: ${b.notes.trim()}`)
+      .join('\n\n');
+    if (bizNotes) c.discoveryNotes['01'] = bizNotes;
+  }
   saveActive();
   renderWorkspace();
   showToast('Profile auto-populated from intake form ✓');
