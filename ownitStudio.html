@@ -697,7 +697,10 @@ function populateFromIntake(data) {
   if (c.otherTaxForms && c.otherTaxForms.includes('Schedule E')) c.features.schedule_e = true;
   if (c.otherTaxForms && c.otherTaxForms.includes('Schedule F')) c.features.schedule_f = true;
   if (c.w2job && c.w2job.startsWith('Yes')) c.features.w2_tracking = true;
-  // Auto-populate Discovery Call Q01 from business "Give us details!" notes
+  // Auto-populate Discovery Call notes from intake answers
+  if (!c.discoveryNotes) c.discoveryNotes = {};
+
+  // Q01 — business details
   if (c.businesses && c.businesses.length) {
     const bizNotes = c.businesses
       .filter(b => b.notes && b.notes.trim())
@@ -705,6 +708,47 @@ function populateFromIntake(data) {
       .join('\n\n');
     if (bizNotes) c.discoveryNotes['01'] = bizNotes;
   }
+
+  // Q04 — income streams
+  if (c.businesses && c.businesses.length) {
+    const names = c.businesses.map((b,i) => b.name || 'Business '+(i+1)).join(', ');
+    c.discoveryNotes['04'] = `${c.businesses.length} — ${names}`;
+  }
+
+  // Q05 — recurring expenses
+  if (c.recurringExp) c.discoveryNotes['05'] = c.recurringExp;
+
+  // Q06 — receipts
+  if (c.receipts) c.discoveryNotes['06'] = c.receipts;
+
+  // Q08 — Schedule C
+  if (c.scheduleC) c.discoveryNotes['08'] = c.scheduleC;
+
+  // Q09 — 1099s
+  if (c.form1099) c.discoveryNotes['09'] = c.form1099;
+
+  // Q10 — other tax forms
+  if (c.otherTaxForms) c.discoveryNotes['10'] = c.otherTaxForms;
+
+  // Q11 — W-2 job
+  if (c.w2job) c.discoveryNotes['11'] = c.w2job;
+
+  // Q12 — device count
+  if (c.deviceCount) c.discoveryNotes['12'] = c.deviceCount;
+
+  // Q14 — branding
+  const brandParts = [c.hasBrand, c.hasLogo, c.brandColors].filter(Boolean);
+  if (brandParts.length) c.discoveryNotes['14'] = brandParts.join(' · ');
+
+  // Q15 — app name
+  if (c.appName) c.discoveryNotes['15'] = c.appName;
+
+  // Q16 — timeline
+  if (c.timeline) c.discoveryNotes['16'] = c.timeline;
+
+  // Q17 — dream features
+  if (c.dreamFeatures) c.discoveryNotes['17'] = c.dreamFeatures;
+
   saveActive();
   renderWorkspace();
   showToast('Profile auto-populated from intake form ✓');
