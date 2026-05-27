@@ -77,6 +77,7 @@ body { background: var(--bg, #F5F5F5); color: var(--tx, #1A1A1A); transition: ba
   font-size: 22px; font-family: 'DM Sans', sans-serif;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
   transition: background 0.1s; -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; user-select: none; -webkit-user-select: none;
 }
 .lkey:hover  { background: rgba(255,255,255,0.14); }
 .lkey:active { background: rgba(255,255,255,0.22); transform: scale(0.95); }
@@ -216,7 +217,9 @@ body { background: var(--bg, #F5F5F5); color: var(--tx, #1A1A1A); transition: ba
 #main-app.vis { display: flex; }
 
 .app-header {
-  background: var(--primary); padding: 0.875rem 1.25rem;
+  background: var(--primary); 
+  padding: 0.875rem 1.25rem;
+  padding-top: calc(0.875rem + env(safe-area-inset-top, 0px));
   display: flex; align-items: center; justify-content: space-between;
   position: sticky; top: 0; z-index: 10;
 }
@@ -1787,20 +1790,56 @@ function rowsToCSV(rows) {
   }).join("\n");
 }
 
-function downloadCSV(csv, filename) {
+function triggerDownload(href, filename) {
   var a = document.createElement("a");
-  a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
-  a.download = filename;
+  a.setAttribute("href", href);
+  a.setAttribute("download", filename);
+  a.style.display = "none";
   document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  a.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+  setTimeout(function() { document.body.removeChild(a); }, 200);
+}
+
+function downloadCSV(csv, filename) {
+  triggerDownload("data:text/csv;charset=utf-8," + encodeURIComponent(csv), filename);
 }
 
 function printSummary(html) {
-  var win = window.open("", "_blank");
-  if (!win) { alert("Please allow pop-ups to print summaries."); return; }
-  win.document.write(html + "<script>window.onload=function(){window.print()}<\/script>");
-  win.document.close();
+  // In PWA standalone mode, new tabs have no close button — use overlay instead
+  var isStandalone = window.navigator.standalone || window.matchMedia("(display-mode: standalone)").matches;
+  if (isStandalone) {
+    var overlay = document.createElement("div");
+    overlay.style.cssText = "position:fixed;inset:0;z-index:500;background:white;display:flex;flex-direction:column";
+    var toolbar = document.createElement("div");
+    toolbar.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:12px 16px;"
+      + "background:#0D1B2A;color:white;flex-shrink:0;padding-top:calc(12px + env(safe-area-inset-top,0px))";
+    toolbar.innerHTML = "<span style=\"font-size:14px;font-weight:500\">Print Preview</span>"
+      + "<div style=\"display:flex;gap:12px\">"
+      + "<button id=\"print-btn\" style=\"background:var(--accent,#2E9CCA);color:white;border:none;border-radius:20px;padding:6px 16px;font-size:13px;cursor:pointer;font-family:inherit\">Print / Save PDF</button>"
+      + "<button id=\"close-preview\" style=\"background:rgba(255,255,255,0.15);color:white;border:none;border-radius:20px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit\">✕ Close</button>"
+      + "</div>";
+    var frame = document.createElement("iframe");
+    frame.style.cssText = "flex:1;border:none;width:100%";
+    overlay.appendChild(toolbar);
+    overlay.appendChild(frame);
+    document.body.appendChild(overlay);
+    // Write HTML into the iframe
+    frame.contentDocument.open();
+    frame.contentDocument.write(html);
+    frame.contentDocument.close();
+    toolbar.querySelector("#close-preview").addEventListener("click", function() {
+      document.body.removeChild(overlay);
+    });
+    toolbar.querySelector("#print-btn").addEventListener("click", function() {
+      frame.contentWindow.print();
+    });
+  } else {
+    // Browser: open new tab as before
+    var win = window.open("", "_blank");
+    if (!win) { alert("Please allow pop-ups to print summaries."); return; }
+    win.document.write(html + "<script>window.onload=function(){window.print()}<\/script>");
+    win.document.close();
+  }
 }
 
 
@@ -2193,13 +2232,11 @@ document.getElementById("set-backup").addEventListener("click", function() {
     state: state
   };
   var json = JSON.stringify(backup, null, 2);
-  var a = document.createElement("a");
-  a.href = "data:application/json;charset=utf-8," + encodeURIComponent(json);
-  a.download = (state.appName||"ownitlite").replace(/[^a-z0-9]/gi,"_").toLowerCase()
-    + "_backup_" + new Date().toISOString().slice(0,10) + ".json";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  triggerDownload(
+    "data:application/json;charset=utf-8," + encodeURIComponent(json),
+    (state.appName||"ownitlite").replace(/[^a-z0-9]/gi,"_").toLowerCase()
+      + "_backup_" + new Date().toISOString().slice(0,10) + ".json"
+  );
 });
 
 document.getElementById("set-import").addEventListener("click", function() {
