@@ -1,0 +1,2760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OwnIt Lite">
+<meta name="theme-color" content="#1A5F7A">
+<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22OwnIt+Lite%22%2C%22short_name%22%3A%22OwnIt+Lite%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%231A5F7A%22%2C%22theme_color%22%3A%22%231A5F7A%22%2C%22orientation%22%3A%22portrait%22%7D">
+<title>OwnIt Lite</title>
+<meta name="apple-touch-icon" href="data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='3' y='3' width='194' height='194' rx='42' fill='%231A5F7A' stroke='%232E9CCA' stroke-width='6'/%3E%3Cpolygon points='92,146 30,146 55,76' fill='%232E9CCA'/%3E%3Cpolygon points='108,146 168,146 142,96' fill='%232E9CCA'/%3E%3Cpolygon points='100,50 124,106 124,160 76,160 76,106' fill='%23EBF4F8'/%3E%3Crect x='28' y='141' width='144' height='22' rx='6' fill='%232E9CCA'/%3E%3Ccircle cx='55' cy='76' r='9' fill='%23FFFFFF'/%3E%3Ccircle cx='100' cy='50' r='10' fill='%23FFFFFF'/%3E%3Ccircle cx='142' cy='96' r='8' fill='%23FFFFFF'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script>
+const OWNITLITE_CONFIG = {
+  supabase: { url: "", anonKey: "" },
+  initialPasscode: "",
+  preset: { appName: null, paletteId: null, businesses: [] }
+};
+</script>
+<style>
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: 'DM Sans', sans-serif; }
+
+/* ── PALETTE CSS VARS ── */
+[data-palette="ocean-depth"]    { --bg:#EBF4F8; --primary:#1A5F7A; --accent:#2E9CCA; --tx:#1C2B35; }
+[data-palette="navy-tan"]       { --bg:#F0E5D8; --primary:#007A8E; --accent:#A2C2D4; --tx:#003B5C; }
+[data-palette="dusty-rose"]     { --bg:#FAF0F0; --primary:#8C4A5A; --accent:#C97A8A; --tx:#2E1A20; }
+[data-palette="slate-gold"]     { --bg:#F2F4F6; --primary:#3A4A5C; --accent:#C4A244; --tx:#1A2030; }
+[data-palette="olive-cream"]    { --bg:#F6F4EC; --primary:#5A6030; --accent:#9AA050; --tx:#1E2010; }
+[data-palette="midnight-plum"]  { --bg:#F0EEF8; --primary:#4A3870; --accent:#8A6CB8; --tx:#1C1530; }
+[data-palette="terracotta"]     { --bg:#FAF0EB; --primary:#8C4A2E; --accent:#C47A5A; --tx:#2E1810; }
+[data-palette="blue-goldenrod"] { --bg:#EEF4FF; --primary:#2B4EA8; --accent:#E8C84A; --tx:#0E1E40; }
+[data-palette="warm-charcoal"]  { --bg:#F6F4F0; --primary:#4A3E30; --accent:#8A7A60; --tx:#1C1610; }
+[data-palette="berry-cream"]    { --bg:#F8F0F6; --primary:#6A2A5A; --accent:#B05A98; --tx:#2A1024; }
+[data-palette="teal-linen"]     { --bg:#F4F8F6; --primary:#2A6A64; --accent:#50AEA4; --tx:#102420; }
+[data-palette="golden-hour"]    { --bg:#FBF5E8; --primary:#7A5A18; --accent:#C8942A; --tx:#2E2008; }
+[data-palette="peach-blush"]    { --bg:#FFF4EE; --primary:#F4B89A; --accent:#E8845A; --tx:#3A1A0A; }
+[data-palette="peach-wisteria"] { --bg:#FFF0E0; --primary:#C97ABE; --accent:#F4C3A0; --tx:#3A1A30; }
+[data-palette="earthen-spice"]  { --bg:#FFF8DC; --primary:#5B3A29; --accent:#8FBC8F; --tx:#2E1A0A; }
+
+body { background: var(--bg, #F5F5F5); color: var(--tx, #1A1A1A); transition: background 0.3s, color 0.3s; }
+
+/* ── LOCK SCREEN ── */
+#lock-screen {
+  position: fixed; inset: 0; z-index: 300;
+  background: #0D1B2A;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 2rem;
+}
+#lock-screen.hidden { display: none; }
+.lock-logo { margin-bottom: 2rem; text-align: center; }
+.lock-mark {
+  width: 56px; height: 56px; border-radius: 50%; background: #1A5F7A;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px;
+  font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: white;
+}
+.lock-name  { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 500; color: white; margin-bottom: 2px; }
+.lock-tag   { font-size: 12px; color: rgba(255,255,255,0.4); }
+.lock-prompt { font-size: 15px; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem; text-align: center; }
+.lock-dots  { display: flex; gap: 14px; margin-bottom: 2rem; }
+.ldot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3); background: transparent; transition: all 0.15s;
+}
+.ldot.filled { background: white; border-color: white; }
+.ldot.error  { background: #E05555; border-color: #E05555; animation: shake 0.4s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+.lock-pad { display: grid; grid-template-columns: repeat(3, 72px); gap: 12px; }
+.lkey {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: rgba(255,255,255,0.08); border: none; color: white; cursor: pointer;
+  font-size: 22px; font-family: 'DM Sans', sans-serif;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  transition: background 0.1s; -webkit-tap-highlight-color: transparent;
+}
+.lkey:hover  { background: rgba(255,255,255,0.14); }
+.lkey:active { background: rgba(255,255,255,0.22); transform: scale(0.95); }
+.lkey-sub    { font-size: 9px; letter-spacing: 0.08em; color: rgba(255,255,255,0.45); text-transform: uppercase; }
+.lock-msg    { margin-top: 1.5rem; font-size: 13px; color: #E05555; text-align: center; min-height: 20px; }
+.lock-lockout{ margin-top: 0.5rem; font-size: 13px; color: rgba(255,255,255,0.4); text-align: center; }
+
+/* ── WIZARD ── */
+#wizard {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
+}
+#wizard.hidden { display: none; }
+.wcard {
+  background: white; border-radius: 20px;
+  width: 100%; max-width: 560px; max-height: 90vh;
+  overflow-y: auto; padding: 2rem; position: relative;
+}
+.wlogo { display: flex; align-items: center; gap: 10px; margin-bottom: 2rem; }
+.wlogo-mark {
+  width: 36px; height: 36px; border-radius: 50%; background: #1A5F7A;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; color: white;
+}
+.wlogo-name  { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; color: #1A1A1A; }
+.wlogo-sub   { font-size: 11px; font-weight: 400; color: #888; display: block; margin-top: -2px; font-family: 'DM Sans', sans-serif; }
+.wdots       { display: flex; gap: 6px; margin-bottom: 2rem; }
+.wdot        { height: 4px; flex: 1; border-radius: 2px; background: #E0E0E0; transition: background 0.3s; }
+.wdot.active { background: #1A5F7A; }
+.wdot.done   { background: #2E9CCA; }
+.wstep       { display: none; }
+.wstep.active{ display: block; }
+.wstep h2    { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 500; color: #1A1A1A; margin-bottom: 0.4rem; }
+.wstep p     { font-size: 14px; color: #666; margin-bottom: 1.5rem; line-height: 1.5; }
+.flabel { font-size: 12px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+.finput {
+  width: 100%; border: 1.5px solid #E0E0E0; border-radius: 10px;
+  padding: 10px 14px; font-size: 15px; font-family: 'DM Sans', sans-serif;
+  color: #1A1A1A; outline: none; transition: border-color 0.2s; margin-bottom: 1rem;
+}
+.finput:focus { border-color: #1A5F7A; }
+.biz-list    { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+.biz-row     { display: flex; gap: 8px; align-items: center; }
+.biz-row .finput { margin-bottom: 0; flex: 1; }
+.biz-rm {
+  width: 32px; height: 32px; border-radius: 8px; border: 1.5px solid #E0E0E0;
+  background: none; cursor: pointer; font-size: 16px; color: #999;
+  display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+}
+.biz-rm:hover { border-color: #E05555; color: #E05555; }
+.add-biz {
+  display: flex; align-items: center; gap: 6px; background: none;
+  border: 1.5px dashed #C0C0C0; border-radius: 10px; padding: 9px 14px;
+  font-size: 14px; color: #888; cursor: pointer; width: 100%;
+  transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.add-biz:hover { border-color: #1A5F7A; color: #1A5F7A; }
+
+/* Palette picker */
+.pal-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 1.5rem; }
+.pal-opt  { border-radius: 12px; overflow: hidden; border: 2px solid transparent; cursor: pointer; transition: all 0.2s; }
+.pal-opt:hover { transform: scale(1.03); }
+.pal-opt.sel   { border-color: #1A5F7A; box-shadow: 0 0 0 3px rgba(26,95,122,0.15); }
+.pal-swatches  { display: flex; height: 40px; }
+.pal-sw        { flex: 1; }
+.pal-lbl       { font-size: 10px; font-weight: 500; color: #555; text-align: center; padding: 4px 2px; background: white; border-top: 0.5px solid #eee; }
+.pal-preview   { border-radius: 14px; overflow: hidden; border: 1px solid #E8E8E8; margin-bottom: 1.5rem; transition: all 0.3s; }
+.pp-header     { padding: 10px 14px; display: flex; align-items: center; gap: 8px; }
+.pp-mark       { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; font-family: 'Playfair Display', serif; }
+.pp-name       { font-size: 13px; font-weight: 500; color: white; }
+.pp-tag        { font-size: 9px; color: rgba(255,255,255,0.65); }
+.pp-body       { padding: 10px 14px; }
+.pp-cards      { display: flex; gap: 6px; margin-bottom: 8px; }
+.pp-card       { flex: 1; border-radius: 8px; padding: 8px 10px; }
+.pp-card-lbl   { font-size: 9px; margin-bottom: 2px; }
+.pp-card-val   { font-size: 16px; font-weight: 500; }
+.pp-row        { border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; font-size: 12px; }
+
+/* Categories */
+.cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; max-height: 300px; overflow-y: auto; padding-right: 4px; }
+.cat-item { display: flex; align-items: center; gap: 8px; border: 1.5px solid #E0E0E0; border-radius: 10px; padding: 8px 10px; cursor: pointer; transition: all 0.2s; background: white; }
+.cat-item.sel { border-color: #1A5F7A; background: rgba(26,95,122,0.05); }
+.cat-chk  { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #C0C0C0; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; transition: all 0.2s; }
+.cat-item.sel .cat-chk { background: #1A5F7A; border-color: #1A5F7A; color: white; }
+.cat-name { font-size: 12px; line-height: 1.3; color: #333; }
+.cat-line { font-size: 10px; color: #999; }
+
+/* Supabase toggle */
+.sb-toggle { display: flex; align-items: center; gap: 12px; border: 1.5px solid #E0E0E0; border-radius: 12px; padding: 14px 16px; cursor: pointer; margin-bottom: 1rem; transition: all 0.2s; }
+.sb-toggle.on { border-color: #1A5F7A; background: rgba(26,95,122,0.04); }
+.sw-track { width: 40px; height: 22px; border-radius: 11px; background: #D0D0D0; position: relative; transition: background 0.2s; flex-shrink: 0; }
+.sw-track.on { background: #1A5F7A; }
+.sw-knob  { width: 18px; height: 18px; border-radius: 50%; background: white; position: absolute; top: 2px; left: 2px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.sw-track.on .sw-knob { left: 20px; }
+.sb-fields { display: none; }
+.sb-fields.vis { display: block; }
+
+/* Wizard footer */
+.wfooter { display: flex; gap: 10px; margin-top: 1.5rem; align-items: center; }
+.btn-primary {
+  flex: 1; background: #1A5F7A; color: white; border: none; border-radius: 12px;
+  padding: 13px; font-size: 15px; font-weight: 500; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+}
+.btn-primary:hover { background: #154f67; }
+.btn-secondary {
+  background: none; color: #888; border: 1.5px solid #E0E0E0; border-radius: 12px;
+  padding: 13px 20px; font-size: 15px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+}
+.btn-secondary:hover { border-color: #AAA; color: #555; }
+
+/* ── PASSCODE MODAL ── */
+#pc-modal {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+}
+#pc-modal.hidden { display: none; }
+.pc-card { background: white; border-radius: 20px; width: 100%; max-width: 340px; padding: 1.75rem; }
+.pc-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 500; color: #1A1A1A; margin-bottom: 0.4rem; }
+.pc-sub   { font-size: 13px; color: #888; margin-bottom: 1.5rem; line-height: 1.5; }
+.pc-step  { font-size: 12px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; text-align: center; }
+.pc-dots  { display: flex; gap: 12px; justify-content: center; margin-bottom: 1.25rem; }
+.pcdot    { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #C0C0C0; background: transparent; transition: all 0.15s; }
+.pcdot.filled { background: #1A5F7A; border-color: #1A5F7A; }
+.pcdot.error  { background: #E05555; border-color: #E05555; }
+.pc-pad   { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 1rem; }
+.pckey    { height: 52px; border-radius: 12px; background: #F4F4F4; border: none; cursor: pointer; font-size: 18px; font-family: 'DM Sans', sans-serif; color: #1A1A1A; transition: background 0.1s; -webkit-tap-highlight-color: transparent; }
+.pckey:hover  { background: #E8E8E8; }
+.pckey:active { background: #D8D8D8; }
+.pc-err   { font-size: 13px; color: #E05555; text-align: center; min-height: 20px; margin-bottom: 0.5rem; }
+
+/* ── MAIN APP ── */
+#main-app { display: none; min-height: 100vh; flex-direction: column; }
+#main-app.vis { display: flex; }
+
+.app-header {
+  background: var(--primary); padding: 0.875rem 1.25rem;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 10;
+}
+.hdr-brand  { display: flex; align-items: center; gap: 10px; }
+.hdr-mark   { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 12px; font-weight: 600; color: var(--primary); }
+.hdr-name   { font-size: 15px; font-weight: 500; color: white; line-height: 1.1; }
+.hdr-tag    { font-size: 10px; color: rgba(255,255,255,0.6); line-height: 1.1; }
+.hdr-btn    { width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,0.15); border: none; color: white; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+.hdr-btn:hover { background: rgba(255,255,255,0.25); }
+
+.biz-switcher { background: var(--primary); padding: 0 1.25rem 0.75rem; display: flex; gap: 6px; overflow-x: auto; }
+.biz-tab { padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; border: none; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+.biz-tab.active { background: var(--accent); color: var(--primary); }
+
+.app-nav { background: var(--bg); border-bottom: 1px solid rgba(0,0,0,0.08); display: flex; padding: 0 1.25rem; gap: 4px; }
+.nav-tab { padding: 12px 16px; font-size: 14px; font-weight: 500; color: var(--tx); opacity: 0.5; border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+.nav-tab.active { opacity: 1; border-bottom-color: var(--accent); }
+
+.app-content { flex: 1; padding: 1.25rem; background: var(--bg); }
+.view { display: none; }
+.view.active { display: block; }
+
+/* Summary cards */
+.sum-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.25rem; }
+.sum-card  { border-radius: 14px; padding: 14px 16px; background: color-mix(in srgb, var(--primary) 12%, transparent); border: 0.5px solid color-mix(in srgb, var(--primary) 25%, transparent); }
+.sum-lbl   { font-size: 11px; color: var(--tx); opacity: 0.6; margin-bottom: 4px; }
+.sum-val   { font-size: 22px; font-weight: 500; color: var(--tx); font-family: 'Playfair Display', serif; }
+
+/* Filter chips */
+.filter-bar { display: flex; gap: 6px; margin-bottom: 1.25rem; overflow-x: auto; }
+.fchip { padding: 6px 14px; border-radius: 20px; font-size: 13px; border: 1.5px solid color-mix(in srgb, var(--primary) 30%, transparent); background: none; color: var(--tx); cursor: pointer; white-space: nowrap; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+.fchip.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* Expense list */
+.sec-title { font-size: 13px; font-weight: 500; color: var(--tx); opacity: 0.5; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.exp-list  { display: flex; flex-direction: column; gap: 6px; }
+.exp-row   { background: color-mix(in srgb, var(--primary) 6%, white); border: 0.5px solid color-mix(in srgb, var(--primary) 15%, transparent); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.15s; }
+.exp-row:hover { background: color-mix(in srgb, var(--primary) 10%, white); }
+.exp-badge { width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0; background: color-mix(in srgb, var(--accent) 20%, transparent); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.exp-info  { flex: 1; min-width: 0; }
+.exp-name  { font-size: 14px; font-weight: 500; color: var(--tx); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.exp-meta  { font-size: 12px; color: var(--tx); opacity: 0.55; }
+.exp-repeat{ font-size: 10px; color: var(--accent); font-weight: 500; background: color-mix(in srgb, var(--accent) 15%, transparent); border-radius: 4px; padding: 1px 6px; margin-left: 6px; }
+.exp-amt   { font-size: 15px; font-weight: 500; color: var(--tx); font-family: 'Playfair Display', serif; flex-shrink: 0; }
+.exp-empty { text-align: center; padding: 2rem; color: #AAA; font-size: 14px; }
+
+/* FAB */
+.fab { position: fixed; bottom: 2rem; right: 1.5rem; width: 54px; height: 54px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 26px; color: var(--primary); box-shadow: 0 4px 16px rgba(0,0,0,0.15); transition: all 0.2s; z-index: 50; }
+.fab:hover { transform: scale(1.08); }
+
+/* Log expense modal */
+.modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; justify-content: center; }
+.modal-overlay.hidden { display: none; }
+.modal-sheet { background: white; border-radius: 20px 20px 0 0; width: 100%; max-width: 600px; padding: 1.5rem 1.5rem 2rem; max-height: 90vh; overflow-y: auto; }
+.modal-handle { width: 40px; height: 4px; border-radius: 2px; background: #E0E0E0; margin: 0 auto 1.5rem; }
+.modal-title  { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 500; color: #1A1A1A; margin-bottom: 1.25rem; }
+.form-row { margin-bottom: 1rem; }
+.form-row .flabel { display: block; margin-bottom: 6px; }
+.fselect  { width: 100%; border: 1.5px solid #E0E0E0; border-radius: 10px; padding: 10px 14px; font-size: 15px; font-family: 'DM Sans', sans-serif; color: #1A1A1A; outline: none; background: white; cursor: pointer; transition: border-color 0.2s; }
+.fselect:focus { border-color: #1A5F7A; }
+.repeat-row { display: flex; align-items: center; gap: 10px; border: 1.5px solid #E0E0E0; border-radius: 10px; padding: 10px 14px; cursor: pointer; margin-bottom: 1rem; transition: all 0.2s; }
+.repeat-row.on { border-color: #1A5F7A; background: rgba(26,95,122,0.04); }
+.rep-chk  { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #C0C0C0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+.repeat-row.on .rep-chk { background: #1A5F7A; border-color: #1A5F7A; color: white; }
+.repeat-row.on .rep-chk::after { content: "✓"; font-size: 12px; }
+.receipt-zone { border: 1.5px dashed #C0C0C0; border-radius: 10px; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; background: #FAFAFA; }
+.receipt-zone:hover { border-color: #1A5F7A; }
+
+/* Settings */
+.set-sec   { margin-bottom: 1.5rem; }
+.set-title { font-size: 12px; font-weight: 500; color: var(--tx); opacity: 0.5; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+.set-card  { background: white; border-radius: 14px; border: 0.5px solid rgba(0,0,0,0.08); overflow: hidden; }
+.set-row   { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 0.5px solid rgba(0,0,0,0.06); cursor: pointer; transition: background 0.15s; }
+.set-row:last-child { border-bottom: none; }
+.set-row:hover { background: rgba(0,0,0,0.02); }
+.set-lbl   { font-size: 14px; color: var(--tx); }
+.set-val   { font-size: 13px; color: var(--tx); opacity: 0.5; }
+.set-chev  { font-size: 16px; color: #C0C0C0; }
+
+/* Export */
+.exp-card  { background: white; border-radius: 14px; border: 0.5px solid rgba(0,0,0,0.08); padding: 1.25rem; margin-bottom: 1rem; }
+.exp-card h3 { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 500; color: var(--tx); margin-bottom: 0.5rem; }
+.exp-card p  { font-size: 13px; color: var(--tx); opacity: 0.6; line-height: 1.5; margin-bottom: 1rem; }
+.btn-export  { width: 100%; padding: 12px; border-radius: 10px; background: var(--primary); color: white; border: none; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity 0.2s; }
+.btn-export:hover { opacity: 0.85; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ══ LOCK SCREEN ══ -->
+<div id="lock-screen" class="hidden">
+  <div class="lock-logo">
+    <div class="lock-mark" id="lock-mark"></div>
+    <div class="lock-name" id="lock-app-name">OwnIt Lite</div>
+    <div class="lock-tag">powered by OwnIt</div>
+  </div>
+  <div class="lock-prompt">Enter your 6-digit passcode</div>
+  <div class="lock-dots" id="lock-dots">
+    <div class="ldot"></div><div class="ldot"></div><div class="ldot"></div>
+    <div class="ldot"></div><div class="ldot"></div><div class="ldot"></div>
+  </div>
+  <div class="lock-pad" id="lock-pad">
+    <button class="lkey" data-k="1">1<span class="lkey-sub"></span></button>
+    <button class="lkey" data-k="2">2<span class="lkey-sub">ABC</span></button>
+    <button class="lkey" data-k="3">3<span class="lkey-sub">DEF</span></button>
+    <button class="lkey" data-k="4">4<span class="lkey-sub">GHI</span></button>
+    <button class="lkey" data-k="5">5<span class="lkey-sub">JKL</span></button>
+    <button class="lkey" data-k="6">6<span class="lkey-sub">MNO</span></button>
+    <button class="lkey" data-k="7">7<span class="lkey-sub">PQRS</span></button>
+    <button class="lkey" data-k="8">8<span class="lkey-sub">TUV</span></button>
+    <button class="lkey" data-k="9">9<span class="lkey-sub">WXYZ</span></button>
+    <div></div>
+    <button class="lkey" data-k="0">0</button>
+    <button class="lkey" data-k="del">&#x232B;</button>
+  </div>
+  <div class="lock-msg" id="lock-msg"></div>
+  <div class="lock-lockout hidden" id="lock-lockout"></div>
+</div>
+
+<!-- ══ PASSCODE MODAL ══ -->
+<div id="pc-modal" class="hidden">
+  <div class="pc-card">
+    <div class="pc-title" id="pc-title">Set a passcode</div>
+    <div class="pc-sub"   id="pc-sub">Choose a 6-digit passcode to protect your app.</div>
+    <div class="pc-step"  id="pc-step-lbl">Enter new passcode</div>
+    <div class="pc-dots"  id="pc-dots">
+      <div class="pcdot"></div><div class="pcdot"></div><div class="pcdot"></div>
+      <div class="pcdot"></div><div class="pcdot"></div><div class="pcdot"></div>
+    </div>
+    <div class="pc-pad" id="pc-pad">
+      <button class="pckey" data-k="1">1</button>
+      <button class="pckey" data-k="2">2</button>
+      <button class="pckey" data-k="3">3</button>
+      <button class="pckey" data-k="4">4</button>
+      <button class="pckey" data-k="5">5</button>
+      <button class="pckey" data-k="6">6</button>
+      <button class="pckey" data-k="7">7</button>
+      <button class="pckey" data-k="8">8</button>
+      <button class="pckey" data-k="9">9</button>
+      <div></div>
+      <button class="pckey" data-k="0">0</button>
+      <button class="pckey" data-k="del">&#x232B;</button>
+    </div>
+    <div class="pc-err" id="pc-err"></div>
+    <button class="btn-secondary" id="pc-skip" style="width:100%">Skip for now</button>
+  </div>
+</div>
+
+<!-- ══ WIZARD ══ -->
+<div id="wizard">
+  <div class="wcard">
+    <div class="wlogo">
+      <div class="wlogo-mark" id="wlogo-mark">Oi</div>
+      <div class="wlogo-name">OwnIt Lite <span class="wlogo-sub">Let's get you set up</span></div>
+    </div>
+    <div class="wdots" id="wdots"></div>
+
+    <!-- Step 1: App name + businesses -->
+    <div class="wstep active" data-step="1">
+      <h2>Name your app</h2>
+      <p>This appears in your app header. You can change it later in Settings.</p>
+      <div class="flabel">App name</div>
+      <input class="finput" id="wiz-name" type="text" placeholder="e.g. Harper's Tracker" maxlength="40">
+      <div class="flabel">Your businesses <span style="color:#AAA;font-weight:400;font-size:11px">(up to 3)</span></div>
+      <div class="biz-list" id="biz-list"></div>
+      <button class="add-biz" id="add-biz">+ Add a business</button>
+    </div>
+
+    <!-- Step 2: Palette -->
+    <div class="wstep" data-step="2">
+      <h2>Choose your colors</h2>
+      <p>Pick a palette that matches your vibe. See a live preview below.</p>
+      <div class="pal-preview">
+        <div class="pp-header" id="pp-header">
+          <div class="pp-mark" id="pp-mark"></div>
+          <div>
+            <div class="pp-name" id="pp-name">My Business</div>
+            <div class="pp-tag">powered by OwnIt</div>
+          </div>
+        </div>
+        <div class="pp-body" id="pp-body">
+          <div class="pp-cards">
+            <div class="pp-card" id="ppc1"><div class="pp-card-lbl" id="ppl1">Total this month</div><div class="pp-card-val" id="ppv1">$1,240</div></div>
+            <div class="pp-card" id="ppc2"><div class="pp-card-lbl" id="ppl2">Expenses logged</div><div class="pp-card-val" id="ppv2">14</div></div>
+          </div>
+          <div class="pp-row" id="pp-row"><span id="pp-rlbl">Office Supplies</span><span id="pp-ramt" style="font-weight:500">$89.00</span></div>
+        </div>
+      </div>
+      <div class="pal-grid" id="pal-grid"></div>
+    </div>
+
+    <!-- Step 3: Categories (per business — title updates dynamically) -->
+    <div class="wstep" data-step="3">
+      <h2 id="cat-title">Select categories</h2>
+      <p id="cat-sub">Select expense categories mapped to IRS Schedule C lines.</p>
+      <div class="cat-grid" id="cat-grid"></div>
+      <div style="font-size:12px;color:#888">You can add custom categories in Settings after setup.</div>
+    </div>
+
+    <!-- Step 4: Supabase -->
+    <div class="wstep" data-step="4">
+      <h2>Cloud sync <span style="font-size:14px;color:#AAA;font-family:sans-serif;font-weight:400">(optional)</span></h2>
+      <p>Your data saves on this device automatically. Enable cloud sync to access from any device.</p>
+      <div class="sb-toggle" id="sb-toggle">
+        <div class="sw-track" id="sb-track"><div class="sw-knob"></div></div>
+        <div><div style="font-size:14px;color:#333">Enable cloud sync</div><div style="font-size:12px;color:#888">Requires Supabase credentials</div></div>
+      </div>
+      <div class="sb-fields" id="sb-fields">
+        <div class="flabel">Supabase project URL</div>
+        <input class="finput" id="sb-url" type="text" placeholder="https://xxxx.supabase.co">
+        <div class="flabel">Anon / public key</div>
+        <input class="finput" id="sb-key" type="text" placeholder="eyJhbGci...">
+      </div>
+      <div style="background:#FFF8EC;border-radius:10px;padding:12px 14px;font-size:13px;color:#7A5A18;line-height:1.5">
+        💡 You can connect cloud sync later in Settings. Your data stays safe on this device in the meantime.
+      </div>
+    </div>
+
+    <div class="wfooter">
+      <button class="btn-secondary" id="wiz-back" style="display:none">Back</button>
+      <button class="btn-primary"   id="wiz-next">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<div id="main-app">
+  <header class="app-header">
+    <div class="hdr-brand">
+      <div class="hdr-mark" id="hdr-mark"></div>
+      <div>
+        <div class="hdr-name" id="hdr-name">My App</div>
+        <div class="hdr-tag">powered by OwnIt</div>
+      </div>
+    </div>
+    <button class="hdr-btn" id="settings-btn">⚙️</button>
+  </header>
+  <div class="biz-switcher" id="biz-switcher"></div>
+  <nav class="app-nav">
+    <button class="nav-tab active" data-view="expenses">Expenses</button>
+    <button class="nav-tab" data-view="export">Export</button>
+  </nav>
+  <main class="app-content">
+
+    <!-- Expenses -->
+    <div class="view active" id="view-expenses">
+      <div class="sum-cards">
+        <div class="sum-card"><div class="sum-lbl">This period</div><div class="sum-val" id="sum-total">$0.00</div></div>
+        <div class="sum-card"><div class="sum-lbl">Logged</div><div class="sum-val" id="sum-count">0</div></div>
+      </div>
+      <div class="filter-bar" id="filter-bar">
+        <button class="fchip active" data-f="all">All time</button>
+        <button class="fchip" data-f="year">This year</button>
+        <button class="fchip" data-f="q1">Q1</button>
+        <button class="fchip" data-f="q2">Q2</button>
+        <button class="fchip" data-f="q3">Q3</button>
+        <button class="fchip" data-f="q4">Q4</button>
+        <button class="fchip" data-f="month">This month</button>
+      </div>
+      <div class="sec-title">Recent expenses</div>
+      <div class="exp-list" id="exp-list"></div>
+    </div>
+
+    <!-- Export -->
+    <div class="view" id="view-export">
+
+      <!-- ── Section 1: Expense Log ── -->
+      <div class="exp-card">
+        <h3>Expense Log</h3>
+        <p>Branded printable summary per business. Opens in a new tab — print or save as PDF.</p>
+        <div id="export-log-list" style="margin-bottom:0.75rem"></div>
+        <button class="btn-export" id="btn-all-log">&#8659; Print All Businesses</button>
+      </div>
+
+      <!-- ── Section 2: Schedule C Summary ── -->
+      <div class="exp-card">
+        <h3>Schedule C Summary</h3>
+        <p>IRS-ready summary &mdash; choose a business:</p>
+
+        <!-- Business tabs for Schedule C -->
+        <div id="sched-biz-tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem"></div>
+
+        <!-- Period filter -->
+        <div class="filter-bar" id="export-filter-bar" style="margin-bottom:1rem">
+          <button class="fchip active" data-ef="all">All time</button>
+          <button class="fchip" data-ef="year">This year</button>
+          <button class="fchip" data-ef="q1">Q1</button>
+          <button class="fchip" data-ef="q2">Q2</button>
+          <button class="fchip" data-ef="q3">Q3</button>
+          <button class="fchip" data-ef="q4">Q4</button>
+          <button class="fchip" data-ef="month">This month</button>
+        </div>
+
+        <!-- Schedule C table -->
+        <div id="sched-c-table" style="margin-bottom:1rem"></div>
+
+        <!-- Per-business: CSV + Print -->
+        <div id="export-sched-list" style="margin-bottom:0.75rem"></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-export" id="btn-all-sched" style="flex:1">&#8659; All Businesses &mdash; CSV</button>
+          <button class="btn-export" id="btn-all-sched-print" style="flex:1">&#8194;&#128438; All Businesses &mdash; Print</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Settings -->
+    <div class="view" id="view-settings">
+      <div class="set-sec">
+        <div class="set-title">App</div>
+        <div class="set-card">
+          <div class="set-row" id="set-name"><span class="set-lbl">App name</span><span class="set-val" id="set-name-val">—</span><span class="set-chev">›</span></div>
+          <div class="set-row" id="set-pal"><span class="set-lbl">Color palette</span><span class="set-val" id="set-pal-val">—</span><span class="set-chev">›</span></div>
+        </div>
+      </div>
+      <div class="set-sec">
+        <div class="set-title">Businesses</div>
+        <div class="set-card" id="set-biz-card"></div>
+      </div>
+      <div class="set-sec">
+        <div class="set-title">Vehicle Use</div>
+        <div class="set-card">
+          <div class="set-row" id="set-car-pct">
+            <span class="set-lbl">Business use %</span>
+            <span class="set-val" id="set-car-pct-val">—</span>
+            <span class="set-chev">›</span>
+          </div>
+        </div>
+      </div>
+      <div class="set-sec">
+        <div class="set-title">Categories</div>
+        <div class="set-card">
+          <div class="set-row" id="set-cats"><span class="set-lbl">Manage categories</span><span class="set-val" id="set-cats-val">—</span><span class="set-chev">›</span></div>
+        </div>
+      </div>
+      <div class="set-sec">
+        <div class="set-title">Security</div>
+        <div class="set-card">
+          <div class="set-row" id="set-passcode"><span class="set-lbl">Passcode</span><span class="set-val" id="set-pc-val">Not set</span><span class="set-chev">›</span></div>
+        </div>
+      </div>
+      <div class="set-sec">
+        <div class="set-title">Cloud sync</div>
+        <div class="set-card">
+          <div class="set-row" id="set-sync"><span class="set-lbl">Supabase sync</span><span class="set-val" id="set-sync-val">Not connected</span><span class="set-chev">›</span></div>
+        </div>
+      </div>
+      <div class="set-sec">
+        <div class="set-title">Data backup</div>
+        <div class="set-card">
+          <div class="set-row" id="set-backup"><span class="set-lbl">Export backup</span><span class="set-val">Save all data as a file</span><span class="set-chev">›</span></div>
+          <div class="set-row" id="set-import"><span class="set-lbl">Import backup</span><span class="set-val">Restore from backup file</span><span class="set-chev">›</span></div>
+        </div>
+      </div>
+      <div class="set-sec">
+        <div class="set-card">
+          <div class="set-row" id="set-reset"><span class="set-lbl" style="color:#E05555">Reset app data</span><span class="set-chev">›</span></div>
+        </div>
+      </div>
+      <input type="file" id="import-file" accept=".json" style="display:none">
+    </div>
+
+  </main>
+  <button class="fab" id="fab">+</button>
+</div>
+
+<!-- ══ LOG EXPENSE MODAL ══ -->
+<div class="modal-overlay hidden" id="log-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Log an expense</div>
+    <div class="form-row"><label class="flabel" for="exp-date">Date</label><input class="finput" id="exp-date" type="date"></div>
+    <div class="form-row"><label class="flabel" for="exp-vendor">Vendor</label><input class="finput" id="exp-vendor" type="text" placeholder=""></div>
+    <div class="form-row"><label class="flabel" for="exp-cat">Category</label><select class="fselect" id="exp-cat"></select></div>
+    <div class="form-row"><label class="flabel" for="exp-amt">Amount ($)</label><input class="finput" id="exp-amt" type="number" placeholder="0.00" min="0" step="0.01"></div>
+
+    <!-- Car & Truck sub-options (shown only when Car & Truck is selected) -->
+    <div id="car-truck-row" style="display:none;margin-bottom:1rem">
+      <div style="background:#F4F8FA;border-radius:12px;padding:14px 16px">
+        <div class="flabel" style="margin-bottom:10px">Deduction method</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button class="car-method-btn active" id="car-actual-btn" data-method="actual"
+            style="flex:1;padding:8px;border-radius:8px;border:1.5px solid #1A5F7A;background:#1A5F7A;color:white;font-size:13px;font-family:inherit;cursor:pointer">
+            Actual Expenses
+          </button>
+          <button class="car-method-btn" id="car-mileage-btn" data-method="mileage"
+            style="flex:1;padding:8px;border-radius:8px;border:1.5px solid #E0E0E0;background:white;color:#555;font-size:13px;font-family:inherit;cursor:pointer">
+            Standard Mileage
+          </button>
+        </div>
+        <div id="car-actual-fields">
+          <div style="font-size:12px;color:#888;line-height:1.5;margin-bottom:10px">
+            <strong style="color:#555">Actual Expense Method</strong> — Enter the full cost of the vehicle expense, then set your business use %. The deductible amount will be calculated automatically.
+          </div>
+          <div style="font-size:13px;color:#555;margin-bottom:8px">
+            Business use: <strong id="car-pct-display" style="color:#1A5F7A"></strong>%
+            <span style="font-size:11px;color:#AAA;margin-left:6px">(edit in Settings)</span>
+          </div>
+          <div id="car-actual-calc" style="font-size:12px;color:#1A5F7A;font-weight:500;margin-bottom:4px"></div>
+        </div>
+        <div id="car-mileage-fields" style="display:none">
+          <div style="font-size:12px;color:#888;line-height:1.5;margin-bottom:10px">
+            <strong style="color:#555">Standard Mileage Rate</strong> — Multiply business miles by the official rate ($0.725/mi). Covers gas, maintenance, insurance, and depreciation.
+          </div>
+          <label class="flabel">Business miles driven</label>
+          <input class="finput" id="exp-miles" type="number" placeholder="e.g. 24.5" min="0" step="0.1" style="margin-bottom:6px">
+          <div id="mileage-calc" style="font-size:12px;color:#1A5F7A;font-weight:500;margin-bottom:4px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row"><label class="flabel" for="exp-notes">Notes <span style="color:#AAA;font-weight:400">(optional)</span></label><input class="finput" id="exp-notes" type="text" placeholder=""></div>
+    <div class="repeat-row" id="repeat-row">
+      <div class="rep-chk" id="rep-chk"></div>
+      <div style="flex:1">
+        <div style="font-size:14px;color:#555">Recurring expense</div>
+        <div style="font-size:12px;color:#AAA">Auto-remind when due again</div>
+      </div>
+      <select id="repeat-freq" class="fselect" style="width:auto;padding:4px 10px;font-size:13px;display:none;margin-left:8px">
+        <option value="monthly">Monthly</option>
+        <option value="weekly">Weekly</option>
+        <option value="annually">Annually</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label class="flabel">Receipt <span style="color:#AAA;font-weight:400">(optional)</span></label>
+      <div class="receipt-zone" id="receipt-zone"><p style="font-size:13px;color:#888">📎 Tap to attach a receipt</p></div>
+      <input type="file" id="receipt-file" accept="image/*,.pdf" style="display:none">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:0.5rem">
+      <button class="btn-secondary" id="modal-cancel">Cancel</button>
+      <button class="btn-primary"   id="modal-save">Save expense</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════
+
+var PALETTES = [
+  {id:"ocean-depth",      name:"Ocean Depth",      bg:"#EBF4F8", pr:"#1A5F7A", ac:"#2E9CCA", tx:"#1C2B35"},
+  {id:"navy-tan",         name:"Navy & Tan",        bg:"#F0E5D8", pr:"#007A8E", ac:"#A2C2D4", tx:"#003B5C"},
+  {id:"dusty-rose",       name:"Dusty Rose",        bg:"#FAF0F0", pr:"#8C4A5A", ac:"#C97A8A", tx:"#2E1A20"},
+  {id:"slate-gold",       name:"Slate & Gold",      bg:"#F2F4F6", pr:"#3A4A5C", ac:"#C4A244", tx:"#1A2030"},
+  {id:"olive-cream",      name:"Olive & Cream",     bg:"#F6F4EC", pr:"#5A6030", ac:"#9AA050", tx:"#1E2010"},
+  {id:"midnight-plum",    name:"Midnight Plum",     bg:"#F0EEF8", pr:"#4A3870", ac:"#8A6CB8", tx:"#1C1530"},
+  {id:"terracotta",       name:"Terracotta",        bg:"#FAF0EB", pr:"#8C4A2E", ac:"#C47A5A", tx:"#2E1810"},
+  {id:"blue-goldenrod",   name:"Blue & Goldenrod",  bg:"#EEF4FF", pr:"#2B4EA8", ac:"#E8C84A", tx:"#0E1E40"},
+  {id:"warm-charcoal",    name:"Warm Charcoal",     bg:"#F6F4F0", pr:"#4A3E30", ac:"#8A7A60", tx:"#1C1610"},
+  {id:"berry-cream",      name:"Berry & Cream",     bg:"#F8F0F6", pr:"#6A2A5A", ac:"#B05A98", tx:"#2A1024"},
+  {id:"teal-linen",       name:"Teal & Linen",      bg:"#F4F8F6", pr:"#2A6A64", ac:"#50AEA4", tx:"#102420"},
+  {id:"golden-hour",      name:"Golden Hour",       bg:"#FBF5E8", pr:"#7A5A18", ac:"#C8942A", tx:"#2E2008"},
+  {id:"peach-blush",      name:"Peach Blush",       bg:"#FFF4EE", pr:"#F4B89A", ac:"#E8845A", tx:"#3A1A0A"},
+  {id:"peach-wisteria",   name:"Peach & Wisteria",  bg:"#FFF0E0", pr:"#C97ABE", ac:"#F4C3A0", tx:"#3A1A30"},
+  {id:"earthen-spice",    name:"Earthen Spice",     bg:"#FFF8DC", pr:"#5B3A29", ac:"#8FBC8F", tx:"#2E1A0A"}
+];
+
+var ICON_MAP = {
+  "ocean-depth": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#1A5F7A\" stroke=\"#2E9CCA\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#2E9CCA\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#2E9CCA\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#EBF4F8\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#2E9CCA\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#2E9CCA\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#1A5F7A\" stroke=\"#2E9CCA\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#2E9CCA\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#2E9CCA\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#EBF4F8\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#2E9CCA\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#2E9CCA\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" },
+  "navy-tan": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#007A8E\" stroke=\"#A2C2D4\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#A2C2D4\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#A2C2D4\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#F0E5D8\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#A2C2D4\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#A2C2D4\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#007A8E\" stroke=\"#A2C2D4\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#A2C2D4\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#A2C2D4\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#F0E5D8\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#A2C2D4\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#A2C2D4\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" },
+  "dusty-rose": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#C97A8A\" stroke=\"#8C4A5A\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#8C4A5A\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#8C4A5A\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#FAF0F0\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#8C4A5A\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#8C4A5A\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#C97A8A\" stroke=\"#8C4A5A\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#8C4A5A\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#8C4A5A\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#FAF0F0\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#8C4A5A\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#8C4A5A\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" },
+  "slate-gold": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#3A4A5C\" stroke=\"#C4A244\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#C4A244\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#C4A244\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#F2F4F6\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#C4A244\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#C4A244\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#3A4A5C\" stroke=\"#C4A244\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#C4A244\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#C4A244\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#F2F4F6\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#C4A244\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#C4A244\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" },
+  "olive-cream": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#5A6030\" stroke=\"#9AA050\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#9AA050\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#9AA050\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#F6F4EC\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#9AA050\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#9AA050\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#5A6030\" stroke=\"#9AA050\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#9AA050\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#9AA050\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#F6F4EC\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#9AA050\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#9AA050\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" },
+  "midnight-plum": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#8A6CB8\" stroke=\"#4A3870\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#4A3870\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#4A3870\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#F0EEF8\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#4A3870\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#4A3870\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#8A6CB8\" stroke=\"#4A3870\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#4A3870\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#4A3870\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#F0EEF8\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#4A3870\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#4A3870\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" },
+  "terracotta": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#8C4A2E\" stroke=\"#C47A5A\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#C47A5A\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#C47A5A\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#FAF0EB\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#C47A5A\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#C47A5A\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#8C4A2E\" stroke=\"#C47A5A\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#C47A5A\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#C47A5A\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#FAF0EB\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#C47A5A\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#C47A5A\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" },
+  "blue-goldenrod": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#2B4EA8\" stroke=\"#E8C84A\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#E8C84A\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#E8C84A\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#EEF4FF\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#E8C84A\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#E8C84A\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#2B4EA8\" stroke=\"#E8C84A\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#E8C84A\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#E8C84A\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#EEF4FF\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#E8C84A\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#E8C84A\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" },
+  "warm-charcoal": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#4A3E30\" stroke=\"#8A7A60\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#8A7A60\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#8A7A60\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#F6F4F0\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#8A7A60\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#8A7A60\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#4A3E30\" stroke=\"#8A7A60\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#8A7A60\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#8A7A60\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#F6F4F0\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#8A7A60\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#8A7A60\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" },
+  "berry-cream": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#6A2A5A\" stroke=\"#B05A98\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#B05A98\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#B05A98\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#F8F0F6\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#B05A98\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#B05A98\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#6A2A5A\" stroke=\"#B05A98\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#B05A98\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#B05A98\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#F8F0F6\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#B05A98\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#B05A98\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" },
+  "teal-linen": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#2A6A64\" stroke=\"#50AEA4\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#50AEA4\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#50AEA4\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#F4F8F6\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#50AEA4\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#50AEA4\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#2A6A64\" stroke=\"#50AEA4\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#50AEA4\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#50AEA4\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#F4F8F6\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#50AEA4\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#50AEA4\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" },
+  "golden-hour": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#C8942A\" stroke=\"#7A5A18\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#7A5A18\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#7A5A18\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#FBF5E8\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#7A5A18\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#7A5A18\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#C8942A\" stroke=\"#7A5A18\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#7A5A18\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#7A5A18\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#FBF5E8\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#7A5A18\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#7A5A18\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" },
+  "peach-blush": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#F4B89A\" stroke=\"#E8845A\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#E8845A\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#E8845A\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#FFF4EE\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#E8845A\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#E8845A\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#F4B89A\" stroke=\"#E8845A\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#E8845A\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#E8845A\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#FFF4EE\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#E8845A\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#E8845A\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" },
+  "peach-wisteria": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#C97ABE\" stroke=\"#F4C3A0\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#F4C3A0\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#F4C3A0\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#FFF0E0\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#F4C3A0\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#F4C3A0\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#C97ABE\" stroke=\"#F4C3A0\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#F4C3A0\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#F4C3A0\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#FFF0E0\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#F4C3A0\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#F4C3A0\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" },
+  "earthen-spice": { sm: "<svg viewBox=\"0 0 200 200\" width=\"32\" height=\"32\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#5B3A29\" stroke=\"#8FBC8F\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#8FBC8F\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#8FBC8F\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#FFF8DC\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#8FBC8F\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#8FBC8F\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>", lg: "<svg viewBox=\"0 0 200 200\" width=\"56\" height=\"56\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"3\" y=\"3\" width=\"194\" height=\"194\" rx=\"42\" fill=\"#5B3A29\" stroke=\"#8FBC8F\" stroke-width=\"6\"/><polygon points=\"92,146 30,146 55,76\" fill=\"#8FBC8F\"/><polygon points=\"108,146 168,146 142,96\" fill=\"#8FBC8F\"/><polygon points=\"100,50 124,106 124,160 76,160 76,106\" fill=\"#FFF8DC\"/><rect x=\"28\" y=\"141\" width=\"144\" height=\"22\" rx=\"6\" fill=\"#8FBC8F\"/><circle cx=\"55\" cy=\"76\" r=\"9\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"10\" fill=\"#FFFFFF\"/><circle cx=\"142\" cy=\"96\" r=\"8\" fill=\"#FFFFFF\"/><circle cx=\"100\" cy=\"50\" r=\"16\" fill=\"none\" stroke=\"#8FBC8F\" stroke-width=\"3\" stroke-dasharray=\"4 3\"/></svg>" }
+};
+
+function getIcon(palId, size) {
+  var icons = ICON_MAP[palId] || ICON_MAP["ocean-depth"];
+  return size === "lg" ? icons.lg : icons.sm;
+}
+
+var SCHED_C = [
+  {id:"advertising",       name:"Advertising",               line:"Line 8",   e:"📢"},
+  {id:"car_truck",         name:"Car & Truck",               line:"Line 9",   e:"🚗"},
+  {id:"commissions",       name:"Commissions & Fees",        line:"Line 10",  e:"🤝"},
+  {id:"contract_labor",    name:"Contract Labor",            line:"Line 11",  e:"👷"},
+  {id:"depletion",         name:"Depletion",                 line:"Line 12",  e:"⛏️"},
+  {id:"depreciation",      name:"Depreciation",              line:"Line 13",  e:"📉"},
+  {id:"employee_benefits", name:"Employee Benefits",         line:"Line 14",  e:"💊"},
+  {id:"insurance",         name:"Insurance",                 line:"Line 15",  e:"🛡️"},
+  {id:"interest_mortgage", name:"Interest – Mortgage",       line:"Line 16a", e:"🏠"},
+  {id:"interest_other",    name:"Interest – Other",          line:"Line 16b", e:"💳"},
+  {id:"legal_prof",        name:"Legal & Professional",      line:"Line 17",  e:"⚖️"},
+  {id:"office_expense",    name:"Office Expense",            line:"Line 18",  e:"🖊️"},
+  {id:"pension",           name:"Pension & Profit Sharing",  line:"Line 19",  e:"🏦"},
+  {id:"rent_vehicles",     name:"Rent – Vehicles/Equipment", line:"Line 20a", e:"🚚"},
+  {id:"rent_property",     name:"Rent – Business Property",  line:"Line 20b", e:"🏢"},
+  {id:"repairs",           name:"Repairs & Maintenance",     line:"Line 21",  e:"🔧"},
+  {id:"supplies",          name:"Supplies",                  line:"Line 22",  e:"📦"},
+  {id:"taxes_licenses",    name:"Taxes & Licenses",          line:"Line 23",  e:"📋"},
+  {id:"travel",            name:"Travel",                    line:"Line 24a", e:"✈️"},
+  {id:"meals",             name:"Meals (50% deductible)",    line:"Line 24b", e:"🍽️"},
+  {id:"utilities",         name:"Utilities",                 line:"Line 25",  e:"💡"},
+  {id:"wages",             name:"Wages",                     line:"Line 26",  e:"💰"},
+  {id:"other",             name:"Other Expenses",            line:"Line 27a", e:"📝"}
+];
+
+// IRS standard mileage rate — update each January
+var MILEAGE_RATE = 0.725; // 2026 IRS standard mileage rate
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+
+var state = {
+  configured: false,
+  appName: "",
+  businesses: [],
+  activeBiz: 0,
+  paletteId: "ocean-depth",
+  categories: {},   // { bizIndex: [catId, ...] }
+  passcodeHash: null,
+  supabase: { enabled: false, url: "", key: "" },
+  expenses: {},     // { bizIndex: [expense, ...] }
+  filter: "all",
+  carBusinessPct: {},  // { bizIndex: pct } — per-business vehicle use %
+  lastRecurringCheck: null  // date string of last recurring expense check
+};
+
+function loadState() {
+  try {
+    var s = localStorage.getItem("ownitlite");
+    if (s) { state = Object.assign(state, JSON.parse(s)); }
+  } catch(e) {}
+  // Merge config.js
+  if (typeof OWNITLITE_CONFIG !== "undefined") {
+    var c = OWNITLITE_CONFIG;
+    if (c.supabase && c.supabase.url) {
+      state.supabase.url = c.supabase.url;
+      state.supabase.key = c.supabase.anonKey;
+      state.supabase.enabled = true;
+    }
+    if (!state.configured && c.preset) {
+      if (c.preset.appName)   state.appName = c.preset.appName;
+      if (c.preset.paletteId) state.paletteId = c.preset.paletteId;
+      if (c.preset.businesses && c.preset.businesses.length) state.businesses = c.preset.businesses;
+    }
+  }
+}
+
+function saveState() {
+  localStorage.setItem("ownitlite", JSON.stringify(state));
+}
+function getCarPct(bizIdx) {
+  if (!state.carBusinessPct || typeof state.carBusinessPct !== 'object') state.carBusinessPct = {};
+  var v = state.carBusinessPct[bizIdx];
+  return (v !== undefined && v !== null) ? v : 100;
+}
+
+function setCarPct(bizIdx, pct) {
+  if (!state.carBusinessPct || typeof state.carBusinessPct !== 'object') state.carBusinessPct = {};
+  state.carBusinessPct[bizIdx] = pct;
+  saveState();
+}
+
+
+
+// ══════════════════════════════════════
+// PALETTE HELPERS
+// ══════════════════════════════════════
+
+function getPal(id) { return PALETTES.find(function(p){ return p.id===id; }) || PALETTES[0]; }
+
+function applyPalette(id) {
+  document.body.setAttribute("data-palette", id);
+  var hm = document.getElementById("hdr-mark");
+  if (hm) hm.innerHTML = getIcon(id, "sm");
+}
+
+// ══════════════════════════════════════
+// LOCK SCREEN
+// ══════════════════════════════════════
+
+var lockEntry = "";
+var lockFails = 0;
+var lockUntil = 0;
+
+async function sha256(str) {
+  var enc = new TextEncoder().encode(str + "_ownitlite");
+  var buf = await crypto.subtle.digest("SHA-256", enc);
+  return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,"0"); }).join("");
+}
+
+function setLockDots(entry, mode) {
+  var dots = document.querySelectorAll("#lock-dots .ldot");
+  dots.forEach(function(d, i) {
+    d.className = "ldot";
+    if (mode === "error") { d.classList.add("error"); }
+    else if (i < entry.length) { d.classList.add("filled"); }
+  });
+}
+
+function showLockScreen() {
+  if (state.appName) document.getElementById("lock-app-name").textContent = state.appName;
+  // Apply client palette to lock screen
+  var pal = getPal(state.paletteId);
+  var ls = document.getElementById("lock-screen");
+  ls.style.background = pal.pr;
+  var markEl = document.getElementById("lock-mark");
+  if (markEl) markEl.innerHTML = getIcon(state.paletteId, "lg");
+  var keys = ls.querySelectorAll(".lkey");
+  keys.forEach(function(k) {
+    k.style.background = "rgba(255,255,255,0.1)";
+    k.style.color = "white";
+  });
+  lockEntry = "";
+  setLockDots("", "");
+  document.getElementById("lock-msg").textContent = "";
+  document.getElementById("lock-lockout").classList.add("hidden");
+  ls.classList.remove("hidden");
+}
+
+function hideLockScreen() {
+  document.getElementById("lock-screen").classList.add("hidden");
+  sessionStorage.setItem("ownitlite_ok", "1");
+}
+
+document.getElementById("lock-pad").addEventListener("click", function(e) {
+  var btn = e.target.closest(".lkey");
+  if (!btn) return;
+  var now = Date.now();
+  if (lockUntil > now) {
+    document.getElementById("lock-lockout").textContent = "Try again in " + Math.ceil((lockUntil-now)/1000) + "s";
+    return;
+  }
+  var k = btn.dataset.k;
+  if (k === "del") { lockEntry = lockEntry.slice(0,-1); setLockDots(lockEntry,""); document.getElementById("lock-msg").textContent=""; return; }
+  if (lockEntry.length >= 6) return;
+  lockEntry += k;
+  setLockDots(lockEntry, "");
+  if (lockEntry.length === 6) { checkLock(); }
+});
+
+async function checkLock() {
+  var hash = await sha256(lockEntry);
+  if (hash === state.passcodeHash) {
+    lockFails = 0;
+    hideLockScreen();
+    if (!document.getElementById("main-app").classList.contains("vis")) launchApp();
+  } else {
+    lockFails++;
+    setLockDots(lockEntry, "error");
+    if (lockFails >= 5) {
+      lockUntil = Date.now() + 30000;
+      var el = document.getElementById("lock-lockout");
+      el.classList.remove("hidden");
+      var t = setInterval(function() {
+        var r = Math.ceil((lockUntil-Date.now())/1000);
+        if (r <= 0) { clearInterval(t); lockFails=0; el.classList.add("hidden"); el.textContent=""; }
+        else { el.textContent = "Too many attempts. Try again in "+r+"s"; }
+      }, 500);
+    } else {
+      document.getElementById("lock-msg").textContent = "Incorrect. " + (5-lockFails) + " attempts left.";
+    }
+    setTimeout(function(){ lockEntry=""; setLockDots("",""); }, 500);
+  }
+}
+
+// ══════════════════════════════════════
+// PASSCODE MODAL
+// ══════════════════════════════════════
+
+var pcEntry = "";
+var pcFirst = "";
+var pcPhase = 1; // 1=enter, 2=confirm
+var pcAfterSave = null; // callback when done
+
+function setPcDots(entry, mode) {
+  var dots = document.querySelectorAll("#pc-dots .pcdot");
+  dots.forEach(function(d,i) {
+    d.className = "pcdot";
+    if (mode==="error") d.classList.add("error");
+    else if (i < entry.length) d.classList.add("filled");
+  });
+}
+
+function openPcModal(isFirst, afterSave) {
+  pcEntry=""; pcFirst=""; pcPhase=1;
+  pcAfterSave = afterSave || null;
+  document.getElementById("pc-title").textContent    = isFirst ? "Create a passcode" : "Change passcode";
+  document.getElementById("pc-sub").textContent      = isFirst ? "Choose a 6-digit passcode to protect your app." : "Choose a new 6-digit passcode.";
+  document.getElementById("pc-step-lbl").textContent = "Enter new passcode";
+  document.getElementById("pc-err").textContent      = "";
+  document.getElementById("pc-skip").textContent     = isFirst ? "Skip for now" : "Cancel";
+  setPcDots("","");
+  document.getElementById("pc-modal").classList.remove("hidden");
+}
+
+function closePcModal() {
+  document.getElementById("pc-modal").classList.add("hidden");
+}
+
+document.getElementById("pc-pad").addEventListener("click", function(e) {
+  var btn = e.target.closest(".pckey");
+  if (!btn) return;
+  var k = btn.dataset.k;
+  if (k === "del") { pcEntry=pcEntry.slice(0,-1); setPcDots(pcEntry,""); return; }
+  if (pcEntry.length >= 6) return;
+  pcEntry += k;
+  setPcDots(pcEntry,"");
+  if (pcEntry.length === 6) { handlePcEntry(); }
+});
+
+async function handlePcEntry() {
+  if (pcPhase === 1) {
+    pcFirst = pcEntry; pcEntry = ""; pcPhase = 2;
+    document.getElementById("pc-step-lbl").textContent = "Confirm passcode";
+    document.getElementById("pc-err").textContent = "";
+    setPcDots("","");
+  } else {
+    if (pcEntry === pcFirst) {
+      var hash = await sha256(pcEntry);
+      state.passcodeHash = hash;
+      saveState();
+      closePcModal();
+      var pcValEl = document.getElementById("set-pc-val");
+      if (pcValEl) pcValEl.textContent = "Change";
+      sessionStorage.setItem("ownitlite_ok", "1");
+      if (typeof pcAfterSave === "function") pcAfterSave();
+    } else {
+      setPcDots(pcEntry,"error");
+      document.getElementById("pc-err").textContent = "Passcodes don't match. Try again.";
+      setTimeout(function(){ pcPhase=1; pcEntry=""; pcFirst=""; document.getElementById("pc-step-lbl").textContent="Enter new passcode"; setPcDots("",""); document.getElementById("pc-err").textContent=""; }, 900);
+    }
+  }
+}
+
+document.getElementById("pc-skip").addEventListener("click", function() {
+  closePcModal();
+  if (typeof pcAfterSave === "function") pcAfterSave();
+});
+
+document.getElementById("set-passcode").addEventListener("click", function() {
+  if (state.passcodeHash) { openVerifyPcModal(function() { openPcModal(false, null); }); }
+  else { openPcModal(false, null); }
+});
+
+function openVerifyPcModal(onSuccess) {
+  var entry = "";
+  var overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;inset:0;z-index:250;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:1.5rem";
+  overlay.innerHTML = '<div style="background:white;border-radius:20px;width:100%;max-width:340px;padding:1.75rem">'
+    +'<div style="font-family:Georgia,serif;font-size:20px;font-weight:500;margin-bottom:0.4rem">Confirm passcode</div>'
+    +'<div style="font-size:13px;color:#888;margin-bottom:1.5rem">Enter your current passcode to continue.</div>'
+    +'<div style="font-size:12px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.75rem;text-align:center">Enter current passcode</div>'
+    +'<div style="display:flex;gap:12px;justify-content:center;margin-bottom:1.25rem" id="vfy-dots">'
+    +'<div class="pcdot"></div><div class="pcdot"></div><div class="pcdot"></div><div class="pcdot"></div><div class="pcdot"></div><div class="pcdot"></div></div>'
+    +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem" id="vfy-pad">'
+    +'<button class="pckey" data-k="1">1</button><button class="pckey" data-k="2">2</button><button class="pckey" data-k="3">3</button>'
+    +'<button class="pckey" data-k="4">4</button><button class="pckey" data-k="5">5</button><button class="pckey" data-k="6">6</button>'
+    +'<button class="pckey" data-k="7">7</button><button class="pckey" data-k="8">8</button><button class="pckey" data-k="9">9</button>'
+    +'<div></div><button class="pckey" data-k="0">0</button><button class="pckey" data-k="del">&#x232B;</button></div>'
+    +'<div style="font-size:13px;color:#E05555;text-align:center;min-height:20px;margin-bottom:0.5rem" id="vfy-err"></div>'
+    +'<button class="btn-secondary" id="vfy-cancel" style="width:100%">Cancel</button></div>';
+  document.body.appendChild(overlay);
+  function setDots(e, mode) {
+    overlay.querySelectorAll(".pcdot").forEach(function(d,i){ d.className="pcdot"; if(mode==="error") d.classList.add("error"); else if(i<e.length) d.classList.add("filled"); });
+  }
+  overlay.querySelector("#vfy-pad").addEventListener("click", function(ev) {
+    var btn = ev.target.closest(".pckey"); if (!btn) return;
+    var k = btn.dataset.k;
+    if (k==="del") { entry=entry.slice(0,-1); setDots(entry,""); return; }
+    if (entry.length>=6) return;
+    entry+=k; setDots(entry,"");
+    if (entry.length===6) {
+      sha256(entry).then(function(hash) {
+        if (hash===state.passcodeHash) { document.body.removeChild(overlay); onSuccess(); }
+        else {
+          setDots(entry,"error");
+          overlay.querySelector("#vfy-err").textContent="Incorrect passcode.";
+          setTimeout(function(){ entry=""; setDots("",""); overlay.querySelector("#vfy-err").textContent=""; },700);
+        }
+      });
+    }
+  });
+  overlay.querySelector("#vfy-cancel").addEventListener("click", function(){ document.body.removeChild(overlay); });
+}
+
+// ══════════════════════════════════════
+// WIZARD
+// ══════════════════════════════════════
+
+var wizStep  = 1;
+var TOTAL_STEPS = 4;
+var selPalId = "ocean-depth";
+var selCats  = {}; // { bizIdx: [catId] }
+var wizCatBiz = 0;
+var sbOn     = false;
+
+function buildDots() {
+  var el = document.getElementById("wdots");
+  el.innerHTML = "";
+  for (var i=1; i<=TOTAL_STEPS; i++) {
+    var d = document.createElement("div");
+    d.className = "wdot" + (i===wizStep?" active":(i<wizStep?" done":""));
+    el.appendChild(d);
+  }
+}
+
+function showStep(n) {
+  document.querySelectorAll(".wstep").forEach(function(s){ s.classList.remove("active"); });
+  var el = document.querySelector(".wstep[data-step='"+n+"']");
+  if (el) el.classList.add("active");
+  document.getElementById("wiz-back").style.display = n===1 ? "none" : "";
+  document.getElementById("wiz-next").textContent   = n===TOTAL_STEPS ? "Finish setup" : "Continue";
+  wizStep = n;
+  buildDots();
+}
+
+// Business list
+function buildBizList() {
+  var list = document.getElementById("biz-list");
+  list.innerHTML = "";
+  var bizzes = state.businesses.length ? state.businesses : [""];
+  bizzes.forEach(function(b, i) {
+    var row = document.createElement("div");
+    row.className = "biz-row";
+    var rm = bizzes.length > 1 ? '<button class="biz-rm" data-i="'+i+'">×</button>' : "";
+    row.innerHTML = '<input class="finput" type="text" placeholder="Business name" value="'+esc(b||"")+'" data-i="'+i+'" maxlength="40">' + rm;
+    list.appendChild(row);
+  });
+  document.getElementById("add-biz").style.display = bizzes.length >= 3 ? "none" : "";
+}
+
+document.getElementById("biz-list").addEventListener("input", function(e) {
+  if (e.target.matches("input")) {
+    var i = parseInt(e.target.dataset.i);
+    if (!state.businesses[i] && state.businesses[i] !== "") state.businesses.push("");
+    state.businesses[i] = e.target.value;
+  }
+});
+document.getElementById("biz-list").addEventListener("click", function(e) {
+  if (e.target.matches(".biz-rm")) {
+    var i = parseInt(e.target.dataset.i);
+    state.businesses.splice(i, 1);
+    buildBizList();
+  }
+});
+document.getElementById("add-biz").addEventListener("click", function() {
+  if (state.businesses.length < 3) {
+    if (!state.businesses.length) state.businesses = [""];
+    state.businesses.push("");
+    buildBizList();
+  }
+});
+
+// Palette picker
+function buildPalGrid() {
+  var grid = document.getElementById("pal-grid");
+  grid.innerHTML = "";
+  PALETTES.forEach(function(p) {
+    var opt = document.createElement("div");
+    opt.className = "pal-opt" + (p.id===selPalId?" sel":"");
+    opt.innerHTML = '<div class="pal-swatches">'
+      + '<div class="pal-sw" style="background:'+p.bg+'"></div>'
+      + '<div class="pal-sw" style="background:'+p.pr+'"></div>'
+      + '<div class="pal-sw" style="background:'+p.ac+'"></div>'
+      + '<div class="pal-sw" style="background:'+p.tx+'"></div>'
+      + '</div><div class="pal-lbl">'+p.name+'</div>';
+    opt.addEventListener("click", function() {
+      document.querySelectorAll(".pal-opt").forEach(function(o){ o.classList.remove("sel"); });
+      opt.classList.add("sel");
+      selPalId = p.id;
+      updatePalPreview(p);
+    });
+    grid.appendChild(opt);
+  });
+}
+
+function updatePalPreview(p) {
+  document.getElementById("pp-header").style.background = p.pr;
+  document.getElementById("pp-body").style.background   = p.bg;
+  document.getElementById("pp-mark").style.background   = p.ac;
+  document.getElementById("pp-mark").style.color        = p.pr;
+  document.getElementById("pp-name").textContent        = document.getElementById("wiz-name").value || "My Business";
+  ["ppc1","ppc2"].forEach(function(id){
+    document.getElementById(id).style.background = p.pr+"18";
+    document.getElementById(id).style.border     = "0.5px solid "+p.pr+"40";
+  });
+  ["ppl1","ppl2"].forEach(function(id){ document.getElementById(id).style.color = p.tx+"AA"; });
+  ["ppv1","ppv2"].forEach(function(id){ document.getElementById(id).style.color = p.tx; });
+  document.getElementById("pp-row").style.background  = p.pr+"10";
+  document.getElementById("pp-row").style.border      = "0.5px solid "+p.pr+"30";
+  document.getElementById("pp-rlbl").style.color      = p.tx;
+  document.getElementById("pp-ramt").style.color      = p.ac;
+}
+
+document.getElementById("wiz-name").addEventListener("input", function() {
+  document.getElementById("pp-name").textContent = this.value || "My Business";
+});
+
+// Category grid (per biz)
+function buildCatGrid(bizIdx) {
+  wizCatBiz = bizIdx;
+  var bizName = state.businesses[bizIdx] || ("Business "+(bizIdx+1));
+  document.getElementById("cat-title").textContent = "Categories for "+bizName;
+  document.getElementById("cat-sub").textContent   = "Select expense categories for "+bizName+", mapped to IRS Schedule C lines.";
+  if (!selCats[bizIdx]) selCats[bizIdx] = [];
+  var grid = document.getElementById("cat-grid");
+  grid.innerHTML = "";
+  SCHED_C.forEach(function(c) {
+    var isSel = selCats[bizIdx].indexOf(c.id) !== -1;
+    var isCarTruck = c.id === "car_truck";
+    var item  = document.createElement("div");
+    item.className = "cat-item" + (isSel ? " sel" : "");
+
+    // Car & Truck gets a special expandable tile
+    if (isCarTruck) {
+      item.style.flexDirection = "column";
+      item.style.alignItems = "stretch";
+      item.style.gridColumn = "";
+      var topRow = document.createElement("div");
+      topRow.style.cssText = "display:flex;align-items:center;gap:8px";
+      topRow.innerHTML = '<div class="cat-chk">'+(isSel?"✓":"")+'</div>'
+        +'<div class="cat-name">'+ c.e+" "+c.name+'<div class="cat-line">'+c.line+'</div></div>';
+      item.appendChild(topRow);
+
+      // Expanded % section — shown when selected
+      var expanded = document.createElement("div");
+      expanded.style.cssText = "display:"+(isSel?"block":"none")+";margin-top:10px;padding-top:10px;border-top:1px solid #E8E8E8";
+      expanded.innerHTML = '<div style="font-size:11px;color:#888;line-height:1.5;margin-bottom:8px">'
+        + '<strong style="color:#555">Actual Expense Method</strong> — what % of your vehicle use is for business? Used to calculate deductible amounts. You can update this later in Settings.' + '</div>'
+        + '<div style="display:flex;align-items:center;gap:8px">'
+        + '<label style="font-size:12px;font-weight:500;color:#555;white-space:nowrap">Business use %</label>'
+        + '<input type="number" min="1" max="100" step="1" placeholder="e.g. 75" value="'+(getCarPct(bizIdx))+'" '
+        + 'style="flex:1;border:1.5px solid #E0E0E0;border-radius:8px;padding:6px 10px;font-size:13px;font-family:inherit;outline:none;min-width:0" '
+        + 'id="cat-car-pct-'+bizIdx+'">'
+        + '</div>';
+      item.appendChild(expanded);
+
+      item.querySelector("div").addEventListener("click", function(e) {
+        // Only toggle when clicking the top row, not the input
+        if (e.target.tagName === "INPUT") return;
+        var arr = selCats[wizCatBiz];
+        var i   = arr.indexOf(c.id);
+        if (i===-1) arr.push(c.id); else arr.splice(i,1);
+        var nowSel = arr.indexOf(c.id) !== -1;
+        item.classList.toggle("sel", nowSel);
+        topRow.querySelector(".cat-chk").textContent = nowSel ? "✓" : "";
+        expanded.style.display = nowSel ? "block" : "none";
+      });
+
+      // Save pct on input change
+      expanded.querySelector("input").addEventListener("change", function() {
+        var pct = Math.min(100, Math.max(1, parseInt(this.value) || 100));
+        this.value = pct;
+        setCarPct(bizIdx, pct);
+      });
+      // prevent input click from toggling the tile
+      expanded.querySelector("input").addEventListener("click", function(e) { e.stopPropagation(); });
+
+    } else {
+      item.innerHTML = '<div class="cat-chk">'+(isSel?"✓":"")+'</div>'
+        +'<div class="cat-name">'+c.e+" "+c.name+'<div class="cat-line">'+c.line+'</div></div>';
+      item.addEventListener("click", function() {
+        var arr = selCats[wizCatBiz];
+        var i   = arr.indexOf(c.id);
+        if (i===-1) arr.push(c.id); else arr.splice(i,1);
+        item.classList.toggle("sel");
+        item.querySelector(".cat-chk").textContent = arr.indexOf(c.id)!==-1 ? "✓" : "";
+      });
+    }
+
+    grid.appendChild(item);
+  });
+}
+
+// Supabase toggle
+document.getElementById("sb-toggle").addEventListener("click", function() {
+  sbOn = !sbOn;
+  document.getElementById("sb-track").classList.toggle("on", sbOn);
+  document.getElementById("sb-toggle").classList.toggle("on", sbOn);
+  document.getElementById("sb-fields").classList.toggle("vis", sbOn);
+});
+
+// Wizard nav
+document.getElementById("wiz-next").addEventListener("click", handleNext);
+document.getElementById("wiz-back").addEventListener("click", function() { if (wizStep>1) showStep(wizStep-1); });
+
+function handleNext() {
+  if (wizStep === 1) {
+    var name = document.getElementById("wiz-name").value.trim();
+    if (!name) { document.getElementById("wiz-name").focus(); return; }
+    var inputs = document.querySelectorAll("#biz-list input");
+    state.businesses = [];
+    inputs.forEach(function(inp){ if (inp.value.trim()) state.businesses.push(inp.value.trim()); });
+    if (!state.businesses.length) { alert("Please enter at least one business name."); return; }
+    state.appName  = name;
+    updatePalPreview(getPal(selPalId));
+    showStep(2);
+    buildPalGrid();
+    return;
+  }
+  if (wizStep === 2) {
+    state.paletteId = selPalId;
+    showStep(3);
+    buildCatGrid(0);
+    return;
+  }
+  if (wizStep === 3) {
+    var cur = selCats[wizCatBiz] || [];
+    if (!cur.length) { alert("Please select at least one category for "+(state.businesses[wizCatBiz]||"this business")+"."); return; }
+    state.categories[wizCatBiz] = cur;
+    var next = wizCatBiz + 1;
+    if (next < state.businesses.length) {
+      buildCatGrid(next); // stay on step 3, next business
+      return;
+    }
+    showStep(4);
+    return;
+  }
+  if (wizStep === 4) {
+    if (sbOn) {
+      state.supabase.enabled = true;
+      state.supabase.url = document.getElementById("sb-url").value.trim();
+      state.supabase.key = document.getElementById("sb-key").value.trim();
+    }
+    finishWizard();
+    return;
+  }
+}
+
+function finishWizard() {
+  state.configured = true;
+  if (!state.carBusinessPct) state.carBusinessPct = {};
+  state.businesses.forEach(function(b, i) {
+    if (!state.expenses[i])   state.expenses[i]   = [];
+    if (!state.categories[i]) state.categories[i] = selCats[i] || [];
+  });
+  saveState();
+  document.getElementById("wizard").classList.add("hidden");
+  proceedToPasscode();
+}
+
+
+function proceedToPasscode() {
+  var cfg = (typeof OWNITLITE_CONFIG !== "undefined") ? OWNITLITE_CONFIG : {};
+  if (cfg.initialPasscode && cfg.initialPasscode.length === 6) {
+    sha256(cfg.initialPasscode).then(function(hash) {
+      state.passcodeHash = hash;
+      saveState();
+      sessionStorage.setItem("ownitlite_ok", "1");
+      launchApp();
+    });
+  } else {
+    openPcModal(true, function() { launchApp(); });
+  }
+}
+
+
+// ══════════════════════════════════════
+// MAIN APP
+// ══════════════════════════════════════
+
+function launchApp() {
+  applyPalette(state.paletteId);
+  document.getElementById("main-app").classList.add("vis");
+  document.getElementById("hdr-name").textContent = state.appName;
+  // Update PWA display name and theme color to match client's app
+  document.title = (state.appName || "OwnIt Lite") + " — powered by OwnIt";
+  var palForMeta = getPal(state.paletteId);
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', palForMeta.pr);
+  document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', state.appName || 'OwnIt Lite');
+  document.getElementById("hdr-mark").innerHTML = getIcon(state.paletteId, "sm");
+  buildBizSwitcher();
+  updateSettings();
+  renderExpenses();
+  // Check for recurring expenses due this month
+  setTimeout(checkRecurringExpenses, 800);
+  // Pull from Supabase if connected
+  if (state.supabase && state.supabase.enabled) {
+    setSyncDot("syncing");
+    setTimeout(syncPull, 400);
+  } else {
+    setSyncDot("off");
+  }
+}
+
+function buildBizSwitcher() {
+  var sw = document.getElementById("biz-switcher");
+  sw.innerHTML = "";
+  state.businesses.forEach(function(b, i) {
+    var btn = document.createElement("button");
+    btn.className = "biz-tab" + (i===state.activeBiz?" active":"");
+    btn.textContent = b;
+    btn.addEventListener("click", function() {
+      state.activeBiz = i;
+      document.querySelectorAll(".biz-tab").forEach(function(t){ t.classList.remove("active"); });
+      btn.classList.add("active");
+      document.querySelectorAll(".nav-tab").forEach(function(t){ t.classList.remove("active"); });
+      var expTab = document.querySelector(".nav-tab[data-view='expenses']");
+      if (expTab) expTab.classList.add("active");
+      document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+      document.getElementById("view-expenses").classList.add("active");
+      document.getElementById("fab").style.display = "flex";
+      renderExpenses();
+    });
+    sw.appendChild(btn);
+  });
+}
+
+function updateSettings() {
+  document.getElementById("set-name-val").textContent = state.appName;
+  document.getElementById("set-pal-val").textContent  = getPal(state.paletteId).name;
+  document.getElementById("set-pc-val").textContent   = state.passcodeHash ? "Change" : "Not set";
+  document.getElementById("set-sync-val").textContent = state.supabase.enabled ? "Connected ✓" : "Not connected";
+  setSyncDot(state.supabase.enabled ? "synced" : "off");
+  var total = Object.values(state.categories).reduce(function(s,a){ return s+(a?a.length:0); },0);
+  document.getElementById("set-cats-val").textContent = total + " total";
+  var card = document.getElementById("set-biz-card");
+  card.innerHTML = "";
+  state.businesses.forEach(function(b, i) {
+    var row = document.createElement("div");
+    row.className = "set-row";
+    row.innerHTML = '<span class="set-lbl">'+esc(b)+'</span><span class="set-chev">›</span>';
+    row.style.cursor = "pointer";
+    row.addEventListener("click", function() { openEditBizOverlay(i); });
+    card.appendChild(row);
+  });
+  if (state.businesses.length < 3) {
+    var addRow = document.createElement("div");
+    addRow.className = "set-row";
+    addRow.style.cssText = "cursor:pointer;color:var(--primary)";
+    addRow.innerHTML = '<span class="set-lbl" style="color:var(--primary)">+ Add business</span>';
+    addRow.addEventListener("click", function() { openAddBizOverlay(); });
+    card.appendChild(addRow);
+  }
+  updateCarPctInSettings();
+}
+
+// ══════════════════════════════════════
+// EXPENSES
+// ══════════════════════════════════════
+
+function filteredExpenses() {
+  var all  = state.expenses[state.activeBiz] || [];
+  var now  = new Date();
+  var yr   = now.getFullYear();
+  var mo   = now.getMonth();
+  return all.filter(function(e) {
+    if (state.filter==="all")   return true;
+    var d = new Date(e.date+"T12:00:00");
+    if (state.filter==="year")  return d.getFullYear()===yr;
+    if (state.filter==="month") return d.getFullYear()===yr && d.getMonth()===mo;
+    var q = Math.floor(d.getMonth()/3)+1;
+    return d.getFullYear()===yr && state.filter==="q"+q;
+  });
+}
+
+function renderExpenses() {
+  var exps  = filteredExpenses();
+  var total = exps.reduce(function(s,e){ return s+parseFloat(e.amount||0); },0);
+  document.getElementById("sum-total").textContent = "$"+total.toFixed(2);
+  document.getElementById("sum-count").textContent = exps.length;
+  var list  = document.getElementById("exp-list");
+  if (!exps.length) { list.innerHTML = '<div class="exp-empty">No expenses yet — tap + to log your first one</div>'; return; }
+  exps = exps.slice().sort(function(a,b){ return new Date(b.date)-new Date(a.date); });
+  list.innerHTML = "";
+  exps.forEach(function(e) {
+    var cat = SCHED_C.find(function(c){ return c.id===e.category; }) || {e:"📝",name:"Other"};
+    var row = document.createElement("div");
+    row.className = "exp-row";
+    row.style.cursor = "default";
+    var carTag = (e.carMethod === "mileage") ? " · " + (e.miles||0) + " mi" : (e.carMethod === "actual" && e.carPct) ? " · " + e.carPct + "% biz use" : "";
+    row.innerHTML = '<div class="exp-badge">'+cat.e+'</div>'
+      +'<div class="exp-info">'
+      +'<div class="exp-name">'+esc(e.vendor||'')+( e.repeat?'<span class="exp-repeat">↻ Repeat</span>':'')+'</div>'
+      +'<div class="exp-meta">'+fmtDate(e.date)+' · '+cat.name+carTag+(e.notes?' · '+esc(e.notes):'')+'</div>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'
+      +'<div class="exp-amt">$'+parseFloat(e.amount).toFixed(2)+'</div>'
+      +'<button class="exp-edit-btn" data-id="'+e.id+'" style="background:none;border:1.5px solid color-mix(in srgb,var(--primary) 30%,transparent);border-radius:8px;padding:4px 8px;font-size:12px;color:var(--primary);cursor:pointer;font-family:inherit;flex-shrink:0">Edit</button>'
+      +'<button class="exp-del-btn" data-id="'+e.id+'" style="background:none;border:1.5px solid #E0E0E0;border-radius:8px;padding:4px 8px;font-size:12px;color:#999;cursor:pointer;font-family:inherit;flex-shrink:0">✕</button>'
+      +'</div>';
+    list.appendChild(row);
+  });
+  list.querySelectorAll(".exp-del-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var id = parseInt(this.dataset.id);
+      if (confirm("Delete this expense?")) {
+        state.expenses[state.activeBiz] = (state.expenses[state.activeBiz]||[]).filter(function(e){ return e.id !== id; });
+        saveState(); renderExpenses();
+      }
+    });
+  });
+  list.querySelectorAll(".exp-edit-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var id = parseInt(this.dataset.id);
+      var exp = (state.expenses[state.activeBiz]||[]).find(function(e){ return e.id===id; });
+      if (exp) openEditModal(exp);
+    });
+  });
+}
+
+// Filter chips
+document.getElementById("filter-bar").addEventListener("click", function(e) {
+  var chip = e.target.closest(".fchip");
+  if (!chip) return;
+  document.querySelectorAll(".fchip").forEach(function(c){ c.classList.remove("active"); });
+  chip.classList.add("active");
+  state.filter = chip.dataset.f;
+  renderExpenses();
+});
+
+// ══════════════════════════════════════
+// LOG EXPENSE
+// ══════════════════════════════════════
+
+var isRepeat = false;
+
+document.getElementById("fab").addEventListener("click", openLogModal);
+document.getElementById("modal-cancel").addEventListener("click", closeLogModal);
+document.getElementById("log-modal").addEventListener("click", function(e){ if(e.target===this) closeLogModal(); });
+document.getElementById("receipt-zone").addEventListener("click", function(){ document.getElementById("receipt-file").click(); });
+
+var carMethod = "actual"; // track which car deduction method is selected
+
+function openLogModal() {
+  var d = new Date();
+  document.getElementById("exp-date").value = d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+  document.getElementById("exp-vendor").value = "";
+  document.getElementById("exp-notes").value  = "";
+  document.getElementById("exp-amt").value    = "";
+  document.getElementById("exp-miles").value  = "";
+  document.getElementById("mileage-calc").textContent = "";
+  isRepeat = false;
+  carMethod = "actual";
+  document.getElementById("repeat-row").classList.remove("on");
+  document.getElementById("rep-chk").textContent = "";
+  document.getElementById("repeat-freq").style.display = "none";
+  document.getElementById("repeat-freq").value = "monthly";
+
+  // Build category dropdown
+  var sel = document.getElementById("exp-cat");
+  sel.innerHTML = "<option value=\"\">— Select —</option>";
+  var cats = state.categories[state.activeBiz] || [];
+  cats.forEach(function(cid) {
+    var c = SCHED_C.find(function(x){ return x.id===cid; });
+    if (c) { var o=document.createElement("option"); o.value=cid; o.textContent=c.e+" "+c.name+" ("+c.line+")"; sel.appendChild(o); }
+  });
+
+  // Show/hide car & truck sub-options
+  function toggleCarTruck() {
+    var isCar = sel.value === "car_truck";
+    document.getElementById("car-truck-row").style.display = isCar ? "block" : "none";
+    document.getElementById("exp-amt").closest(".form-row").style.display =
+      (isCar && carMethod === "mileage") ? "none" : "block";
+  }
+  sel.addEventListener("change", toggleCarTruck);
+  toggleCarTruck();
+
+  // Car method toggle buttons
+  document.getElementById("car-actual-btn").addEventListener("click", function() {
+    carMethod = "actual";
+    document.getElementById("car-actual-fields").style.display = "block";
+    document.getElementById("car-mileage-fields").style.display = "none";
+    document.getElementById("exp-amt").closest(".form-row").style.display = "block";
+    document.getElementById("car-actual-btn").style.background = "var(--primary)";
+    document.getElementById("car-actual-btn").style.borderColor = "var(--primary)";
+    document.getElementById("car-actual-btn").style.color = "white";
+    document.getElementById("car-mileage-btn").style.background = "white";
+    document.getElementById("car-mileage-btn").style.borderColor = "var(--accent)";
+    document.getElementById("car-mileage-btn").style.color = "var(--tx)";
+  });
+  document.getElementById("car-mileage-btn").addEventListener("click", function() {
+    carMethod = "mileage";
+    document.getElementById("car-actual-fields").style.display = "none";
+    document.getElementById("car-mileage-fields").style.display = "block";
+    document.getElementById("exp-amt").closest(".form-row").style.display = "none";
+    document.getElementById("car-mileage-btn").style.background = "var(--primary)";
+    document.getElementById("car-mileage-btn").style.borderColor = "var(--primary)";
+    document.getElementById("car-mileage-btn").style.color = "white";
+    document.getElementById("car-actual-btn").style.background = "white";
+    document.getElementById("car-actual-btn").style.borderColor = "var(--accent)";
+    document.getElementById("car-actual-btn").style.color = "var(--tx)";
+  });
+
+  // Reset car method buttons to default
+  document.getElementById("car-actual-btn").style.cssText += ";background:var(--primary);border-color:var(--primary);color:white";
+  document.getElementById("car-mileage-btn").style.cssText += ";background:white;border-color:var(--accent);color:var(--tx)";
+  document.getElementById("car-actual-fields").style.display = "block";
+  document.getElementById("car-mileage-fields").style.display = "none";
+
+  // Show car business % read-only (edit in Settings)
+  var bizPct = getCarPct(state.activeBiz);
+  document.getElementById("car-pct-display").textContent = bizPct;
+  document.getElementById("car-actual-calc").textContent = "";
+  document.getElementById("exp-amt").addEventListener("input", function() {
+    var rawAmt = parseFloat(this.value) || 0;
+    if (rawAmt > 0 && document.getElementById("car-truck-row").style.display !== "none" && carMethod === "actual") {
+      var ded = (rawAmt * bizPct / 100).toFixed(2);
+      document.getElementById("car-actual-calc").textContent = rawAmt.toFixed(2) + " × " + bizPct + "% = $" + ded + " deductible";
+    } else {
+      document.getElementById("car-actual-calc").textContent = "";
+    }
+  });
+
+  document.getElementById("log-modal").classList.remove("hidden");
+}
+
+function closeLogModal() { document.getElementById("log-modal").classList.add("hidden"); }
+
+document.getElementById("repeat-row").addEventListener("click", function(e) {
+  if (e.target.tagName === "SELECT") return; // don't toggle when clicking the select
+  isRepeat = !isRepeat;
+  this.classList.toggle("on", isRepeat);
+  document.getElementById("repeat-freq").style.display = isRepeat ? "block" : "none";
+});
+
+document.getElementById("modal-save").addEventListener("click", function() {
+  var vendor = document.getElementById("exp-vendor").value.trim();
+  var notes  = document.getElementById("exp-notes").value.trim();
+  var date   = document.getElementById("exp-date").value;
+  var cat    = document.getElementById("exp-cat").value;
+  var miles  = null;
+  var amt;
+
+  var rawAmt = null;
+  var deductible = null;
+  if (cat === "" ) { alert("Please select a category."); return; }
+  if (cat === "car_truck" && carMethod === "mileage") {
+    miles = parseFloat(document.getElementById("exp-miles").value) || 0;
+    amt   = parseFloat((miles * MILEAGE_RATE).toFixed(2));
+    if (!miles) { document.getElementById("exp-miles").focus(); return; }
+  } else if (cat === "car_truck" && carMethod === "actual") {
+    rawAmt = parseFloat(document.getElementById("exp-amt").value);
+    if (!rawAmt || rawAmt <= 0) { document.getElementById("exp-amt").focus(); return; }
+    var pct = getCarPct(state.activeBiz);
+    deductible = parseFloat((rawAmt * pct / 100).toFixed(2));
+    amt = deductible; // amount stored = deductible amount for Schedule C
+  } else {
+    amt = parseFloat(document.getElementById("exp-amt").value);
+    if (!amt || amt <= 0) { document.getElementById("exp-amt").focus(); return; }
+  }
+  if (!date) { document.getElementById("exp-date").focus(); return; }
+  if (!state.expenses[state.activeBiz]) state.expenses[state.activeBiz] = [];
+  state.expenses[state.activeBiz].push({
+    id: Date.now(), vendor: vendor, notes: notes, amount: amt,
+    date: date, category: cat, repeat: isRepeat,
+    repeatFreq: isRepeat ? document.getElementById("repeat-freq").value : null,
+    carMethod: cat === "car_truck" ? carMethod : null,
+    miles: miles, rawAmount: rawAmt, deductible: deductible,
+    carPct: cat === "car_truck" && carMethod === "actual" ? getCarPct(state.activeBiz) : null
+  });
+  saveState();
+  closeLogModal();
+  renderExpenses();
+});
+
+// ══════════════════════════════════════
+// NAV
+// ══════════════════════════════════════
+
+document.querySelectorAll(".nav-tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".nav-tab").forEach(function(t){ t.classList.remove("active"); });
+    tab.classList.add("active");
+    document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+    document.getElementById("view-"+tab.dataset.view).classList.add("active");
+    document.getElementById("fab").style.display = tab.dataset.view==="expenses" ? "flex" : "none";
+    if (tab.dataset.view==="export") { initExportBizSel(); renderSchedC(); }
+  });
+});
+
+document.getElementById("settings-btn").addEventListener("click", function() {
+  document.querySelectorAll(".nav-tab").forEach(function(t){ t.classList.remove("active"); });
+  document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+  document.getElementById("view-settings").classList.add("active");
+  document.getElementById("fab").style.display = "none";
+});
+
+// ══════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════
+
+var exportFilter = "all";
+var exportBizIdx = 0; // which business to show in export (separate from active biz)
+
+// Build export page — per-business download rows + Schedule C business tabs
+function initExportBizSel() {
+  // ── Expense Log rows ──
+  var logList = document.getElementById("export-log-list");
+  logList.innerHTML = "";
+  state.businesses.forEach(function(b, i) {
+    var row = document.createElement("div");
+    row.style.cssText = "display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid color-mix(in srgb, var(--primary) 15%, transparent)";
+    row.innerHTML = '<span style="font-size:14px;font-weight:500;color:var(--tx)">' + esc(b) + '</span>'
+      + '<button data-biz="' + i + '" class="exp-dl-btn" style="padding:6px 16px;border-radius:20px;border:none;background:var(--accent);color:var(--primary);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">Print / PDF</button>';
+    logList.appendChild(row);
+  });
+  logList.querySelectorAll(".exp-dl-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var i = parseInt(this.dataset.biz);
+      var exps = getExportExpenses(i, exportFilter);
+      if (!exps.length) { alert("No expenses for " + state.businesses[i] + "."); return; }
+      var periodLabel = document.querySelector("#export-filter-bar .fchip.active") ? document.querySelector("#export-filter-bar .fchip.active").textContent : "All time";
+      printSummary(generateLogHTML(exps, state.businesses[i], periodLabel));
+    });
+  });
+
+  // ── Schedule C business tabs ──
+  var tabsEl = document.getElementById("sched-biz-tabs");
+  tabsEl.innerHTML = "";
+  state.businesses.forEach(function(b, i) {
+    var btn = document.createElement("button");
+    btn.textContent = b;
+    btn.dataset.i = i;
+    btn.style.cssText = "padding:6px 16px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid "
+      + (i===exportBizIdx ? "var(--primary)" : "color-mix(in srgb, var(--primary) 30%, transparent)")
+      + ";background:" + (i===exportBizIdx ? "var(--primary)" : "transparent")
+      + ";color:" + (i===exportBizIdx ? "white" : "var(--tx)")
+      + ";font-family:inherit;transition:all 0.2s";
+    btn.addEventListener("click", function() {
+      exportBizIdx = i;
+      // Update tab styles
+      tabsEl.querySelectorAll("button").forEach(function(b2) {
+        var active = parseInt(b2.dataset.i) === exportBizIdx;
+        b2.style.background = active ? "var(--primary)" : "transparent";
+        b2.style.color = active ? "white" : "var(--tx)";
+        b2.style.borderColor = active ? "var(--primary)" : "color-mix(in srgb, var(--primary) 30%, transparent)";
+      });
+      renderSchedC();
+    });
+    tabsEl.appendChild(btn);
+  });
+
+  // ── Schedule C per-business download rows ──
+  var schedList = document.getElementById("export-sched-list");
+  schedList.innerHTML = "";
+  state.businesses.forEach(function(b, i) {
+    var row = document.createElement("div");
+    row.style.cssText = "display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid color-mix(in srgb, var(--primary) 15%, transparent)";
+    row.innerHTML = '<span style="font-size:14px;font-weight:500;color:var(--tx)">' + esc(b) + '</span>'
+      + '<div style="display:flex;gap:6px">'
+      + '<button data-biz="' + i + '" class="sched-dl-btn" style="padding:6px 14px;border-radius:20px;border:none;background:var(--accent);color:var(--primary);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit">CSV</button>'
+      + '<button data-biz="' + i + '" class="sched-print-btn" style="padding:6px 14px;border-radius:20px;border:1.5px solid color-mix(in srgb,var(--primary) 40%,transparent);background:transparent;color:var(--primary);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit">Print</button>'
+      + '</div>';
+    schedList.appendChild(row);
+  });
+  schedList.querySelectorAll(".sched-dl-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var i = parseInt(this.dataset.biz);
+      var exps = getExportExpenses(i, exportFilter);
+      if (!exps.length) { alert("No expenses for " + state.businesses[i] + "."); return; }
+      downloadCSV(rowsToCSV(expensesToSchedCRows(exps)),
+        (state.appName||"ownitlite") + "_" + bizFileName(i) + "_schedC.csv");
+    });
+  });
+  schedList.querySelectorAll(".sched-print-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var i = parseInt(this.dataset.biz);
+      var exps = getExportExpenses(i, exportFilter);
+      if (!exps.length) { alert("No expenses for " + state.businesses[i] + "."); return; }
+      var periodLabel = document.querySelector("#export-filter-bar .fchip.active") ? document.querySelector("#export-filter-bar .fchip.active").textContent : "All time";
+      printSummary(generateSchedCHTML(exps, state.businesses[i], periodLabel));
+    });
+  });
+
+  renderSchedC();
+}
+
+document.getElementById("export-filter-bar").addEventListener("click", function(e) {
+  var chip = e.target.closest(".fchip");
+  if (!chip) return;
+  document.querySelectorAll("#export-filter-bar .fchip").forEach(function(c){ c.classList.remove("active"); });
+  chip.classList.add("active");
+  exportFilter = chip.dataset.ef;
+  renderSchedC();
+});
+
+function getExportExpenses(bizIdx, filter) {
+  var all = state.expenses[bizIdx] || [];
+  var now = new Date(), yr = now.getFullYear(), mo = now.getMonth();
+  return all.filter(function(e) {
+    if (filter === "all") return true;
+    var d = new Date(e.date + "T12:00:00");
+    if (filter === "year")  return d.getFullYear() === yr;
+    if (filter === "month") return d.getFullYear() === yr && d.getMonth() === mo;
+    var q = Math.floor(d.getMonth() / 3) + 1;
+    return d.getFullYear() === yr && filter === "q" + q;
+  });
+}
+
+function filteredExportExpenses() {
+  return getExportExpenses(exportBizIdx, exportFilter);
+}
+
+function renderSchedC() {
+  var tableEl = document.getElementById("sched-c-table");
+  if (!tableEl) return;
+  var exps = filteredExportExpenses();
+  var groups = {};
+  exps.forEach(function(e) {
+    var cat = SCHED_C.find(function(c){ return c.id === e.category; }) || {name:"Other", line:"Line 27a", e:"📝"};
+    if (!groups[cat.line]) groups[cat.line] = { line:cat.line, name:cat.name, e:cat.e, total:0, count:0 };
+    groups[cat.line].total += parseFloat(e.amount || 0);
+    groups[cat.line].count++;
+  });
+  var lines = Object.values(groups).sort(function(a,b){ return a.line.localeCompare(b.line); });
+  if (!lines.length) {
+    tableEl.innerHTML = '<div style="font-size:13px;color:#AAA;text-align:center;padding:1rem">No expenses for this period</div>';
+    return;
+  }
+  var grand = lines.reduce(function(s,l){ return s + l.total; }, 0);
+  tableEl.innerHTML = lines.map(function(l) {
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid rgba(0,0,0,0.06)">'
+      + '<div><div style="font-size:13px;font-weight:500;color:var(--tx)">' + l.e + ' ' + l.name + '</div>'
+      + '<div style="font-size:11px;opacity:0.5;color:var(--tx)">' + l.line + ' · ' + l.count + ' expense' + (l.count !== 1 ? 's' : '') + '</div></div>'
+      + '<div style="font-size:14px;font-weight:500;color:var(--tx)">$' + l.total.toFixed(2) + '</div></div>';
+  }).join('')
+    + '<div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-weight:500;font-size:14px;color:var(--tx)"><span>Total</span><span>$' + grand.toFixed(2) + '</span></div>';
+}
+
+// CSV helpers
+function expensesToSchedCRows(exps) {
+  var rows = [["Date","Vendor","Category","Schedule C Line","Amount","Deduction Method","Miles","Notes","Repeat"]];
+  exps.forEach(function(e) {
+    var c = SCHED_C.find(function(x){ return x.id === e.category; }) || {name:"Other", line:""};
+    rows.push([
+      e.date,
+      e.vendor || "",
+      c.name, c.line,
+      parseFloat(e.amount).toFixed(2),
+      e.carMethod || "",
+      e.miles || "",
+      e.notes || "",
+      e.repeat ? "Yes" : "No"
+    ]);
+  });
+  return rows;
+}
+
+function expensesToLogRows(exps) {
+  var rows = [["Date","Vendor","Amount","Category","Deduction Method","Miles","Notes","Repeat"]];
+  exps.forEach(function(e) {
+    var c = SCHED_C.find(function(x){ return x.id === e.category; }) || {name:"Other"};
+    rows.push([
+      e.date,
+      e.vendor || "",
+      parseFloat(e.amount).toFixed(2),
+      c.name,
+      e.carMethod || "",
+      e.miles || "",
+      e.notes || "",
+      e.repeat ? "Yes" : "No"
+    ]);
+  });
+  return rows;
+}
+
+function rowsToCSV(rows) {
+  return rows.map(function(r) {
+    return r.map(function(v){ return '"' + String(v).replace(/"/g, '""')+'"'; }).join(",");
+  }).join("\n");
+}
+
+function downloadCSV(csv, filename) {
+  var a = document.createElement("a");
+  a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function printSummary(html) {
+  var win = window.open("", "_blank");
+  if (!win) { alert("Please allow pop-ups to print summaries."); return; }
+  win.document.write(html + "<script>window.onload=function(){window.print()}<\/script>");
+  win.document.close();
+}
+
+
+// ── Option B: Branded expense log (uses client palette) ──
+function generateLogHTML(exps, bizName, period) {
+  var pal = getPal(state.paletteId);
+  var total = exps.reduce(function(s,e){ return s+parseFloat(e.amount||0); }, 0);
+  var rows = exps.slice().sort(function(a,b){ return new Date(a.date)-new Date(b.date); }).map(function(e) {
+    var c = SCHED_C.find(function(x){ return x.id===e.category; }) || {name:"Other", e:"📝"};
+    var method = e.carMethod === "mileage" ? " · " + (e.miles||0) + " mi" : e.carMethod === "actual" && e.carPct ? " · " + e.carPct + "% biz" : "";
+    return '<tr><td>'+fmtDate(e.date)+'</td><td>'+esc(e.vendor||'')+'</td><td>'+c.e+' '+c.name+method+'</td><td style="text-align:right;font-weight:500">$'+parseFloat(e.amount).toFixed(2)+'</td><td style="color:#888;font-size:11px">'+esc(e.notes||'')+'</td></tr>';
+  }).join('');
+  var today = new Date().toLocaleDateString("en-US", {month:"long", day:"numeric", year:"numeric"});
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Expense Log</title>'+
+    '<style>body{font-family:Arial,sans-serif;font-size:12px;color:#1A2030;margin:0;padding:0}'+
+    '.accent{height:5px;background:linear-gradient(90deg,'+pal.pr+','+pal.ac+')}'+
+    '.header{padding:14px 24px 10px;display:flex;justify-content:space-between;align-items:center;border-bottom:0.5px solid #ddd;gap:16px}'+
+    '.brand{display:flex;align-items:center;gap:8px}'+
+    '.mark{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}'+
+    '.brand-name{font-size:14px;font-weight:500;color:#0D1B2A}'+
+    '.brand-tag{font-size:10px;color:#888}'+
+    '.docinfo{font-size:11px;color:#888;text-align:right;line-height:1.8;white-space:nowrap}'+
+    '.body{padding:14px 24px}'+
+    '.biz{font-size:15px;font-weight:500;color:#0D1B2A;margin-bottom:2px}'+
+    '.period{font-size:11px;color:#888;margin-bottom:14px}'+
+    '.cards{display:flex;gap:10px;margin-bottom:16px}'+
+    '.card{flex:1;background:#f5f5f5;border-radius:6px;padding:10px 12px}'+
+    '.card label{font-size:10px;color:#888;display:block;margin-bottom:2px}'+
+    '.card span{font-size:18px;font-weight:500;color:#0D1B2A}'+
+    '.section-title{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:'+pal.pr+';margin-bottom:8px}'+
+    'table{width:100%;border-collapse:collapse;font-size:12px}'+
+    'th{font-size:10px;color:#888;text-align:left;padding:0 0 6px;border-bottom:1px solid #ddd;font-weight:500}'+
+    'td{padding:6px 8px 6px 0;border-bottom:0.5px solid #eee;vertical-align:top;color:#1A2030}'+
+    '.total{display:flex;justify-content:space-between;padding:10px 0 0;border-top:1.5px solid #ccc;font-weight:500;font-size:13px;margin-top:4px}'+
+    '.note{font-size:10px;color:#888;margin-top:10px;font-style:italic}'+
+    '.footer{border-top:0.5px solid #ddd;padding:8px 24px;font-size:10px;color:#888;display:flex;justify-content:space-between;margin-top:16px}'+
+    '@media print{@page{margin:1.5cm}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}}'+
+    '</style></head><body>'+
+    '<div class="accent"></div>'+
+    '<div class="header">'+
+      '<div class="brand"><div class="mark">' + getIcon(state.paletteId, "sm") + '</div><div><div class="brand-name">'+esc(state.appName)+'</div><div class="brand-tag">powered by OwnIt</div></div></div>'+
+      '<div class="docinfo">Expense Log<br>'+today+'</div>'+
+    '</div>'+
+    '<div class="body">'+
+      '<div class="biz">'+esc(bizName)+'</div>'+
+      '<div class="period">'+esc(period)+' · '+exps.length+' expenses</div>'+
+      '<div class="cards">'+
+        '<div class="card"><label>Total expenses</label><span>$'+total.toFixed(2)+'</span></div>'+
+        '<div class="card"><label>Expenses logged</label><span>'+exps.length+'</span></div>'+
+      '</div>'+
+      '<div class="section-title">Expense detail</div>'+
+      '<table><thead><tr><th>Date</th><th>Vendor</th><th>Category</th><th style="text-align:right">Amount</th><th>Notes</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+      '<div class="total"><span>Total</span><span>$'+total.toFixed(2)+'</span></div>'+
+      '<div class="note">Keep this document for your records. Consult a tax professional for filing guidance.</div>'+
+    '</div>'+
+    '<div class="footer"><span>OwnIt Lite · ownitapp.info</span><span>Page 1 of 1</span></div>'+
+    '</body></html>';
+}
+
+// ── Option B layout for Schedule C printable summary ──
+function generateSchedCHTML(exps, bizName, period) {
+  var pal = getPal(state.paletteId);
+  var groups = {};
+  exps.forEach(function(e) {
+    var cat = SCHED_C.find(function(c){ return c.id===e.category; }) || {name:"Other",line:"Line 27a",e:"📝"};
+    if (!groups[cat.line]) groups[cat.line] = {line:cat.line, name:cat.name, e:cat.e, total:0, count:0};
+    groups[cat.line].total += parseFloat(e.amount||0);
+    groups[cat.line].count++;
+  });
+  var lines = Object.values(groups).sort(function(a,b){return a.line.localeCompare(b.line);});
+  var grand = lines.reduce(function(s,l){return s+l.total;},0);
+  var today = new Date().toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"});
+  var rows = lines.map(function(l) {
+    return '<tr><td>'+l.e+' '+l.name+'</td><td style="color:#888;font-size:11px">'+l.line+'</td><td style="color:#888;font-size:11px">'+l.count+' expense'+(l.count!==1?'s':'')+'</td><td style="text-align:right;font-weight:500">$'+l.total.toFixed(2)+'</td></tr>';
+  }).join('');
+  if (!rows) rows = '<tr><td colspan="4" style="text-align:center;color:#AAA;padding:16px">No expenses for this period</td></tr>';
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Schedule C Summary</title>'+
+    '<style>body{font-family:Arial,sans-serif;font-size:12px;color:#1A2030;margin:0;padding:0}'+
+    '.accent{height:5px;background:linear-gradient(90deg,'+pal.pr+','+pal.ac+')}'+
+    '.header{padding:14px 24px 10px;display:flex;justify-content:space-between;align-items:center;border-bottom:0.5px solid #ddd;gap:16px}'+
+    '.mark{width:28px;height:28px;border-radius:50%;background:'+pal.pr+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:white}'+
+    '.brand-name{font-size:14px;font-weight:500;color:#0D1B2A}'+
+    '.brand-tag{font-size:10px;color:#888}'+
+    '.body{padding:14px 24px}'+
+    '.biz{font-size:15px;font-weight:500;color:#0D1B2A;margin-bottom:2px}'+
+    '.period{font-size:11px;color:#888;margin-bottom:14px}'+
+    '.cards{display:flex;gap:10px;margin-bottom:16px}'+
+    '.card{flex:1;background:#f5f5f5;border-radius:6px;padding:10px 12px}'+
+    '.card label{font-size:10px;color:#888;display:block;margin-bottom:2px}'+
+    '.card span{font-size:18px;font-weight:500;color:#0D1B2A}'+
+    '.section-title{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:'+pal.pr+';margin-bottom:8px}'+
+    'table{width:100%;border-collapse:collapse;font-size:12px}'+
+    'th{font-size:10px;color:#888;text-align:left;padding:0 0 6px;border-bottom:1px solid #ddd;font-weight:500}'+
+    'td{padding:7px 8px 7px 0;border-bottom:0.5px solid #eee;vertical-align:top;color:#1A2030}'+
+    '.total{display:flex;justify-content:space-between;padding:10px 0 0;border-top:1.5px solid #ccc;font-weight:500;font-size:13px;margin-top:4px}'+
+    '.note{font-size:10px;color:#888;margin-top:10px;font-style:italic}'+
+    '.footer{border-top:0.5px solid #ddd;padding:8px 24px;font-size:10px;color:#888;display:flex;justify-content:space-between;margin-top:16px}'+
+    '@media print{@page{margin:1.5cm}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}}'+
+    '</style></head><body>'+
+    '<div class="accent"></div>'+
+    '<div class="header">'+
+      '<div style="display:flex;align-items:center;gap:8px"><div class="mark">' + getIcon(state.paletteId, "sm") + '</div><div><div style="font-size:14px;font-weight:500">'+esc(state.appName)+'</div><div style="font-size:10px;color:#888">powered by OwnIt</div></div></div>'+
+      '<div style="font-size:11px;color:#888;text-align:right">Schedule C Summary<br>'+today+'</div>'+
+    '</div>'+
+    '<div class="body">'+
+      '<div class="biz">'+esc(bizName)+'</div>'+
+      '<div class="period">'+esc(period)+'</div>'+
+      '<div class="cards">'+
+        '<div class="card"><label>Total deductible</label><span>$'+grand.toFixed(2)+'</span></div>'+
+        '<div class="card"><label>Line items</label><span>'+lines.length+'</span></div>'+
+        '<div class="card"><label>Expenses</label><span>'+exps.length+'</span></div>'+
+      '</div>'+
+      '<div class="section-title">Schedule C breakdown</div>'+
+      '<table><thead><tr><th>Category</th><th>Line</th><th>Count</th><th style="text-align:right">Amount</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+      '<div class="total"><span>Total deductible</span><span>$'+grand.toFixed(2)+'</span></div>'+
+      '<div class="note">* IRS Schedule C line items. Consult a tax professional.</div>'+
+    '</div>'+
+    '<div class="footer"><span>OwnIt Lite · ownitapp.info</span><span>Page 1 of 1</span></div>'+
+    '</body></html>';
+}
+
+function bizFileName(bizIdx) {
+  return (state.businesses[bizIdx] || "business").replace(/[^a-z0-9]/gi, "_").toLowerCase();
+}
+
+
+
+// All businesses — expense log
+document.getElementById("btn-all-log").addEventListener("click", function() {
+  var allRows = [["Business","Date","Vendor","Amount","Category","Deduction Method","Miles","Notes","Repeat"]];
+  state.businesses.forEach(function(biz, i) {
+    var exps = getExportExpenses(i, exportFilter);
+    exps.forEach(function(e) {
+      var c = SCHED_C.find(function(x){ return x.id === e.category; }) || {name:"Other"};
+      allRows.push([biz, e.date, e.vendor||"", parseFloat(e.amount).toFixed(2),
+        c.name, e.carMethod||"", e.miles||"", e.notes||"", e.repeat?"Yes":"No"]);
+    });
+  });
+  if (allRows.length <= 1) { alert("No expenses logged yet."); return; }
+  downloadCSV(rowsToCSV(allRows), (state.appName||"ownitlite") + "_all_businesses_expenses.csv");
+});
+
+// All businesses — Schedule C print
+document.getElementById("btn-all-sched-print").addEventListener("click", function() {
+  var pal = getPal(state.paletteId);
+  var periodLabel = document.querySelector("#export-filter-bar .fchip.active") ? document.querySelector("#export-filter-bar .fchip.active").textContent : "All time";
+  var today = new Date().toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"});
+  var allExps = [];
+  var bizSections = state.businesses.map(function(biz,i) {
+    var exps = getExportExpenses(i, exportFilter);
+    allExps = allExps.concat(exps);
+    if (!exps.length) return '<div style="margin-bottom:20px"><div style="font-size:13px;font-weight:500">'+esc(biz)+'</div><div style="font-size:11px;color:#888">No expenses.</div></div>';
+    var groups = {};
+    exps.forEach(function(e) {
+      var cat=SCHED_C.find(function(c){return c.id===e.category;})||{name:"Other",line:"Line 27a",e:"📝"};
+      if(!groups[cat.line]) groups[cat.line]={line:cat.line,name:cat.name,e:cat.e,total:0};
+      groups[cat.line].total+=parseFloat(e.amount||0);
+    });
+    var subRows = Object.values(groups).sort(function(a,b){return a.line.localeCompare(b.line);}).map(function(l){
+      return '<tr><td>'+l.e+' '+l.name+'</td><td style="color:#888;font-size:10px">'+l.line+'</td><td style="text-align:right;font-weight:500">$'+l.total.toFixed(2)+'</td></tr>';
+    }).join('');
+    var subtotal = exps.reduce(function(s,e){return s+parseFloat(e.amount||0);},0);
+    return '<div style="margin-bottom:20px">'+
+      '<div style="font-size:13px;font-weight:500;margin-bottom:6px">'+esc(biz)+'</div>'+
+      '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:6px">'+subRows+'</table>'+
+      '<div style="display:flex;justify-content:space-between;font-weight:500;font-size:12px;border-top:1px solid #ccc;padding-top:4px"><span>Subtotal</span><span>$'+subtotal.toFixed(2)+'</span></div>'+
+      '</div>';
+  }).join('');
+  var grand = allExps.reduce(function(s,e){return s+parseFloat(e.amount||0);},0);
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>All Businesses Schedule C</title>'+
+    '<style>body{font-family:Arial,sans-serif;font-size:12px;color:#1A2030;margin:0;padding:0}.accent{height:5px;background:linear-gradient(90deg,'+pal.pr+','+pal.ac+')}.header{padding:14px 24px 10px;display:flex;justify-content:space-between;align-items:center;border-bottom:0.5px solid #ddd}.mark{width:28px;height:28px;border-radius:50%;background:'+pal.pr+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:white}.body{padding:14px 24px}.footer{border-top:0.5px solid #ddd;padding:8px 24px;font-size:10px;color:#888;display:flex;justify-content:space-between}@media print{@page{margin:1.5cm}}</style>'+
+    '</head><body>'+
+    '<div class="accent"></div>'+
+    '<div class="header"><div style="display:flex;align-items:center;gap:8px"><div class="mark">' + getIcon(state.paletteId, "sm") + '</div><div><div style="font-size:14px;font-weight:500">'+esc(state.appName)+'</div><div style="font-size:10px;color:#888">powered by OwnIt</div></div></div>'+
+    '<div style="font-size:11px;color:#888;text-align:right">All Businesses — Schedule C<br>'+today+'</div></div>'+
+    '<div class="body"><div style="font-size:11px;color:#888;margin-bottom:16px">Period: '+esc(periodLabel)+'</div>'+
+    bizSections+
+    '<div style="display:flex;justify-content:space-between;font-size:14px;font-weight:500;border-top:2px solid #333;padding:10px 0 0;margin-top:8px"><span>Grand Total</span><span>$'+grand.toFixed(2)+'</span></div>'+
+    '<div style="font-size:10px;color:#888;margin-top:8px;font-style:italic">* IRS Schedule C line items. Consult a tax professional.</div>'+
+    '</div><div class="footer"><span>OwnIt Lite · ownitapp.info</span><span>Generated '+today+'</span></div></body></html>';
+  printSummary(html);
+});
+
+// All businesses — Schedule C CSV
+document.getElementById("btn-all-sched").addEventListener("click", function() {
+  var allRows = [["Business","Date","Vendor","Category","Schedule C Line","Amount","Deduction Method","Miles","Notes","Repeat"]];
+  state.businesses.forEach(function(biz, i) {
+    var exps = getExportExpenses(i, exportFilter);
+    exps.forEach(function(e) {
+      var c = SCHED_C.find(function(x){ return x.id === e.category; }) || {name:"Other", line:""};
+      allRows.push([biz, e.date, e.vendor||"", c.name, c.line,
+        parseFloat(e.amount).toFixed(2), e.carMethod||"", e.miles||"", e.notes||"", e.repeat?"Yes":"No"]);
+    });
+  });
+  if (allRows.length <= 1) { alert("No expenses logged yet."); return; }
+  downloadCSV(rowsToCSV(allRows), (state.appName||"ownitlite") + "_all_businesses_schedC.csv");
+});
+
+
+// ══════════════════════════════════════
+// SETTINGS ACTIONS
+// ══════════════════════════════════════
+
+document.getElementById("set-name").addEventListener("click", function() {
+  var val = prompt("App name:", state.appName);
+  if (val && val.trim()) {
+    state.appName = val.trim();
+    document.getElementById("hdr-name").textContent = state.appName;
+  // Update PWA display name and theme color to match client's app
+  document.title = (state.appName || "OwnIt Lite") + " — powered by OwnIt";
+  var palForMeta = getPal(state.paletteId);
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', palForMeta.pr);
+  document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', state.appName || 'OwnIt Lite');
+    document.getElementById("set-name-val").textContent = state.appName;
+    saveState();
+  }
+});
+
+document.getElementById("set-pal").addEventListener("click", function() { openPalettePicker(); });
+
+document.getElementById("set-sync").addEventListener("click", function() { openSupabaseSettings(); });
+
+function openSupabaseSettings() {
+  var overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;inset:0;z-index:150;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:1.5rem";
+  var card = document.createElement("div");
+  card.style.cssText = "background:white;border-radius:20px;width:100%;max-width:420px;padding:1.75rem";
+  var connected = state.supabase && state.supabase.enabled;
+  card.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem">'
+    + '<div style="font-family:Georgia,serif;font-size:20px;font-weight:500">Cloud Sync</div>'
+    + '<button id="sb-ov-close" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888">×</button></div>'
+    + '<div style="font-size:13px;color:#888;margin-bottom:1.25rem;line-height:1.5">Connect a Supabase project to sync your data across devices and keep a secure backup.</div>'
+    + '<div class="flabel" style="margin-bottom:6px">Supabase Project URL</div>'
+    + '<input class="finput" id="sb-ov-url" type="text" placeholder="https://xxxx.supabase.co" value="' + (state.supabase.url||"") + '" style="margin-bottom:1rem">'
+    + '<div class="flabel" style="margin-bottom:6px">Anon / Public Key</div>'
+    + '<input class="finput" id="sb-ov-key" type="text" placeholder="eyJhbGci..." value="' + (state.supabase.key||"") + '" style="margin-bottom:1rem">'
+    + '<div id="sb-ov-status" style="font-size:13px;margin-bottom:1rem;color:' + (connected?"#3DAA6A":"#888") + '">' + (connected ? "✓ Connected" : "Not connected") + '</div>'
+    + '<div style="display:flex;gap:8px">'
+    + '<button id="sb-ov-save" style="flex:1;padding:12px;background:var(--primary);color:white;border:none;border-radius:12px;font-size:14px;font-weight:500;cursor:pointer">Save & Connect</button>'
+    + (connected ? '<button id="sb-ov-disconnect" style="padding:12px 16px;background:none;border:1.5px solid #E0E0E0;color:#888;border-radius:12px;font-size:14px;cursor:pointer">Disconnect</button>' : "")
+    + '</div>';
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+  card.querySelector("#sb-ov-close").addEventListener("click", function(){ document.body.removeChild(overlay); });
+  card.querySelector("#sb-ov-save").addEventListener("click", function() {
+    var url = card.querySelector("#sb-ov-url").value.trim();
+    var key = card.querySelector("#sb-ov-key").value.trim();
+    if (!url || !key) { card.querySelector("#sb-ov-status").textContent = "Please fill in both fields."; card.querySelector("#sb-ov-status").style.color="#E05555"; return; }
+    state.supabase = { enabled: true, url: url, key: key };
+    saveState();
+    document.getElementById("set-sync-val").textContent = "Connected";
+    setSyncDot("syncing");
+    document.body.removeChild(overlay);
+    syncPull();
+  });
+  if (connected) {
+    card.querySelector("#sb-ov-disconnect").addEventListener("click", function() {
+      state.supabase = { enabled: false, url: "", key: "" };
+      saveState();
+      document.getElementById("set-sync-val").textContent = "Not connected";
+      setSyncDot("off");
+      document.body.removeChild(overlay);
+    });
+  }
+}
+document.getElementById("set-cats").addEventListener("click", function() { openCatEditor(); });
+
+document.getElementById("set-car-pct").addEventListener("click", function() {
+  var carBizzes = state.businesses.map(function(b, i) { return i; })
+    .filter(function(i) { return (state.categories[i]||[]).indexOf("car_truck") !== -1; });
+  if (!carBizzes.length) {
+    alert("No businesses have Car & Truck as a selected category. Add it in Manage Categories first.");
+    return;
+  }
+  openCarPctSettingsOverlay(carBizzes);
+});
+
+function openCarPctSettingsOverlay(carBizzes) {
+  var overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;inset:0;z-index:210;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:1.5rem";
+  var card = document.createElement("div");
+  card.style.cssText = "background:white;border-radius:20px;width:100%;max-width:400px;padding:1.75rem";
+
+  // Build dropdown options
+  var opts = carBizzes.map(function(i) {
+    return '<option value="' + i + '">' + esc(state.businesses[i]) + '</option>';
+  }).join('');
+
+  card.innerHTML = '<div style="font-family:Georgia,serif;font-size:20px;font-weight:500;margin-bottom:0.4rem">Vehicle Business Use %</div>'
+    + '<div style="font-size:13px;color:#888;margin-bottom:1.25rem;line-height:1.5">Set the % of vehicle use for business per business. Changing this only affects future expenses — existing logged expenses keep their original %.</div>'
+    + '<label class="flabel" style="display:block;margin-bottom:6px">Business</label>'
+    + '<select class="fselect" id="car-pct-biz-sel" style="margin-bottom:1.25rem">' + opts + '</select>'
+    + '<label class="flabel" style="display:block;margin-bottom:6px">Business use %</label>'
+    + '<input class="finput" id="car-pct-settings-input" type="number" min="1" max="100" step="1" style="margin-bottom:0.5rem">'
+    + '<div id="car-pct-note" style="font-size:12px;color:#888;margin-bottom:1.25rem"></div>'
+    + '<div style="display:flex;gap:8px">'
+    + '<button id="car-pct-s-cancel" class="btn-secondary">Cancel</button>'
+    + '<button id="car-pct-s-save" class="btn-primary">Save</button>'
+    + '</div>';
+
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+
+  function loadBiz(bizIdx) {
+    var pct = getCarPct(bizIdx);
+    card.querySelector("#car-pct-settings-input").value = pct;
+    card.querySelector("#car-pct-note").textContent = "Currently " + pct + "% for " + state.businesses[bizIdx];
+  }
+
+  var sel = card.querySelector("#car-pct-biz-sel");
+  loadBiz(parseInt(sel.value));
+  sel.addEventListener("change", function() { loadBiz(parseInt(this.value)); });
+
+  card.querySelector("#car-pct-s-cancel").addEventListener("click", function() {
+    document.body.removeChild(overlay);
+  });
+  card.querySelector("#car-pct-s-save").addEventListener("click", function() {
+    var bizIdx = parseInt(sel.value);
+    var pct = Math.min(100, Math.max(1, parseInt(card.querySelector("#car-pct-settings-input").value) || 100));
+    setCarPct(bizIdx, pct);
+    loadBiz(bizIdx);
+    updateCarPctInSettings();
+    document.body.removeChild(overlay);
+  });
+}
+
+function openEditBizOverlay(bizIdx) {
+  var overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;inset:0;z-index:150;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:1.5rem";
+  var card = document.createElement("div");
+  card.style.cssText = "background:white;border-radius:20px;width:100%;max-width:380px;padding:1.75rem";
+  card.innerHTML = '<div style="font-family:Georgia,serif;font-size:20px;font-weight:500;margin-bottom:0.4rem">Edit business</div>'
+    +'<div style="font-size:13px;color:#888;margin-bottom:1.25rem">Rename this business. Your expense data will stay intact.</div>'
+    +'<label class="flabel" style="display:block;margin-bottom:6px">Business name</label>'
+    +'<input class="finput" id="edit-biz-name" type="text" value="'+esc(state.businesses[bizIdx])+'" maxlength="40" style="margin-bottom:1rem">'
+    +'<div style="display:flex;gap:8px">'
+    +'<button id="edit-biz-cancel" class="btn-secondary">Cancel</button>'
+    +'<button id="edit-biz-save" class="btn-primary">Save</button>'
+    +'</div>';
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+  card.querySelector("#edit-biz-cancel").addEventListener("click", function(){ document.body.removeChild(overlay); });
+  card.querySelector("#edit-biz-save").addEventListener("click", function() {
+    var name = card.querySelector("#edit-biz-name").value.trim();
+    if (!name) return;
+    state.businesses[bizIdx] = name;
+    saveState();
+    updateSettings();
+    buildBizSwitcher();
+    document.body.removeChild(overlay);
+  });
+}
+
+function openAddBizOverlay() {
+  var overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;inset:0;z-index:150;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:1.5rem";
+  var card = document.createElement("div");
+  card.style.cssText = "background:white;border-radius:20px;width:100%;max-width:380px;padding:1.75rem";
+  card.innerHTML = '<div style="font-family:Georgia,serif;font-size:20px;font-weight:500;margin-bottom:0.4rem">Add a business</div>'
+    +'<div style="font-size:13px;color:#888;margin-bottom:1.25rem">You can have up to 3 businesses.</div>'
+    +'<label class="flabel" style="display:block;margin-bottom:6px">Business name</label>'
+    +'<input class="finput" id="add-biz-name" type="text" placeholder="e.g. Photography" maxlength="40" style="margin-bottom:1rem">'
+    +'<div style="font-size:13px;color:#888;margin-bottom:1rem">After adding, go to Categories in Settings to choose expense categories for this business.</div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<button id="add-biz-cancel" class="btn-secondary">Cancel</button>'
+    +'<button id="add-biz-save" class="btn-primary">Add business</button>'
+    +'</div>';
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+  card.querySelector("#add-biz-cancel").addEventListener("click", function(){ document.body.removeChild(overlay); });
+  card.querySelector("#add-biz-save").addEventListener("click", function() {
+    var name = card.querySelector("#add-biz-name").value.trim();
+    if (!name) return;
+    var newIdx = state.businesses.length;
+    state.businesses.push(name);
+    state.expenses[newIdx] = state.expenses[newIdx] || [];
+    state.categories[newIdx] = state.categories[newIdx] || [];
+    saveState();
+    updateSettings();
+    buildBizSwitcher();
+    document.body.removeChild(overlay);
+  });
+}
+
+document.getElementById("set-backup").addEventListener("click", function() {
+  var backup = {
+    version: "1.0",
+    exportedAt: new Date().toISOString(),
+    appName: state.appName,
+    state: state
+  };
+  var json = JSON.stringify(backup, null, 2);
+  var a = document.createElement("a");
+  a.href = "data:application/json;charset=utf-8," + encodeURIComponent(json);
+  a.download = (state.appName||"ownitlite").replace(/[^a-z0-9]/gi,"_").toLowerCase()
+    + "_backup_" + new Date().toISOString().slice(0,10) + ".json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+});
+
+document.getElementById("set-import").addEventListener("click", function() {
+  document.getElementById("import-file").click();
+});
+
+document.getElementById("import-file").addEventListener("change", function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var backup = JSON.parse(ev.target.result);
+      if (!backup.state || !backup.state.configured) {
+        alert("This doesn't look like a valid OwnIt Lite backup file.");
+        return;
+      }
+      if (!confirm("This will replace all your current app data with the backup from " + (backup.exportedAt ? new Date(backup.exportedAt).toLocaleDateString() : "an unknown date") + ". Are you sure?")) return;
+      // Restore state
+      Object.assign(state, backup.state);
+      saveState();
+      sessionStorage.setItem("ownitlite_ok", "1");
+      // Re-launch
+      applyPalette(state.paletteId);
+      document.getElementById("hdr-name").textContent = state.appName;
+  // Update PWA display name and theme color to match client's app
+  document.title = (state.appName || "OwnIt Lite") + " — powered by OwnIt";
+  var palForMeta = getPal(state.paletteId);
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', palForMeta.pr);
+  document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', state.appName || 'OwnIt Lite');
+      buildBizSwitcher();
+      updateSettings();
+      renderExpenses();
+      alert("Backup restored successfully!");
+    } catch(err) {
+      alert("Could not read backup file. Make sure it's a valid OwnIt Lite backup.");
+    }
+  };
+  reader.readAsText(file);
+  // Reset input so same file can be re-imported
+  this.value = "";
+});
+
+document.getElementById("set-reset").addEventListener("click", function() {
+  if (confirm("This will delete all your data and restart setup. Are you sure?")) {
+    localStorage.removeItem("ownitlite");
+    location.reload();
+  }
+});
+
+// ══════════════════════════════════════
+// UTILITIES
+// ══════════════════════════════════════
+
+function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function pad(n) { return String(n).padStart(2,"0"); }
+function fmtDate(d) { var dt=new Date(d+"T12:00:00"); return dt.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}); }
+
+// ══════════════════════════════════════
+// CAR PCT OVERLAY
+// ══════════════════════════════════════
+
+function openCarPctOverlay(bizIdx, bizName, fromSettings, onDone) {
+  var current = getCarPct(bizIdx);
+  var overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;inset:0;z-index:210;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:1.5rem";
+  var card = document.createElement("div");
+  card.style.cssText = "background:white;border-radius:20px;width:100%;max-width:400px;padding:1.75rem";
+  card.innerHTML = '<div style="font-family:Georgia,serif;font-size:20px;font-weight:500;margin-bottom:0.4rem">Vehicle Business Use</div>'
+    +'<div style="font-size:13px;color:#888;margin-bottom:0.25rem;font-weight:500">'+bizName+'</div>'
+    +'<div style="font-size:13px;color:#888;margin-bottom:1.25rem;line-height:1.5">What % of your vehicle use is for business? This applies to the Actual Expense method for Car & Truck deductions. You can update this in Settings at any time — existing logged expenses will keep their original %.</div>'
+    +'<label class="flabel" style="display:block;margin-bottom:6px">Business use %</label>'
+    +'<input class="finput" id="car-pct-ov-input" type="number" value="'+current+'" min="1" max="100" step="1" placeholder="e.g. 75" style="margin-bottom:1.25rem">'
+    +'<div style="display:flex;gap:8px">'
+    +(fromSettings ? '<button id="car-pct-ov-cancel" class="btn-secondary">Cancel</button>' : '')
+    +'<button id="car-pct-ov-save" class="btn-primary">'+(fromSettings?'Save':'Continue')+'</button>'
+    +'</div>';
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+  if (fromSettings) {
+    card.querySelector("#car-pct-ov-cancel").addEventListener("click", function() {
+      document.body.removeChild(overlay);
+      if (onDone) onDone();
+    });
+  }
+  card.querySelector("#car-pct-ov-save").addEventListener("click", function() {
+    var pct = Math.min(100, Math.max(1, parseInt(card.querySelector("#car-pct-ov-input").value) || current));
+    setCarPct(bizIdx, pct);
+    document.body.removeChild(overlay);
+    if (fromSettings) updateCarPctInSettings();
+    if (onDone) onDone();
+  });
+}
+
+function updateCarPctInSettings() {
+  var val = document.getElementById("set-car-pct-val");
+  if (!val) return;
+  // Show summary: biz names with their pcts
+  var parts = state.businesses.map(function(b, i) {
+    return b + ": " + getCarPct(i) + "%";
+  }).filter(function(_, i) {
+    return (state.categories[i] || []).indexOf("car_truck") !== -1;
+  });
+  val.textContent = parts.length ? parts.join(" | ") : "—";
+}
+
+// ══════════════════════════════════════
+// EDIT EXPENSE MODAL
+// ══════════════════════════════════════
+
+function openEditModal(exp) {
+  var overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.45);display:flex;align-items:flex-end;justify-content:center";
+  var cat = SCHED_C.find(function(c){ return c.id===exp.category; }) || {name:"Other"};
+  var cats = state.categories[state.activeBiz] || [];
+  var catOpts = '<option value="">— Select —</option>' + cats.map(function(cid) {
+    var c = SCHED_C.find(function(x){ return x.id===cid; });
+    return c ? '<option value="'+cid+'"'+(cid===exp.category?' selected':'')+'>'+ c.e+" "+c.name+'</option>' : '';
+  }).join('');
+  overlay.innerHTML = '<div style="background:white;border-radius:20px 20px 0 0;width:100%;max-width:600px;padding:1.5rem 1.5rem 2rem;max-height:90vh;overflow-y:auto">'
+    +'<div style="width:40px;height:4px;border-radius:2px;background:#E0E0E0;margin:0 auto 1.5rem"></div>'
+    +'<div style="font-family:Georgia,serif;font-size:20px;font-weight:500;color:#1A1A1A;margin-bottom:1.25rem">Edit expense</div>'
+    +'<div style="margin-bottom:1rem"><label class="flabel" style="display:block;margin-bottom:6px">Date</label><input class="finput" id="edit-date" type="date" value="'+exp.date+'"></div>'
+    +'<div style="margin-bottom:1rem"><label class="flabel" style="display:block;margin-bottom:6px">Vendor</label><input class="finput" id="edit-vendor" type="text" value="'+esc(exp.vendor||exp.description||'')+'"></div>'
+    +'<div style="margin-bottom:1rem"><label class="flabel" style="display:block;margin-bottom:6px">Category</label><select class="fselect" id="edit-cat">'+catOpts+'</select></div>'
+    +'<div style="margin-bottom:1rem"><label class="flabel" style="display:block;margin-bottom:6px">Amount ($)</label><input class="finput" id="edit-amt" type="number" value="'+parseFloat(exp.amount).toFixed(2)+'" min="0" step="0.01"></div>'
+    +'<div style="margin-bottom:1rem"><label class="flabel" style="display:block;margin-bottom:6px">Notes</label><input class="finput" id="edit-notes" type="text" value="'+esc(exp.notes||'')+'"></div>'
+    +'<div style="display:flex;gap:10px;margin-top:0.5rem">'
+    +'<button id="edit-cancel" class="btn-secondary">Cancel</button>'
+    +'<button id="edit-save" class="btn-primary">Save changes</button>'
+    +'</div></div>';
+  document.body.appendChild(overlay);
+  overlay.querySelector("#edit-cancel").addEventListener("click", function(){ document.body.removeChild(overlay); });
+  overlay.querySelector("#edit-save").addEventListener("click", function() {
+    var date   = overlay.querySelector("#edit-date").value;
+    var vendor = overlay.querySelector("#edit-vendor").value.trim();
+    var cat    = overlay.querySelector("#edit-cat").value;
+    var amt    = parseFloat(overlay.querySelector("#edit-amt").value);
+    var notes  = overlay.querySelector("#edit-notes").value.trim();
+    if (!date || !cat || !amt || amt <= 0) { alert("Please fill in all required fields."); return; }
+    var exps = state.expenses[state.activeBiz] || [];
+    var idx = exps.findIndex(function(e){ return e.id === exp.id; });
+    if (idx !== -1) {
+      exps[idx] = Object.assign({}, exps[idx], { date:date, vendor:vendor, category:cat, amount:amt, notes:notes });
+      saveState();
+    }
+    document.body.removeChild(overlay);
+    renderExpenses();
+  });
+}
+
+// ══════════════════════════════════════
+// SETTINGS OVERLAYS
+// ══════════════════════════════════════
+
+function openPalettePicker() {
+  var overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;inset:0;z-index:150;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:1rem";
+  var card = document.createElement("div");
+  card.style.cssText = "background:white;border-radius:20px;width:100%;max-width:560px;max-height:85vh;overflow-y:auto;padding:1.5rem";
+  card.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">'
+    +'<div style="font-family:Georgia,serif;font-size:20px;font-weight:500">Choose palette</div>'
+    +'<button id="pal-ov-close" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888">×</button></div>'
+    +'<div id="pal-ov-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem"></div>'
+    +'<button id="pal-ov-save" style="width:100%;padding:13px;background:var(--primary);color:white;border:none;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer">Apply palette</button>';
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+  var tmpId = state.paletteId;
+  var grid = card.querySelector("#pal-ov-grid");
+  PALETTES.forEach(function(p) {
+    var opt = document.createElement("div");
+    opt.style.cssText = "border-radius:12px;overflow:hidden;border:2px solid "+(p.id===tmpId?"var(--primary)":"transparent")+";cursor:pointer;transition:all 0.2s";
+    opt.innerHTML = '<div style="display:flex;height:40px">'
+      +'<div style="flex:1;background:'+p.bg+'"></div><div style="flex:1;background:'+p.pr+'"></div>'
+      +'<div style="flex:1;background:'+p.ac+'"></div><div style="flex:1;background:'+p.tx+'"></div></div>'
+      +'<div style="font-size:10px;font-weight:500;color:#555;text-align:center;padding:4px 2px;background:white;border-top:0.5px solid #eee">'+p.name+'</div>';
+    opt.addEventListener("click", function() {
+      grid.querySelectorAll("div").forEach(function(o){ if(o.style.border!==undefined) o.style.border="2px solid transparent"; });
+      opt.style.border="2px solid var(--primary)"; tmpId=p.id;
+    });
+    grid.appendChild(opt);
+  });
+  card.querySelector("#pal-ov-close").addEventListener("click", function(){ document.body.removeChild(overlay); });
+  card.querySelector("#pal-ov-save").addEventListener("click", function() {
+    state.paletteId=tmpId; saveState(); applyPalette(tmpId);
+    document.getElementById("set-pal-val").textContent=getPal(tmpId).name;
+    document.body.removeChild(overlay);
+  });
+}
+
+function openCatEditor(forceBizIdx) {
+  var bizIdx = (forceBizIdx !== undefined) ? forceBizIdx : state.activeBiz;
+  var bizName = state.businesses[bizIdx] || ("Business "+(bizIdx+1));
+  var overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;inset:0;z-index:150;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:1rem";
+  var card = document.createElement("div");
+  card.style.cssText = "background:white;border-radius:20px;width:100%;max-width:540px;max-height:85vh;overflow-y:auto;padding:1.5rem";
+  var curCats = (state.categories[bizIdx]||[]).slice();
+  var bizTabs = state.businesses.map(function(b, i) {
+    return '<button data-i="'+i+'" style="padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1.5px solid '+( i===bizIdx?"#1A5F7A":"#E0E0E0")+';background:'+(i===bizIdx?"#1A5F7A":"white")+';color:'+(i===bizIdx?"white":"#555")+';cursor:pointer;font-family:inherit">'+b+'</button>';
+  }).join('');
+  card.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem">'
+    +'<div style="font-family:Georgia,serif;font-size:20px;font-weight:500">Edit categories</div>'
+    +'<button id="cat-ov-close" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888">×</button></div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem" id="cat-biz-tabs">'+bizTabs+'</div>'
+    +'<div id="cat-ov-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;max-height:320px;overflow-y:auto"></div>'
+    +'<button id="cat-ov-save" style="width:100%;padding:13px;background:var(--primary);color:white;border:none;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer">Save categories</button>';
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+  // Wire biz tabs in cat editor
+  function buildCatOvGrid(idx) {
+    bizIdx = idx;
+    curCats = (state.categories[idx]||[]).slice();
+    card.querySelectorAll("#cat-biz-tabs button").forEach(function(b) {
+      var active = parseInt(b.dataset.i) === idx;
+      b.style.background = active ? "#1A5F7A" : "white";
+      b.style.color = active ? "white" : "#555";
+      b.style.borderColor = active ? "#1A5F7A" : "#E0E0E0";
+    });
+    var g = card.querySelector("#cat-ov-grid");
+    g.innerHTML = "";
+    SCHED_C.forEach(function(c) {
+      var isSel = curCats.indexOf(c.id)!==-1;
+      var item = document.createElement("div");
+      item.style.cssText = "display:flex;align-items:center;gap:8px;border:1.5px solid "+(isSel?"#1A5F7A":"#E0E0E0")+";border-radius:10px;padding:8px 10px;cursor:pointer;transition:all 0.2s;background:"+(isSel?"rgba(26,95,122,0.05)":"white");
+      item.innerHTML = '<div style="width:18px;height:18px;border-radius:5px;border:1.5px solid '+(isSel?"#1A5F7A":"#C0C0C0")+';display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;background:'+(isSel?"#1A5F7A":"transparent")+';color:'+(isSel?"white":"transparent")+'">'+(isSel?"✓":"")+'</div>'
+        +'<div style="font-size:12px;line-height:1.3;color:#333">'+c.e+" "+c.name+'<div style="font-size:10px;color:#999">'+c.line+'</div></div>';
+      item.addEventListener("click", function() {
+        var i=curCats.indexOf(c.id); if(i===-1) curCats.push(c.id); else curCats.splice(i,1);
+        var s=curCats.indexOf(c.id)!==-1;
+        item.style.border="1.5px solid "+(s?"#1A5F7A":"#E0E0E0");
+        item.style.background=s?"rgba(26,95,122,0.05)":"white";
+        var chk=item.querySelector("div");
+        chk.style.background=s?"#1A5F7A":"transparent";
+        chk.style.borderColor=s?"#1A5F7A":"#C0C0C0";
+        chk.style.color=s?"white":"transparent";
+        chk.textContent=s?"✓":"";
+      });
+      g.appendChild(item);
+    });
+  }
+  card.querySelector("#cat-biz-tabs").addEventListener("click", function(e) {
+    var btn = e.target.closest("button"); if (!btn) return;
+    buildCatOvGrid(parseInt(btn.dataset.i));
+  });
+  buildCatOvGrid(bizIdx);
+
+  var grid = card.querySelector("#cat-ov-grid"); // reference for save handler
+  SCHED_C.forEach(function(c) {  // REPLACED — kept for save handler reference below
+    var isSel = curCats.indexOf(c.id)!==-1;
+    var item = document.createElement("div");
+    item.style.cssText = "display:flex;align-items:center;gap:8px;border:1.5px solid "+(isSel?"#1A5F7A":"#E0E0E0")+";border-radius:10px;padding:8px 10px;cursor:pointer;transition:all 0.2s;background:"+(isSel?"rgba(26,95,122,0.05)":"white");
+    item.innerHTML = '<div style="width:18px;height:18px;border-radius:5px;border:1.5px solid '+( isSel?"#1A5F7A":"#C0C0C0")+';display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;background:'+(isSel?"#1A5F7A":"transparent")+';color:'+(isSel?"white":"transparent")+'">'+( isSel?"✓":"")+'</div>'
+      +'<div style="font-size:12px;line-height:1.3;color:#333">'+c.e+" "+c.name+'<div style="font-size:10px;color:#999">'+c.line+'</div></div>';
+    item.addEventListener("click", function() {
+      var i=curCats.indexOf(c.id); if(i===-1) curCats.push(c.id); else curCats.splice(i,1);
+      var s=curCats.indexOf(c.id)!==-1;
+      item.style.border="1.5px solid "+(s?"#1A5F7A":"#E0E0E0");
+      item.style.background=s?"rgba(26,95,122,0.05)":"white";
+      var chk=item.querySelector("div");
+      chk.style.background=s?"#1A5F7A":"transparent";
+      chk.style.borderColor=s?"#1A5F7A":"#C0C0C0";
+      chk.style.color=s?"white":"transparent";
+      chk.textContent=s?"✓":"";
+    });
+    grid.appendChild(item);
+  });
+  card.querySelector("#cat-ov-close").addEventListener("click", function(){ document.body.removeChild(overlay); });
+  card.querySelector("#cat-ov-save").addEventListener("click", function() {
+    if (!curCats.length) { alert("Please select at least one category."); return; }
+    state.categories[bizIdx]=curCats; saveState();
+    var total=Object.values(state.categories).reduce(function(s,a){ return s+(a?a.length:0); },0);
+    document.getElementById("set-cats-val").textContent=total+" total";
+    document.body.removeChild(overlay);
+  });
+}
+
+// ══════════════════════════════════════
+
+// ══════════════════════════════════════
+// SUPABASE SYNC
+// ══════════════════════════════════════
+
+var syncInProgress = false;
+
+// Derive a stable user_id from app name + passcode hash
+// Uses a simple deterministic string so same app = same row
+function getSyncUserId() {
+  var name = (state.appName || "ownitlite").replace(/[^a-z0-9]/gi, "_").toLowerCase();
+  var hash = state.passcodeHash ? state.passcodeHash.slice(0, 16) : "nopw";
+  return "ol_" + name + "_" + hash;
+}
+
+function setSyncDot(status) {
+  // status: "synced" | "syncing" | "error" | "off"
+  var dot = document.getElementById("sync-dot");
+  if (!dot) return;
+  var colors = { synced:"#3DAA6A", syncing:"#F4A300", error:"#E05555", off:"transparent" };
+  var titles = { synced:"Synced", syncing:"Syncing...", error:"Sync error", off:"" };
+  dot.style.background = colors[status] || "transparent";
+  dot.title = titles[status] || "";
+  dot.style.display = status === "off" ? "none" : "block";
+}
+
+async function sbFetch(path, method, body) {
+  if (!state.supabase || !state.supabase.enabled) return null;
+  var url = state.supabase.url.replace(/\/+$/, "") + "/rest/v1" + path;
+  var opts = {
+    method: method || "GET",
+    headers: {
+      "apikey":        state.supabase.key,
+      "Authorization": "Bearer " + state.supabase.key,
+      "Content-Type":  "application/json",
+      "Prefer":        method === "POST" ? "return=minimal" : ""
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  var res = await fetch(url, opts);
+  if (!res.ok) {
+    var err = await res.text();
+    throw new Error("Supabase " + method + " " + path + " failed: " + err);
+  }
+  var text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+// Pull from Supabase → merge into localStorage (remote wins on conflict)
+async function syncPull() {
+  if (!state.supabase || !state.supabase.enabled || syncInProgress) return;
+  syncInProgress = true;
+  setSyncDot("syncing");
+  try {
+    var uid = getSyncUserId();
+    var rows = await sbFetch("/ownitlite_data?user_id=eq." + encodeURIComponent(uid) + "&select=data", "GET");
+    if (rows && rows.length > 0 && rows[0].data) {
+      var remote = rows[0].data;
+      // Merge: keep local expenses if remote has none, else use remote
+      // Remote always wins for settings; merge expenses by taking most recent
+      var merged = Object.assign({}, state, remote);
+      // Deep merge expenses: combine both sets, deduplicate by id
+      var allExps = {};
+      [state.expenses, remote.expenses].forEach(function(expSet) {
+        if (!expSet) return;
+        Object.keys(expSet).forEach(function(bizIdx) {
+          if (!allExps[bizIdx]) allExps[bizIdx] = {};
+          (expSet[bizIdx] || []).forEach(function(e) {
+            if (e && e.id) allExps[bizIdx][e.id] = e;
+          });
+        });
+      });
+      // Convert back to arrays
+      Object.keys(allExps).forEach(function(k) {
+        merged.expenses[k] = Object.values(allExps[k]);
+      });
+      Object.assign(state, merged);
+      saveState();
+      renderExpenses();
+    }
+    setSyncDot("synced");
+  } catch(e) {
+    console.warn("Sync pull failed:", e.message);
+    setSyncDot("error");
+  } finally {
+    syncInProgress = false;
+  }
+}
+
+// Push localStorage → Supabase (upsert by user_id)
+async function syncPush() {
+  if (!state.supabase || !state.supabase.enabled) return;
+  setSyncDot("syncing");
+  try {
+    var uid = getSyncUserId();
+    // Upsert: insert or update row with this user_id
+    await sbFetch("/ownitlite_data?on_conflict=user_id", "POST", {
+      user_id: uid,
+      data: state,
+      updated_at: new Date().toISOString()
+    });
+    setSyncDot("synced");
+  } catch(e) {
+    console.warn("Sync push failed:", e.message);
+    setSyncDot("error");
+  }
+}
+
+// Hook saveState to also push — debounced so rapid saves batch together
+var syncPushTimer = null;
+var _originalSaveState = saveState;
+function saveState() {
+  localStorage.setItem("ownitlite", JSON.stringify(state));
+  if (state.supabase && state.supabase.enabled) {
+    clearTimeout(syncPushTimer);
+    syncPushTimer = setTimeout(syncPush, 1500);
+  }
+}
+
+// ══════════════════════════════════════
+// RECURRING EXPENSES
+// ══════════════════════════════════════
+
+function checkRecurringExpenses() {
+  var today = new Date();
+  var todayStr = today.getFullYear() + "-" + pad(today.getMonth()+1) + "-" + pad(today.getDate());
+  var todayMonth = today.getFullYear() + "-" + pad(today.getMonth()+1);
+
+  // Only check once per calendar month
+  if (state.lastRecurringCheck && state.lastRecurringCheck.indexOf(todayMonth) === 0) return;
+
+  var due = [];
+  state.businesses.forEach(function(biz, bizIdx) {
+    var exps = state.expenses[bizIdx] || [];
+    exps.forEach(function(e) {
+      if (!e.repeat || !e.date) return;
+      var freq = e.repeatFreq || "monthly";
+      var expDate = new Date(e.date + "T12:00:00");
+      var daysSince = Math.floor((today - expDate) / 86400000);
+      var dueAgain = false;
+      if (freq === "weekly") {
+        // Due again after 7 days, within the next 7-day window
+        dueAgain = daysSince >= 7 && daysSince < 14;
+      } else if (freq === "monthly") {
+        // Due on the same day of month as the original expense
+        var sameDay = expDate.getDate() === today.getDate();
+        var nextMonth = today.getMonth() > expDate.getMonth()
+          || (today.getFullYear() > expDate.getFullYear());
+        dueAgain = sameDay && nextMonth;
+        // Edge case: original was on 31st, current month has fewer days →
+        // trigger on last day of month instead
+        if (!dueAgain && nextMonth) {
+          var lastDay = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
+          if (expDate.getDate() > lastDay && today.getDate() === lastDay) dueAgain = true;
+        }
+      } else if (freq === "annually") {
+        // Same month and day, different year
+        dueAgain = today.getDate() === expDate.getDate()
+          && today.getMonth() === expDate.getMonth()
+          && today.getFullYear() > expDate.getFullYear();
+      }
+      if (!dueAgain) return;
+      // Check not already re-logged in the due window
+      var alreadyLogged = exps.some(function(e2) {
+        if (!e2.repeat || e2.id === e.id) return false;
+        if (e2.vendor !== e.vendor || e2.category !== e.category) return false;
+        var d2 = new Date(e2.date + "T12:00:00");
+        var diff = Math.floor((today - d2) / 86400000);
+        var d2Date = new Date(e2.date + "T12:00:00");
+        if (freq === "weekly")   return diff < 7;
+        if (freq === "monthly")  return d2Date.getMonth() === today.getMonth() && d2Date.getFullYear() === today.getFullYear();
+        if (freq === "annually") return d2Date.getFullYear() === today.getFullYear();
+        return false;
+      });
+      if (!alreadyLogged) due.push({ bizIdx: bizIdx, bizName: biz, expense: e });
+    });
+  });
+
+  if (!due.length) {
+    state.lastRecurringCheck = todayStr;
+    saveState();
+    return;
+  }
+
+  // Show confirmation modal for each due expense
+  showRecurringModal(due, 0, function() {
+    state.lastRecurringCheck = todayStr;
+    saveState();
+    renderExpenses();
+  });
+}
+
+function showRecurringModal(due, idx, onAllDone) {
+  if (idx >= due.length) { onAllDone(); return; }
+  var item = due[idx];
+  var e = item.expense;
+  var cat = SCHED_C.find(function(c){ return c.id===e.category; }) || {name:"Other", e:"📝"};
+  var today = new Date();
+  var newDate = today.getFullYear()+"-"+pad(today.getMonth()+1)+"-"+pad(today.getDate());
+
+  var overlay = document.createElement("div");
+  overlay.style.cssText = "position:fixed;inset:0;z-index:210;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:1.5rem";
+  var card = document.createElement("div");
+  card.style.cssText = "background:white;border-radius:20px;width:100%;max-width:380px;padding:1.75rem";
+  card.innerHTML = '<div style="font-size:12px;font-weight:500;color:var(--accent,#2E9CCA);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">↻ Recurring expense</div>'
+    +'<div style="font-family:Georgia,serif;font-size:19px;font-weight:500;color:#1A1A1A;margin-bottom:6px">Add to this month?</div>'
+    +'<div style="background:#F5F5F5;border-radius:12px;padding:12px 14px;margin-bottom:1.25rem">'+
+      '<div style="font-size:14px;font-weight:500;color:#1A1A1A;margin-bottom:2px">'+cat.e+' '+esc(e.vendor||'Expense')+'</div>'+
+      '<div style="font-size:13px;color:#555">'+cat.name+' · $'+parseFloat(e.amount).toFixed(2)+'</div>'+
+      (e.notes ? '<div style="font-size:12px;color:#888;margin-top:2px">'+esc(e.notes)+'</div>' : '')+
+      '<div style="font-size:11px;color:#AAA;margin-top:4px">'+item.bizName+'</div>'+
+    '</div>'
+    +'<div style="font-size:12px;color:#888;margin-bottom:1.25rem">The amount and category will be copied from last month. You can edit it after.</div>'
+    +'<div style="display:flex;gap:8px">'+
+      '<button id="rec-skip" class="btn-secondary" style="flex:1">Skip</button>'+
+      '<button id="rec-add" class="btn-primary" style="flex:1">Add expense</button>'+
+    '</div>'+
+    (due.length > 1 ? '<div style="font-size:11px;color:#AAA;text-align:center;margin-top:10px">'+(idx+1)+' of '+due.length+' recurring expenses</div>' : '');
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+
+  card.querySelector("#rec-skip").addEventListener("click", function() {
+    document.body.removeChild(overlay);
+    showRecurringModal(due, idx+1, onAllDone);
+  });
+  card.querySelector("#rec-add").addEventListener("click", function() {
+    if (!state.expenses[item.bizIdx]) state.expenses[item.bizIdx] = [];
+    state.expenses[item.bizIdx].push({
+      id: Date.now(),
+      vendor: e.vendor || "",
+      notes: e.notes || "",
+      amount: e.amount,
+      date: newDate,
+      category: e.category,
+      repeat: true,
+      repeatFreq: e.repeatFreq || "monthly",
+      carMethod: e.carMethod || null,
+      miles: e.miles || null,
+      carPct: e.carPct || null
+    });
+    saveState();
+    document.body.removeChild(overlay);
+    showRecurringModal(due, idx+1, onAllDone);
+  });
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+
+// Add ?reset to the URL to wipe all data and restart the wizard
+if (window.location.search.indexOf("reset") !== -1) {
+  localStorage.removeItem("ownitlite");
+  sessionStorage.removeItem("ownitlite_ok");
+  window.history.replaceState({}, "", window.location.pathname);
+}
+
+loadState();
+
+if (state.configured) {
+  document.getElementById("wizard").classList.add("hidden");
+  applyPalette(state.paletteId);
+  var unlocked = sessionStorage.getItem("ownitlite_ok") === "1";
+  if (state.passcodeHash && !unlocked) {
+    showLockScreen();
+  } else {
+    sessionStorage.setItem("ownitlite_ok", "1");
+    launchApp();
+  }
+} else {
+  // Start wizard
+  buildBizList();
+  buildDots();
+  if (state.appName) document.getElementById("wiz-name").value = state.appName;
+  var wm = document.getElementById("wlogo-mark");
+  if (wm) { wm.innerHTML = getIcon(state.paletteId || "ocean-depth", "sm"); wm.style.background="transparent"; wm.style.padding="0"; }
+}
+</script>
+</body>
+</html>
