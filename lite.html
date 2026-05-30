@@ -2,8 +2,44 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OwnIt Lite">
+<meta name="theme-color" content="#1A5F7A">
+<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22OwnIt+Lite%22%2C%22short_name%22%3A%22OwnIt+Lite%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%231A5F7A%22%2C%22theme_color%22%3A%22%231A5F7A%22%2C%22orientation%22%3A%22portrait%22%7D">
 <title>OwnIt Lite</title>
+<!--
+  ╔══════════════════════════════════════════════════════════╗
+  ║  CLIENT HOME SCREEN ICON — EDIT BEFORE DEPLOYING        ║
+  ║                                                          ║
+  ║  After the client picks their palette in the wizard:     ║
+  ║  1. Find their palette ID below                          ║
+  ║  2. Copy the href value for that palette                 ║
+  ║  3. Paste it into the apple-touch-icon meta tag below    ║
+  ║  4. Commit to GitHub → client re-adds to home screen     ║
+  ╚══════════════════════════════════════════════════════════╝
+
+  PALETTE ICON HREFS (copy the one matching client's choice):
+
+<!--   ocean-depth: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%231A5F7A%27%20stroke%3D%27%232E9CCA%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%232E9CCA%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%232E9CCA%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23EBF4F8%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%232E9CCA%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%232E9CCA%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+<!--   navy-tan: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%23007A8E%27%20stroke%3D%27%23A2C2D4%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%23A2C2D4%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%23A2C2D4%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23F0E5D8%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%23A2C2D4%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%23A2C2D4%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+<!--   dusty-rose: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%23C97A8A%27%20stroke%3D%27%238C4A5A%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%238C4A5A%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%238C4A5A%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23FAF0F0%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%238C4A5A%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%238C4A5A%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+<!--   slate-gold: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%233A4A5C%27%20stroke%3D%27%23C4A244%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%23C4A244%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%23C4A244%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23F2F4F6%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%23C4A244%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%23C4A244%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+<!--   olive-cream: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%235A6030%27%20stroke%3D%27%239AA050%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%239AA050%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%239AA050%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23F6F4EC%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%239AA050%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%239AA050%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+<!--   midnight-plum: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%238A6CB8%27%20stroke%3D%27%234A3870%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%234A3870%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%234A3870%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23F0EEF8%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%234A3870%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%234A3870%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+<!--   terracotta: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%238C4A2E%27%20stroke%3D%27%23C47A5A%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%23C47A5A%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%23C47A5A%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23FAF0EB%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%23C47A5A%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%23C47A5A%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+<!--   blue-goldenrod: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%232B4EA8%27%20stroke%3D%27%23E8C84A%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%23E8C84A%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%23E8C84A%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23EEF4FF%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%23E8C84A%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%23E8C84A%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+<!--   warm-charcoal: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%234A3E30%27%20stroke%3D%27%238A7A60%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%238A7A60%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%238A7A60%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23F6F4F0%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%238A7A60%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%238A7A60%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+<!--   berry-cream: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%236A2A5A%27%20stroke%3D%27%23B05A98%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%23B05A98%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%23B05A98%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23F8F0F6%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%23B05A98%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%23B05A98%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+<!--   teal-linen: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%232A6A64%27%20stroke%3D%27%2350AEA4%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%2350AEA4%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%2350AEA4%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23F4F8F6%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%2350AEA4%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%2350AEA4%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+<!--   golden-hour: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%23C8942A%27%20stroke%3D%27%237A5A18%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%237A5A18%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%237A5A18%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23FBF5E8%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%237A5A18%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%237A5A18%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+<!--   peach-blush: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%23F4B89A%27%20stroke%3D%27%23E8845A%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%23E8845A%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%23E8845A%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23FFF4EE%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%23E8845A%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%23E8845A%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+<!--   peach-wisteria: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%23C97ABE%27%20stroke%3D%27%23F4C3A0%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%23F4C3A0%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%23F4C3A0%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23FFF0E0%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%23F4C3A0%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%23F4C3A0%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+<!--   earthen-spice: href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%235B3A29%27%20stroke%3D%27%238FBC8F%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%238FBC8F%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%238FBC8F%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23FFF8DC%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%238FBC8F%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%238FBC8F%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E" -->
+-->
+<meta name="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Crect%20x%3D%273%27%20y%3D%273%27%20width%3D%27194%27%20height%3D%27194%27%20rx%3D%2742%27%20fill%3D%27%231A5F7A%27%20stroke%3D%27%232E9CCA%27%20stroke-width%3D%276%27%2F%3E%3Cpolygon%20points%3D%2792%2C146%2030%2C146%2055%2C76%27%20fill%3D%27%232E9CCA%27%2F%3E%3Cpolygon%20points%3D%27108%2C146%20168%2C146%20142%2C96%27%20fill%3D%27%232E9CCA%27%2F%3E%3Cpolygon%20points%3D%27100%2C50%20124%2C106%20124%2C160%2076%2C160%2076%2C106%27%20fill%3D%27%23EBF4F8%27%2F%3E%3Crect%20x%3D%2728%27%20y%3D%27141%27%20width%3D%27144%27%20height%3D%2722%27%20rx%3D%276%27%20fill%3D%27%232E9CCA%27%2F%3E%3Ccircle%20cx%3D%2755%27%20cy%3D%2776%27%20r%3D%279%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2710%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27142%27%20cy%3D%2796%27%20r%3D%278%27%20fill%3D%27%23FFFFFF%27%2F%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2750%27%20r%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%232E9CCA%27%20stroke-width%3D%273%27%20stroke-dasharray%3D%274%203%27%2F%3E%3C%2Fsvg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script>
@@ -70,6 +106,7 @@ body { background: var(--bg, #F5F5F5); color: var(--tx, #1A1A1A); transition: ba
   font-size: 22px; font-family: 'DM Sans', sans-serif;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
   transition: background 0.1s; -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; user-select: none; -webkit-user-select: none;
 }
 .lkey:hover  { background: rgba(255,255,255,0.14); }
 .lkey:active { background: rgba(255,255,255,0.22); transform: scale(0.95); }
@@ -209,7 +246,9 @@ body { background: var(--bg, #F5F5F5); color: var(--tx, #1A1A1A); transition: ba
 #main-app.vis { display: flex; }
 
 .app-header {
-  background: var(--primary); padding: 0.875rem 1.25rem;
+  background: var(--primary); 
+  padding: 0.875rem 1.25rem;
+  padding-top: calc(0.875rem + env(safe-area-inset-top, 0px));
   display: flex; align-items: center; justify-content: space-between;
   position: sticky; top: 0; z-index: 10;
 }
@@ -1067,6 +1106,11 @@ document.getElementById("add-biz").addEventListener("click", function() {
     if (!state.businesses.length) state.businesses = [""];
     state.businesses.push("");
     buildBizList();
+    var inputs = document.querySelectorAll(".biz-input");
+    if (inputs.length) {
+      inputs[inputs.length - 1].focus();
+      inputs[inputs.length - 1].scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   }
 });
 
@@ -1282,6 +1326,11 @@ function launchApp() {
   applyPalette(state.paletteId);
   document.getElementById("main-app").classList.add("vis");
   document.getElementById("hdr-name").textContent = state.appName;
+  // Update PWA display name and theme color to match client's app
+  document.title = (state.appName || "OwnIt Lite") + " — powered by OwnIt";
+  var palForMeta = getPal(state.paletteId);
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', palForMeta.pr);
+  document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', state.appName || 'OwnIt Lite');
   document.getElementById("hdr-mark").innerHTML = getIcon(state.paletteId, "sm");
   buildBizSwitcher();
   updateSettings();
@@ -1383,10 +1432,19 @@ function renderExpenses() {
     row.className = "exp-row";
     row.style.cursor = "default";
     var carTag = (e.carMethod === "mileage") ? " · " + (e.miles||0) + " mi" : (e.carMethod === "actual" && e.carPct) ? " · " + e.carPct + "% biz use" : "";
+    var receiptHtml = '';
+    if (e.receipt) {
+      if (e.receipt.mimeType && e.receipt.mimeType.startsWith('image/')) {
+        receiptHtml = '<img src="'+e.receipt.dataUrl+'" class="receipt-thumb" data-id="'+e.id+'" style="height:36px;width:36px;object-fit:cover;border-radius:6px;margin-top:6px;cursor:pointer;border:1px solid rgba(0,0,0,0.1)">';
+      } else {
+        receiptHtml = '<div class="receipt-thumb" data-id="'+e.id+'" style="display:inline-flex;align-items:center;gap:4px;margin-top:6px;cursor:pointer;font-size:11px;color:var(--primary);background:color-mix(in srgb,var(--primary) 8%,transparent);padding:3px 8px;border-radius:6px">\ud83d\udcc4 '+esc(e.receipt.name||'Receipt')+'</div>';
+      }
+    }
     row.innerHTML = '<div class="exp-badge">'+cat.e+'</div>'
       +'<div class="exp-info">'
       +'<div class="exp-name">'+esc(e.vendor||'')+( e.repeat?'<span class="exp-repeat">↻ Repeat</span>':'')+'</div>'
       +'<div class="exp-meta">'+fmtDate(e.date)+' · '+cat.name+carTag+(e.notes?' · '+esc(e.notes):'')+'</div>'
+      +receiptHtml
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'
       +'<div class="exp-amt">$'+parseFloat(e.amount).toFixed(2)+'</div>'
@@ -1411,6 +1469,13 @@ function renderExpenses() {
       if (exp) openEditModal(exp);
     });
   });
+  list.querySelectorAll(".receipt-thumb").forEach(function(img) {
+    img.addEventListener("click", function() {
+      var id = parseInt(this.dataset.id);
+      var exp = (state.expenses[state.activeBiz]||[]).find(function(e){ return e.id===id; });
+      if (exp && exp.receipt) openReceiptPreview(exp.receipt);
+    });
+  });
 }
 
 // Filter chips
@@ -1432,9 +1497,29 @@ var isRepeat = false;
 document.getElementById("fab").addEventListener("click", openLogModal);
 document.getElementById("modal-cancel").addEventListener("click", closeLogModal);
 document.getElementById("log-modal").addEventListener("click", function(e){ if(e.target===this) closeLogModal(); });
-document.getElementById("receipt-zone").addEventListener("click", function(){ document.getElementById("receipt-file").click(); });
+document.getElementById("receipt-zone").addEventListener("click", function() {
+  document.getElementById("receipt-file").click();
+});
 
-var carMethod = "actual"; // track which car deduction method is selected
+document.getElementById("receipt-file").addEventListener("change", function() {
+  var file = this.files[0];
+  if (!file) return;
+  if (file.size > 5242880) { alert("File too large. Max 5MB."); return; }
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    pendingReceipt = { dataUrl: ev.target.result, name: file.name, mimeType: file.type };
+    renderReceiptZone(document.getElementById("receipt-zone"), pendingReceipt, function() {
+      pendingReceipt = null;
+      document.getElementById("receipt-file").value = "";
+      renderReceiptZone(document.getElementById("receipt-zone"), null, null);
+    });
+  };
+  reader.readAsDataURL(file);
+  this.value = "";
+});
+
+var carMethod = "actual";
+var pendingReceipt = null;
 
 function openLogModal() {
   var d = new Date();
@@ -1450,6 +1535,9 @@ function openLogModal() {
   document.getElementById("rep-chk").textContent = "";
   document.getElementById("repeat-freq").style.display = "none";
   document.getElementById("repeat-freq").value = "monthly";
+  pendingReceipt = null;
+  document.getElementById("receipt-file").value = "";
+  renderReceiptZone(document.getElementById("receipt-zone"), null, null);
 
   // Build category dropdown
   var sel = document.getElementById("exp-cat");
@@ -1561,7 +1649,8 @@ document.getElementById("modal-save").addEventListener("click", function() {
     repeatFreq: isRepeat ? document.getElementById("repeat-freq").value : null,
     carMethod: cat === "car_truck" ? carMethod : null,
     miles: miles, rawAmount: rawAmt, deductible: deductible,
-    carPct: cat === "car_truck" && carMethod === "actual" ? getCarPct(state.activeBiz) : null
+    carPct: cat === "car_truck" && carMethod === "actual" ? getCarPct(state.activeBiz) : null,
+    receipt: pendingReceipt || null
   });
   saveState();
   closeLogModal();
@@ -1775,18 +1864,56 @@ function rowsToCSV(rows) {
   }).join("\n");
 }
 
-function downloadCSV(csv, filename) {
+function triggerDownload(href, filename) {
   var a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv"}));
-  a.download = filename;
-  a.click();
+  a.setAttribute("href", href);
+  a.setAttribute("download", filename);
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+  setTimeout(function() { document.body.removeChild(a); }, 200);
+}
+
+function downloadCSV(csv, filename) {
+  triggerDownload("data:text/csv;charset=utf-8," + encodeURIComponent(csv), filename);
 }
 
 function printSummary(html) {
-  var win = window.open("", "_blank");
-  if (!win) { alert("Please allow pop-ups to print summaries."); return; }
-  win.document.write(html + "<script>window.onload=function(){window.print()}<\/script>");
-  win.document.close();
+  // In PWA standalone mode, new tabs have no close button — use overlay instead
+  var isStandalone = window.navigator.standalone || window.matchMedia("(display-mode: standalone)").matches;
+  if (isStandalone) {
+    var overlay = document.createElement("div");
+    overlay.style.cssText = "position:fixed;inset:0;z-index:500;background:white;display:flex;flex-direction:column";
+    var toolbar = document.createElement("div");
+    toolbar.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:12px 16px;"
+      + "background:#0D1B2A;color:white;flex-shrink:0;padding-top:calc(12px + env(safe-area-inset-top,0px))";
+    toolbar.innerHTML = "<span style=\"font-size:14px;font-weight:500\">Print Preview</span>"
+      + "<div style=\"display:flex;gap:12px\">"
+      + "<button id=\"print-btn\" style=\"background:var(--accent,#2E9CCA);color:white;border:none;border-radius:20px;padding:6px 16px;font-size:13px;cursor:pointer;font-family:inherit\">Print / Save PDF</button>"
+      + "<button id=\"close-preview\" style=\"background:rgba(255,255,255,0.15);color:white;border:none;border-radius:20px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit\">✕ Close</button>"
+      + "</div>";
+    var frame = document.createElement("iframe");
+    frame.style.cssText = "flex:1;border:none;width:100%";
+    overlay.appendChild(toolbar);
+    overlay.appendChild(frame);
+    document.body.appendChild(overlay);
+    // Write HTML into the iframe
+    frame.contentDocument.open();
+    frame.contentDocument.write(html);
+    frame.contentDocument.close();
+    toolbar.querySelector("#close-preview").addEventListener("click", function() {
+      document.body.removeChild(overlay);
+    });
+    toolbar.querySelector("#print-btn").addEventListener("click", function() {
+      frame.contentWindow.print();
+    });
+  } else {
+    // Browser: open new tab as before
+    var win = window.open("", "_blank");
+    if (!win) { alert("Please allow pop-ups to print summaries."); return; }
+    win.document.write(html + "<script>window.onload=function(){window.print()}<\/script>");
+    win.document.close();
+  }
 }
 
 
@@ -1995,6 +2122,11 @@ document.getElementById("set-name").addEventListener("click", function() {
   if (val && val.trim()) {
     state.appName = val.trim();
     document.getElementById("hdr-name").textContent = state.appName;
+  // Update PWA display name and theme color to match client's app
+  document.title = (state.appName || "OwnIt Lite") + " — powered by OwnIt";
+  var palForMeta = getPal(state.paletteId);
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', palForMeta.pr);
+  document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', state.appName || 'OwnIt Lite');
     document.getElementById("set-name-val").textContent = state.appName;
     saveState();
   }
@@ -2174,11 +2306,11 @@ document.getElementById("set-backup").addEventListener("click", function() {
     state: state
   };
   var json = JSON.stringify(backup, null, 2);
-  var a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([json], {type:"application/json"}));
-  a.download = (state.appName||"ownitlite").replace(/[^a-z0-9]/gi,"_").toLowerCase()
-    + "_backup_" + new Date().toISOString().slice(0,10) + ".json";
-  a.click();
+  triggerDownload(
+    "data:application/json;charset=utf-8," + encodeURIComponent(json),
+    (state.appName||"ownitlite").replace(/[^a-z0-9]/gi,"_").toLowerCase()
+      + "_backup_" + new Date().toISOString().slice(0,10) + ".json"
+  );
 });
 
 document.getElementById("set-import").addEventListener("click", function() {
@@ -2204,6 +2336,11 @@ document.getElementById("import-file").addEventListener("change", function(e) {
       // Re-launch
       applyPalette(state.paletteId);
       document.getElementById("hdr-name").textContent = state.appName;
+  // Update PWA display name and theme color to match client's app
+  document.title = (state.appName || "OwnIt Lite") + " — powered by OwnIt";
+  var palForMeta = getPal(state.paletteId);
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', palForMeta.pr);
+  document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', state.appName || 'OwnIt Lite');
       buildBizSwitcher();
       updateSettings();
       renderExpenses();
@@ -2281,6 +2418,57 @@ function updateCarPctInSettings() {
 }
 
 // ══════════════════════════════════════
+
+function renderReceiptZone(zone, receipt, onClear) {
+  if (!receipt) {
+    zone.innerHTML = '<p style="font-size:13px;color:#888">📎 Tap to attach a receipt</p>';
+    return;
+  }
+  if (receipt.mimeType && receipt.mimeType.startsWith("image/")) {
+    zone.innerHTML = '<div style="position:relative;display:inline-block">'
+      + '<img src="' + receipt.dataUrl + '" style="max-height:120px;max-width:100%;border-radius:8px;display:block;cursor:pointer" class="rcpt-prev-img">'
+      + '<button class="rcpt-clr" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#E05555;color:white;border:none;font-size:13px;cursor:pointer">&times;</button>'
+      + '</div>';
+  } else {
+    zone.innerHTML = '<div style="display:flex;align-items:center;gap:8px;justify-content:center">'
+      + '<span style="font-size:20px">📄</span>'
+      + '<span style="font-size:13px;color:#555">' + esc(receipt.name || 'File') + '</span>'
+      + '<button class="rcpt-clr" style="background:none;border:none;color:#E05555;font-size:18px;cursor:pointer">&times;</button>'
+      + '</div>';
+  }
+  var clr = zone.querySelector(".rcpt-clr");
+  if (clr) clr.addEventListener("click", function(e) {
+    e.stopPropagation();
+    if (onClear) onClear();
+    renderReceiptZone(zone, null, null);
+  });
+  var img = zone.querySelector(".rcpt-prev-img");
+  if (img) img.addEventListener("click", function(e) { e.stopPropagation(); openReceiptPreview(receipt); });
+}
+
+function openReceiptPreview(receipt) {
+  var ov = document.createElement("div");
+  ov.style.cssText = "position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem";
+  var tb = document.createElement("div");
+  tb.style.cssText = "display:flex;justify-content:space-between;align-items:center;width:100%;max-width:600px;margin-bottom:1rem";
+  tb.innerHTML = '<span style="color:white;font-size:13px;opacity:0.8">' + esc(receipt.name || 'Receipt') + '</span>'
+    + '<button style="background:rgba(255,255,255,0.15);color:white;border:none;border-radius:20px;padding:6px 16px;font-size:13px;cursor:pointer;font-family:inherit">Close</button>';
+  tb.querySelector("button").addEventListener("click", function() { document.body.removeChild(ov); });
+  ov.addEventListener("click", function(e) { if (e.target === ov) document.body.removeChild(ov); });
+  var inner = document.createElement("div");
+  inner.style.cssText = "max-width:600px;width:100%;display:flex;align-items:center;justify-content:center";
+  if (receipt.mimeType && receipt.mimeType.startsWith("image/")) {
+    inner.innerHTML = '<img src="' + receipt.dataUrl + '" style="max-width:100%;max-height:70vh;border-radius:12px;object-fit:contain">';
+  } else {
+    inner.innerHTML = '<div style="background:white;border-radius:12px;padding:2rem;text-align:center">'
+      + '<div style="font-size:14px;color:#333;margin-bottom:1rem">' + esc(receipt.name) + '</div>'
+      + '<a href="' + receipt.dataUrl + '" download="' + esc(receipt.name) + '" style="background:#1A5F7A;color:white;border-radius:20px;padding:8px 20px;text-decoration:none;font-size:13px">Download</a>'
+      + '</div>';
+  }
+  ov.appendChild(tb);
+  ov.appendChild(inner);
+  document.body.appendChild(ov);
+}
 // EDIT EXPENSE MODAL
 // ══════════════════════════════════════
 
@@ -2301,12 +2489,32 @@ function openEditModal(exp) {
     +'<div style="margin-bottom:1rem"><label class="flabel" style="display:block;margin-bottom:6px">Category</label><select class="fselect" id="edit-cat">'+catOpts+'</select></div>'
     +'<div style="margin-bottom:1rem"><label class="flabel" style="display:block;margin-bottom:6px">Amount ($)</label><input class="finput" id="edit-amt" type="number" value="'+parseFloat(exp.amount).toFixed(2)+'" min="0" step="0.01"></div>'
     +'<div style="margin-bottom:1rem"><label class="flabel" style="display:block;margin-bottom:6px">Notes</label><input class="finput" id="edit-notes" type="text" value="'+esc(exp.notes||'')+'"></div>'
+    +'<div style="margin-bottom:1rem"><label class="flabel" style="display:block;margin-bottom:6px">Receipt <span style="color:#AAA;font-weight:400">(optional)</span></label><div id="edit-receipt-zone" style="border:1.5px dashed #C0C0C0;border-radius:10px;padding:1rem;text-align:center;cursor:pointer"><p style=\"font-size:13px;color:#888\">Tap to attach a receipt</p></div><input type="file" id="edit-receipt-file" accept="image/*,.pdf" style="display:none"></div>'
     +'<div style="display:flex;gap:10px;margin-top:0.5rem">'
     +'<button id="edit-cancel" class="btn-secondary">Cancel</button>'
     +'<button id="edit-save" class="btn-primary">Save changes</button>'
     +'</div></div>';
   document.body.appendChild(overlay);
   overlay.querySelector("#edit-cancel").addEventListener("click", function(){ document.body.removeChild(overlay); });
+
+  var editReceipt = exp.receipt || null;
+  var erZone = overlay.querySelector("#edit-receipt-zone");
+  var erFile = overlay.querySelector("#edit-receipt-file");
+  if (erZone) {
+    renderReceiptZone(erZone, editReceipt, function() { editReceipt = null; });
+    erZone.addEventListener("click", function() { erFile.click(); });
+    erFile.addEventListener("change", function() {
+      var file = this.files[0]; if (!file) return;
+      if (file.size > 5242880) { alert("Max 5MB."); return; }
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        editReceipt = { dataUrl: ev.target.result, name: file.name, mimeType: file.type };
+        renderReceiptZone(erZone, editReceipt, function() { editReceipt = null; });
+      };
+      reader.readAsDataURL(file); this.value = "";
+    });
+  }
+
   overlay.querySelector("#edit-save").addEventListener("click", function() {
     var date   = overlay.querySelector("#edit-date").value;
     var vendor = overlay.querySelector("#edit-vendor").value.trim();
@@ -2317,7 +2525,7 @@ function openEditModal(exp) {
     var exps = state.expenses[state.activeBiz] || [];
     var idx = exps.findIndex(function(e){ return e.id === exp.id; });
     if (idx !== -1) {
-      exps[idx] = Object.assign({}, exps[idx], { date:date, vendor:vendor, category:cat, amount:amt, notes:notes });
+      exps[idx] = Object.assign({}, exps[idx], { date:date, vendor:vendor, category:cat, amount:amt, notes:notes, receipt: editReceipt });
       saveState();
     }
     document.body.removeChild(overlay);
